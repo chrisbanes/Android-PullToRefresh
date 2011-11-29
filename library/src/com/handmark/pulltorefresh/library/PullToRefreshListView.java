@@ -15,7 +15,7 @@ public class PullToRefreshListView extends PullToRefreshBase<ListView> {
 	}
 
 	@Override
-	protected ListView createAdapterView(Context context, AttributeSet attrs) {
+	protected final ListView createAdapterView(Context context, AttributeSet attrs) {
 		ListView lv = new ListView(context, attrs);
 
 		// Set it to this so it can be used in ListActivity/ListFragment

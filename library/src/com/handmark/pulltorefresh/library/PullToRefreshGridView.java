@@ -15,7 +15,7 @@ public class PullToRefreshGridView extends PullToRefreshBase<GridView> {
 	}
 
 	@Override
-	protected GridView createAdapterView(Context context, AttributeSet attrs) {
+	protected final GridView createAdapterView(Context context, AttributeSet attrs) {
 		GridView gv = new GridView(context, attrs);
 
 		// Use Generated ID (from res/values/ids.xml)
