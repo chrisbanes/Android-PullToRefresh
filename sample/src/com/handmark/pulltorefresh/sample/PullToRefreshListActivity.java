@@ -14,6 +14,7 @@ import com.handmark.pulltorefresh.library.PullToRefreshListView;
 public class PullToRefreshListActivity extends ListActivity {
 	private LinkedList<String> mListItems;
 	private PullToRefreshListView mPullRefreshListView;
+	private ArrayAdapter<String> mAdapter;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -35,9 +36,8 @@ public class PullToRefreshListActivity extends ListActivity {
 		mListItems = new LinkedList<String>();
 		mListItems.addAll(Arrays.asList(mStrings));
 
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, mListItems);
-
-		setListAdapter(adapter);
+		mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, mListItems);
+		setListAdapter(mAdapter);
 	}
 
 	private class GetDataTask extends AsyncTask<Void, Void, String[]> {
@@ -48,7 +48,6 @@ public class PullToRefreshListActivity extends ListActivity {
 			try {
 				Thread.sleep(2000);
 			} catch (InterruptedException e) {
-				;
 			}
 			return mStrings;
 		}
@@ -56,6 +55,7 @@ public class PullToRefreshListActivity extends ListActivity {
 		@Override
 		protected void onPostExecute(String[] result) {
 			mListItems.addFirst("Added after refresh...");
+			mAdapter.notifyDataSetChanged();
 
 			// Call onRefreshComplete when the list has been refreshed.
 			mPullRefreshListView.onRefreshComplete();

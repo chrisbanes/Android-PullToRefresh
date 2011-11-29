@@ -16,6 +16,7 @@ public class PullToRefreshGridActivity extends Activity {
 	private LinkedList<String> mListItems;
 	private PullToRefreshGridView mPullRefreshGridView;
 	private GridView mGridView;
+	private ArrayAdapter<String> mAdapter;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -38,8 +39,8 @@ public class PullToRefreshGridActivity extends Activity {
 		mListItems = new LinkedList<String>();
 		mListItems.addAll(Arrays.asList(mStrings));
 
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, mListItems);
-		mGridView.setAdapter(adapter);
+		mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, mListItems);
+		mGridView.setAdapter(mAdapter);
 	}
 
 	private class GetDataTask extends AsyncTask<Void, Void, String[]> {
@@ -50,7 +51,6 @@ public class PullToRefreshGridActivity extends Activity {
 			try {
 				Thread.sleep(2000);
 			} catch (InterruptedException e) {
-				;
 			}
 			return mStrings;
 		}
@@ -58,6 +58,7 @@ public class PullToRefreshGridActivity extends Activity {
 		@Override
 		protected void onPostExecute(String[] result) {
 			mListItems.addFirst("Added after refresh...");
+			mAdapter.notifyDataSetChanged();
 
 			// Call onRefreshComplete when the list has been refreshed.
 			mPullRefreshGridView.onRefreshComplete();
