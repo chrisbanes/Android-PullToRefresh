@@ -131,14 +131,29 @@ public abstract class PullToRefreshBase<T extends AdapterView<ListAdapter>> exte
 	// Getter & Setter
 	// ===========================================================
 
-	public T getAdapterView() {
+	/**
+	 * Get the Wrapped AdapterView. Anything returned here has already been
+	 * added to the content view.
+	 * 
+	 * @return The AdapterView which is currently wrapped
+	 */
+	public final T getAdapterView() {
 		return adapterView;
 	}
 
+	/**
+	 * Whether Pull-to-Refresh is enabled
+	 * 
+	 * @return enabled
+	 */
 	public boolean isPullToRefreshEnabled() {
 		return isPullToRefreshEnabled;
 	}
 
+	/**
+	 * Mark the current Refresh as complete. Will Reset the UI and hide the
+	 * Refreshing View
+	 */
 	public void onRefreshComplete() {
 		resetHeader();
 	}
@@ -147,6 +162,12 @@ public abstract class PullToRefreshBase<T extends AdapterView<ListAdapter>> exte
 		onRefreshListener = listener;
 	}
 
+	/**
+	 * A mutator to enable/disable Pull-to-Refresh for the current AdapterView
+	 * 
+	 * @param enable
+	 *            Whether Pull-To-Refresh should be used
+	 */
 	public void setPullToRefreshEnabled(boolean enabled) {
 		this.isPullToRefreshEnabled = enabled;
 	}
@@ -174,6 +195,21 @@ public abstract class PullToRefreshBase<T extends AdapterView<ListAdapter>> exte
 		return false;
 	}
 
+	/**
+	 * This is implemented by derived classes to return the created AdapterView.
+	 * If you need to use a custom AdapterView (such as a custom ListView),
+	 * override this method and return an instance of your custom class.
+	 * 
+	 * Be sure to set the ID of the view in this method, especially if you're
+	 * using a ListActivity or ListFragment.
+	 * 
+	 * @param context
+	 * @param attrs
+	 *            AttributeSet from wrapped class. Means that anything you
+	 *            include in the XML layout declaration will be routed to the
+	 *            AdapterView
+	 * @return New instance of the AdapterView
+	 */
 	protected abstract T createAdapterView(Context context, AttributeSet attrs);
 
 	// ===========================================================
