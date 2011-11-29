@@ -3,10 +3,11 @@
 This project aims to provide a reusable Pull to Refresh widget for Android. It is originally based on Johan Nilsson's excellent [Library](https://github.com/johannilsson/android-pulltorefresh), but has been vastly improved since then.
 
 This version has several improvements over the previous library:
-*   No longer uses a (slow) OnScrollListener
-*   No longer shows the Tap to Refresh view when the AdapterView can not fill itself.
-*   Animated Scrolling for all devices (Tested on 1.6+)
-*   Works for all AdapterViews. I've implemented both ListView and GridView.
+
+ * No longer uses a (slow) OnScrollListener
+ * No longer shows the Tap to Refresh view when the AdapterView can not fill itself.
+ * Animated Scrolling for all devices (Tested on 1.6+)
+ * Works for all AdapterViews. I've implemented both ListView and GridView.
 
 Repository at <https://github.com/chrisbanes/Android-PullToRefresh>.
 
@@ -17,14 +18,12 @@ Repository at <https://github.com/chrisbanes/Android-PullToRefresh>.
 ``` xml
 <!--
   The PullToRefreshListView replaces a standard ListView widget.
-  The ID CAN NOT be @android:id/list
+  The ID CAN NOT be @+id/android:list
 -->
 <com.handmark.pulltorefresh.library.PullToRefreshListView
     android:id="@+id/pull_to_refresh_listview"
-    android:id="@+id/android:list"
     android:layout_height="fill_parent"
-    android:layout_width="fill_parent"
-    />
+    android:layout_width="fill_parent" />
 ```
 
 ### Activity
