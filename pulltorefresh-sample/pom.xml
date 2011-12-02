@@ -8,7 +8,7 @@
     <version>1.0</version>
   </parent>
   <groupId>com.github.handmark.pulltorefresh</groupId>
-  <artifactId>sample</artifactId>
+  <artifactId>pulltorefresh-sample</artifactId>
   <packaging>apk</packaging>
   <name>Android-PullToRefresh Sample</name>
 
@@ -16,6 +16,12 @@
     <dependency>
       <groupId>com.google.android</groupId>
       <artifactId>android</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.github.handmark.pulltorefresh</groupId>
+      <artifactId>pulltorefresh-library</artifactId>
+      <type>apklib</type>
+      <version>${project.version}</version>
     </dependency>
   </dependencies>
 

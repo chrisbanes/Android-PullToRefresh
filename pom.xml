@@ -10,8 +10,8 @@
   <name>Android-PullToRefresh Project</name>
 
   <modules>
-    <module>library</module>
-    <module>sample</module>
+    <module>pulltorefresh-library</module>
+    <module>pulltorefresh-sample</module>
   </modules>
 
   <properties>

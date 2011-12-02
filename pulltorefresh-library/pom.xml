@@ -8,7 +8,7 @@
     <version>1.0</version>
   </parent>
   <groupId>com.github.handmark.pulltorefresh</groupId>
-  <artifactId>library</artifactId>
+  <artifactId>pulltorefresh-library</artifactId>
   <packaging>apklib</packaging>
   <name>Android-PullToRefresh Library</name>
 
