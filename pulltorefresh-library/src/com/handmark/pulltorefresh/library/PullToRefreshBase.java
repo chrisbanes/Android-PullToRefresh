@@ -113,6 +113,10 @@ public abstract class PullToRefreshBase<T extends AdapterView<ListAdapter>> exte
 
 	private float startY = -1;
 	private final float[] lastYs = new float[EVENT_COUNT];
+	
+	private String releaseLabel;
+    private String pullLabel;
+    private String refreshingLabel;
 
 	// ===========================================================
 	// Constructors
@@ -233,6 +237,9 @@ public abstract class PullToRefreshBase<T extends AdapterView<ListAdapter>> exte
 		ViewGroup header = (ViewGroup) LayoutInflater.from(context).inflate(R.layout.pull_to_refresh_header, this,
 		        false);
 		headerText = (TextView) header.findViewById(R.id.pull_to_refresh_text);
+		pullLabel = context.getString(R.string.pull_to_refresh_pull_label);
+		refreshingLabel = context.getString(R.string.pull_to_refresh_refreshing_label);
+		releaseLabel = context.getString(R.string.pull_to_refresh_release_label);
 		headerImage = (ImageView) header.findViewById(R.id.pull_to_refresh_image);
 		headerProgress = (ProgressBar) header.findViewById(R.id.pull_to_refresh_progress);
 		addView(header, ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -325,13 +332,13 @@ public abstract class PullToRefreshBase<T extends AdapterView<ListAdapter>> exte
 
 		if (state == PULL_TO_REFRESH && headerHeight < height) {
 			state = RELEASE_TO_REFRESH;
-			headerText.setText(R.string.pull_to_refresh_release_label);
+			headerText.setText(releaseLabel);
 			headerImage.clearAnimation();
 			headerImage.startAnimation(flipAnimation);
 		}
 		if (state == RELEASE_TO_REFRESH && headerHeight >= height) {
 			state = PULL_TO_REFRESH;
-			headerText.setText(R.string.pull_to_refresh_pull_label);
+			headerText.setText(pullLabel);
 			headerImage.clearAnimation();
 			headerImage.startAnimation(reverseAnimation);
 		}
@@ -347,7 +354,7 @@ public abstract class PullToRefreshBase<T extends AdapterView<ListAdapter>> exte
 
 	private void setRefreshing() {
 		state = REFRESHING;
-		headerText.setText(R.string.pull_to_refresh_refreshing_label);
+		headerText.setText(refreshingLabel);
 		headerImage.clearAnimation();
 		headerImage.setVisibility(View.INVISIBLE);
 		headerProgress.setVisibility(View.VISIBLE);
@@ -408,6 +415,22 @@ public abstract class PullToRefreshBase<T extends AdapterView<ListAdapter>> exte
 
 		this.currentSmoothScrollRunnable = new SmoothScrollRunnable(handler, getHeaderScroll(), y);
 		handler.post(currentSmoothScrollRunnable);
+	}
+	
+	public void setReleaseLabel(String releaseLabel) {
+        this.releaseLabel = releaseLabel;
+    }
+	
+	public void setPullLabel(String pullLabel) {
+        this.pullLabel = pullLabel;
+    }
+	
+	public void setRefreshingLabel(String refreshingLabel) {
+        this.refreshingLabel = refreshingLabel;
+    }
+
+	public void setHeaderProgress(ProgressBar headerProgress) {
+		this.headerProgress = headerProgress;
 	}
 
 	// ===========================================================
