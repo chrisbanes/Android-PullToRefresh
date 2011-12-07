@@ -29,6 +29,16 @@
                     android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".PullToRefreshExpandableListActivity"
+            android:label="PtR ExpandableListView" >
+            <intent-filter >
+                <action
+                    android:name="android.intent.action.MAIN" />
+                <category
+                    android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
     <uses-sdk
