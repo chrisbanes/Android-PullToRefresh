@@ -113,10 +113,10 @@ public abstract class PullToRefreshBase<T extends AdapterView<ListAdapter>> exte
 
 	private float startY = -1;
 	private final float[] lastYs = new float[EVENT_COUNT];
-	
+
 	private String releaseLabel;
-    private String pullLabel;
-    private String refreshingLabel;
+	private String pullLabel;
+	private String refreshingLabel;
 
 	// ===========================================================
 	// Constructors
@@ -174,6 +174,22 @@ public abstract class PullToRefreshBase<T extends AdapterView<ListAdapter>> exte
 	 */
 	public void setPullToRefreshEnabled(boolean enabled) {
 		this.isPullToRefreshEnabled = enabled;
+	}
+
+	public void setReleaseLabel(String releaseLabel) {
+		this.releaseLabel = releaseLabel;
+	}
+
+	public void setPullLabel(String pullLabel) {
+		this.pullLabel = pullLabel;
+	}
+
+	public void setRefreshingLabel(String refreshingLabel) {
+		this.refreshingLabel = refreshingLabel;
+	}
+
+	public void setHeaderProgress(ProgressBar headerProgress) {
+		this.headerProgress = headerProgress;
 	}
 
 	// ===========================================================
@@ -415,22 +431,6 @@ public abstract class PullToRefreshBase<T extends AdapterView<ListAdapter>> exte
 
 		this.currentSmoothScrollRunnable = new SmoothScrollRunnable(handler, getHeaderScroll(), y);
 		handler.post(currentSmoothScrollRunnable);
-	}
-	
-	public void setReleaseLabel(String releaseLabel) {
-        this.releaseLabel = releaseLabel;
-    }
-	
-	public void setPullLabel(String pullLabel) {
-        this.pullLabel = pullLabel;
-    }
-	
-	public void setRefreshingLabel(String refreshingLabel) {
-        this.refreshingLabel = refreshingLabel;
-    }
-
-	public void setHeaderProgress(ProgressBar headerProgress) {
-		this.headerProgress = headerProgress;
 	}
 
 	// ===========================================================
