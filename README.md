@@ -29,6 +29,18 @@ Repository at <https://github.com/chrisbanes/Android-PullToRefresh>.
     android:layout_width="fill_parent" />
 ```
 
+It can also be styled using XML, such as in the sample ExpandableListView Sample:
+``` xml
+<com.handmark.pulltorefresh.library.PullToRefreshExpandableListView
+    xmlns:ptr="http://schemas.android.com/apk/res/YOUR_APP_PACKAGE_NAME"
+    android:id="@+id/pull_refresh_expandable_list"
+    android:layout_height="fill_parent"
+    android:layout_width="fill_parent"
+    ptr:adapterViewBackground="@android:color/white"
+    ptr:headerBackground="@android:color/darker_gray"
+    ptr:headerTextColor="@android:color/white" />
+```
+
 ### Activity
 
 ``` java

@@ -1,6 +1,8 @@
 package com.handmark.pulltorefresh.library;
 
 import android.content.Context;
+import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -267,6 +269,20 @@ public abstract class PullToRefreshBase<T extends AdapterView<ListAdapter>> exte
 		adapterView = this.createAdapterView(context, attrs);
 		adapterView.setOnTouchListener(this);
 		addView(adapterView, ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.FILL_PARENT);
+
+		// Styleables from XML
+		TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.PullToRefresh);
+		if (a.hasValue(R.styleable.PullToRefresh_headerTextColor)) {
+			headerText.setTextColor(a.getColor(R.styleable.PullToRefresh_headerTextColor, Color.BLACK));
+		}
+		if (a.hasValue(R.styleable.PullToRefresh_headerBackground)) {
+			this.setBackgroundResource(a.getResourceId(R.styleable.PullToRefresh_headerBackground, Color.WHITE));
+		}
+		if (a.hasValue(R.styleable.PullToRefresh_adapterViewBackground)) {
+			adapterView.setBackgroundResource(a.getResourceId(R.styleable.PullToRefresh_adapterViewBackground,
+			        Color.WHITE));
+		}
+		a.recycle();
 
 		// Animations
 		flipAnimation = new RotateAnimation(0, -180, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
