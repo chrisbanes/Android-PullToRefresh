@@ -30,6 +30,7 @@ Repository at <https://github.com/chrisbanes/Android-PullToRefresh>.
 ```
 
 It can also be styled using XML, such as in the sample ExpandableListView Sample:
+
 ``` xml
 <com.handmark.pulltorefresh.library.PullToRefreshExpandableListView
     xmlns:ptr="http://schemas.android.com/apk/res/YOUR_APP_PACKAGE_NAME"
