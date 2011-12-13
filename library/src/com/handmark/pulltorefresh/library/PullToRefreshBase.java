@@ -244,6 +244,7 @@ public abstract class PullToRefreshBase<T extends AdapterView<ListAdapter>> exte
 		startY = -1;
 		headerImage.setVisibility(View.VISIBLE);
 		headerProgress.setVisibility(View.GONE);
+		headerText.setText(R.string.pull_to_refresh_pull_label);
 
 		smoothScrollTo(0);
 	}
