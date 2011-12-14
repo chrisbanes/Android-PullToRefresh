@@ -1,6 +1,6 @@
 # Pull To Refresh AdapterViews for Android
 
-This project aims to provide a reusable Pull to Refresh widget for Android. It is originally based on Johan Nilsson's excellent [Library](https://github.com/johannilsson/android-pulltorefresh), but has been vastly improved since then.
+This project aims to provide a reusable Pull to Refresh widget for Android. It is originally (loosely) based on Johan Nilsson's [Library](https://github.com/johannilsson/android-pulltorefresh) (mainly for graphics, strings and animations), and has been vastly improved since then.
 
 ## Features
 
