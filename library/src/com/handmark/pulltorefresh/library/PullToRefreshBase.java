@@ -286,15 +286,16 @@ public abstract class PullToRefreshBase<T extends AdapterView<ListAdapter>> exte
 		a.recycle();
 
 		// Animations
+		final Interpolator interpolator = new LinearInterpolator();
 		flipAnimation = new RotateAnimation(0, -180, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-		flipAnimation.setInterpolator(new LinearInterpolator());
-		flipAnimation.setDuration(250);
+		flipAnimation.setInterpolator(interpolator);
+		flipAnimation.setDuration(125);
 		flipAnimation.setFillAfter(true);
 
 		reverseAnimation = new RotateAnimation(-180, 0, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
 		        0.5f);
-		reverseAnimation.setInterpolator(new LinearInterpolator());
-		reverseAnimation.setDuration(250);
+		reverseAnimation.setInterpolator(interpolator);
+		reverseAnimation.setDuration(125);
 		reverseAnimation.setFillAfter(true);
 
 		// Hide Header View
