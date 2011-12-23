@@ -15,15 +15,15 @@ import android.view.animation.Animation;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
-import android.widget.AdapterView;
+import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-public abstract class PullToRefreshBase<T extends AdapterView<ListAdapter>> extends LinearLayout implements
-        OnTouchListener {
+public abstract class PullToRefreshBase<T extends AbsListView> extends LinearLayout implements OnTouchListener,
+        OnScrollListener {
 
 	private final class SmoothScrollRunnable implements Runnable {
 
@@ -115,6 +115,10 @@ public abstract class PullToRefreshBase<T extends AdapterView<ListAdapter>> exte
 
 	private OnTouchListener onTouchListener;
 	private OnRefreshListener onRefreshListener;
+	private OnScrollListener onScrollListener;
+
+	private OnLastItemVisibleListener onLastItemVisibleListener;
+	private int lastSavedFirstVisibleItem = -1;
 
 	private SmoothScrollRunnable currentSmoothScrollRunnable;
 
@@ -174,6 +178,10 @@ public abstract class PullToRefreshBase<T extends AdapterView<ListAdapter>> exte
 		resetHeader();
 	}
 
+	public void setOnLastItemVisibleListener(OnLastItemVisibleListener listener) {
+		onLastItemVisibleListener = listener;
+	}
+
 	public void setOnRefreshListener(OnRefreshListener listener) {
 		onRefreshListener = listener;
 	}
@@ -208,13 +216,43 @@ public abstract class PullToRefreshBase<T extends AdapterView<ListAdapter>> exte
 	// Methods for/from SuperClass/Interfaces
 	// ===========================================================
 
-	@Override
-	public void setOnTouchListener(OnTouchListener listener) {
-		onTouchListener = listener;
+	public final void setOnScrollListener(OnScrollListener listener) {
+		onScrollListener = listener;
 	}
 
 	@Override
-	public boolean onTouch(View view, MotionEvent ev) {
+	public final void setOnTouchListener(OnTouchListener listener) {
+		onTouchListener = listener;
+	}
+
+	public final void onScroll(final AbsListView view, final int firstVisibleItem, final int visibleItemCount,
+	        final int totalItemCount) {
+
+		if (null != onLastItemVisibleListener) {
+			// detect if last item is visible
+			if (visibleItemCount > 0 && visibleItemCount < totalItemCount
+			        && (firstVisibleItem + visibleItemCount == totalItemCount)) {
+				// only process first event
+				if (firstVisibleItem != lastSavedFirstVisibleItem) {
+					lastSavedFirstVisibleItem = firstVisibleItem;
+					onLastItemVisibleListener.onLastItemVisible();
+				}
+			}
+		}
+
+		if (null != onScrollListener) {
+			onScrollListener.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
+		}
+	}
+
+	public final void onScrollStateChanged(final AbsListView view, final int scrollState) {
+		if (null != onScrollListener) {
+			onScrollListener.onScrollStateChanged(view, scrollState);
+		}
+	}
+
+	@Override
+	public final boolean onTouch(View view, MotionEvent ev) {
 		if (isPullToRefreshEnabled) {
 			// Returning true here stops the ListView being scrollable while we
 			// refresh
@@ -271,6 +309,7 @@ public abstract class PullToRefreshBase<T extends AdapterView<ListAdapter>> exte
 		// By passing the attrs, we can add ListView/GridView params via XML
 		adapterView = this.createAdapterView(context, attrs);
 		adapterView.setOnTouchListener(this);
+		adapterView.setOnScrollListener(this);
 		addView(adapterView, new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, 0, 1.0f));
 
 		// Header
@@ -561,6 +600,12 @@ public abstract class PullToRefreshBase<T extends AdapterView<ListAdapter>> exte
 	public static interface OnRefreshListener {
 
 		public void onRefresh();
+
+	}
+
+	public static interface OnLastItemVisibleListener {
+
+		public void onLastItemVisible();
 
 	}
 
