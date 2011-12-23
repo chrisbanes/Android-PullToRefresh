@@ -166,7 +166,7 @@ public abstract class PullToRefreshBase<T extends AbsListView> extends LinearLay
 	 * 
 	 * @return enabled
 	 */
-	public boolean isPullToRefreshEnabled() {
+	public final boolean isPullToRefreshEnabled() {
 		return isPullToRefreshEnabled;
 	}
 
@@ -174,15 +174,15 @@ public abstract class PullToRefreshBase<T extends AbsListView> extends LinearLay
 	 * Mark the current Refresh as complete. Will Reset the UI and hide the
 	 * Refreshing View
 	 */
-	public void onRefreshComplete() {
+	public final void onRefreshComplete() {
 		resetHeader();
 	}
 
-	public void setOnLastItemVisibleListener(OnLastItemVisibleListener listener) {
+	public final void setOnLastItemVisibleListener(OnLastItemVisibleListener listener) {
 		onLastItemVisibleListener = listener;
 	}
 
-	public void setOnRefreshListener(OnRefreshListener listener) {
+	public final void setOnRefreshListener(OnRefreshListener listener) {
 		onRefreshListener = listener;
 	}
 
@@ -192,23 +192,23 @@ public abstract class PullToRefreshBase<T extends AbsListView> extends LinearLay
 	 * @param enable
 	 *            Whether Pull-To-Refresh should be used
 	 */
-	public void setPullToRefreshEnabled(boolean enabled) {
+	public final void setPullToRefreshEnabled(boolean enabled) {
 		this.isPullToRefreshEnabled = enabled;
 	}
 
-	public void setReleaseLabel(String releaseLabel) {
+	public final void setReleaseLabel(String releaseLabel) {
 		this.releaseLabel = releaseLabel;
 	}
 
-	public void setPullLabel(String pullLabel) {
+	public final void setPullLabel(String pullLabel) {
 		this.pullLabel = pullLabel;
 	}
 
-	public void setRefreshingLabel(String refreshingLabel) {
+	public final void setRefreshingLabel(String refreshingLabel) {
 		this.refreshingLabel = refreshingLabel;
 	}
 
-	public void setHeaderProgress(ProgressBar headerProgress) {
+	public final void setHeaderProgress(ProgressBar headerProgress) {
 		this.headerProgress = headerProgress;
 	}
 
