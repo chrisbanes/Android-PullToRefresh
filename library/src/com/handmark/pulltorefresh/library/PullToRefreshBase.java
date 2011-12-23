@@ -92,18 +92,23 @@ public abstract class PullToRefreshBase<T extends AdapterView<ListAdapter>> exte
 	static final int REFRESHING = RELEASE_TO_REFRESH + 1;
 	static final int EVENT_COUNT = 3;
 
+	public static final int MODE_PULL_DOWN_TO_REFRESH = 0x1;
+	public static final int MODE_PULL_UP_TO_REFRESH = 0x2;
+
 	// ===========================================================
 	// Fields
 	// ===========================================================
 
 	private int state = PULL_TO_REFRESH;
+	private int mode = MODE_PULL_DOWN_TO_REFRESH;
+
 	private T adapterView;
 	private boolean isPullToRefreshEnabled = true;
 
 	private ProgressBar headerProgress;
 	private TextView headerText;
 	private ImageView headerImage;
-	private Animation flipAnimation, reverseAnimation;
+	private Animation rotateToPointUpAnimation, rotateToPointDownAnimation;
 	private int headerHeight;
 
 	private final Handler handler = new Handler();
@@ -126,6 +131,11 @@ public abstract class PullToRefreshBase<T extends AdapterView<ListAdapter>> exte
 
 	public PullToRefreshBase(Context context) {
 		this(context, null);
+	}
+
+	public PullToRefreshBase(Context context, int mode) {
+		this(context);
+		this.mode = mode;
 	}
 
 	public PullToRefreshBase(Context context, AttributeSet attrs) {
@@ -250,7 +260,18 @@ public abstract class PullToRefreshBase<T extends AdapterView<ListAdapter>> exte
 	}
 
 	private void init(Context context, AttributeSet attrs) {
+
+		// Styleables from XML
+		final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.PullToRefresh);
+		mode = a.getInteger(R.styleable.PullToRefresh_mode, MODE_PULL_DOWN_TO_REFRESH);
+
 		setOrientation(LinearLayout.VERTICAL);
+
+		// AdapterView
+		// By passing the attrs, we can add ListView/GridView params via XML
+		adapterView = this.createAdapterView(context, attrs);
+		adapterView.setOnTouchListener(this);
+		addView(adapterView, new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, 0, 1.0f));
 
 		// Header
 		ViewGroup header = (ViewGroup) LayoutInflater.from(context).inflate(R.layout.pull_to_refresh_header, this,
@@ -261,18 +282,22 @@ public abstract class PullToRefreshBase<T extends AdapterView<ListAdapter>> exte
 		releaseLabel = context.getString(R.string.pull_to_refresh_release_label);
 		headerImage = (ImageView) header.findViewById(R.id.pull_to_refresh_image);
 		headerProgress = (ProgressBar) header.findViewById(R.id.pull_to_refresh_progress);
-		addView(header, ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+		int index;
+		if (mode == MODE_PULL_UP_TO_REFRESH) {
+			headerImage.setImageResource(R.drawable.pulltorefresh_up_arrow);
+			index = 1;
+		} else {
+			headerImage.setImageResource(R.drawable.pulltorefresh_down_arrow);
+			index = 0;
+		}
+
+		addView(header, index, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,
+		        ViewGroup.LayoutParams.WRAP_CONTENT));
 		measureView(header);
 		headerHeight = header.getMeasuredHeight();
 
-		// AdapterView
-		// By passing the attrs, we can add ListView/GridView params via XML
-		adapterView = this.createAdapterView(context, attrs);
-		adapterView.setOnTouchListener(this);
-		addView(adapterView, ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.FILL_PARENT);
-
 		// Styleables from XML
-		TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.PullToRefresh);
 		if (a.hasValue(R.styleable.PullToRefresh_headerTextColor)) {
 			headerText.setTextColor(a.getColor(R.styleable.PullToRefresh_headerTextColor, Color.BLACK));
 		}
@@ -287,19 +312,28 @@ public abstract class PullToRefreshBase<T extends AdapterView<ListAdapter>> exte
 
 		// Animations
 		final Interpolator interpolator = new LinearInterpolator();
-		flipAnimation = new RotateAnimation(0, -180, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-		flipAnimation.setInterpolator(interpolator);
-		flipAnimation.setDuration(125);
-		flipAnimation.setFillAfter(true);
+		rotateToPointUpAnimation = new RotateAnimation(0, -180, Animation.RELATIVE_TO_SELF, 0.5f,
+		        Animation.RELATIVE_TO_SELF, 0.5f);
+		rotateToPointUpAnimation.setInterpolator(interpolator);
+		rotateToPointUpAnimation.setDuration(125);
+		rotateToPointUpAnimation.setFillAfter(true);
 
-		reverseAnimation = new RotateAnimation(-180, 0, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
-		        0.5f);
-		reverseAnimation.setInterpolator(interpolator);
-		reverseAnimation.setDuration(125);
-		reverseAnimation.setFillAfter(true);
+		rotateToPointDownAnimation = new RotateAnimation(-180, 0, Animation.RELATIVE_TO_SELF, 0.5f,
+		        Animation.RELATIVE_TO_SELF, 0.5f);
+		rotateToPointDownAnimation.setInterpolator(interpolator);
+		rotateToPointDownAnimation.setDuration(125);
+		rotateToPointDownAnimation.setFillAfter(true);
 
 		// Hide Header View
-		setPadding(getPaddingLeft(), -headerHeight, getPaddingRight(), getPaddingBottom());
+		switch (mode) {
+			case MODE_PULL_UP_TO_REFRESH:
+				setPadding(getPaddingLeft(), getPaddingTop(), getPaddingRight(), -headerHeight);
+				break;
+			case MODE_PULL_DOWN_TO_REFRESH:
+			default:
+				setPadding(getPaddingLeft(), -headerHeight, getPaddingRight(), getPaddingBottom());
+				break;
+		}
 	}
 
 	private void measureView(View child) {
@@ -325,7 +359,7 @@ public abstract class PullToRefreshBase<T extends AdapterView<ListAdapter>> exte
 			case MotionEvent.ACTION_MOVE:
 				updateEventStates(event);
 
-				if (isPullingDownToRefresh() && startY == -1) {
+				if (isPullingToRefresh() && startY == -1) {
 					if (startY == -1) {
 						startY = event.getY();
 					}
@@ -333,7 +367,7 @@ public abstract class PullToRefreshBase<T extends AdapterView<ListAdapter>> exte
 				}
 
 				if (startY != -1 && !adapterView.isPressed()) {
-					pullDown(event, startY);
+					pullEvent(event, startY);
 					return true;
 				}
 				break;
@@ -358,32 +392,74 @@ public abstract class PullToRefreshBase<T extends AdapterView<ListAdapter>> exte
 		return false;
 	}
 
-	private void pullDown(MotionEvent event, float firstY) {
+	private void pullEvent(MotionEvent event, float firstY) {
 		float averageY = average(lastYs);
 
-		int height = (int) (Math.max(averageY - firstY, 0));
+		int height;
+		switch (mode) {
+			case MODE_PULL_UP_TO_REFRESH:
+				height = (int) Math.max(firstY - averageY, 0);
+				break;
+			case MODE_PULL_DOWN_TO_REFRESH:
+			default:
+				height = (int) Math.max(averageY - firstY, 0);
+				break;
+		}
+
 		setHeaderScroll(height);
 
 		if (state == PULL_TO_REFRESH && headerHeight < height) {
 			state = RELEASE_TO_REFRESH;
 			headerText.setText(releaseLabel);
 			headerImage.clearAnimation();
-			headerImage.startAnimation(flipAnimation);
-		}
-		if (state == RELEASE_TO_REFRESH && headerHeight >= height) {
+
+			switch (mode) {
+				case MODE_PULL_UP_TO_REFRESH:
+					headerImage.startAnimation(rotateToPointDownAnimation);
+					break;
+				case MODE_PULL_DOWN_TO_REFRESH:
+				default:
+					headerImage.startAnimation(rotateToPointUpAnimation);
+					break;
+			}
+
+		} else if (state == RELEASE_TO_REFRESH && headerHeight >= height) {
 			state = PULL_TO_REFRESH;
 			headerText.setText(pullLabel);
 			headerImage.clearAnimation();
-			headerImage.startAnimation(reverseAnimation);
+
+			switch (mode) {
+				case MODE_PULL_UP_TO_REFRESH:
+					headerImage.startAnimation(rotateToPointUpAnimation);
+					break;
+				case MODE_PULL_DOWN_TO_REFRESH:
+				default:
+					headerImage.startAnimation(rotateToPointDownAnimation);
+					break;
+			}
 		}
 	}
 
 	private void setHeaderScroll(int y) {
-		scrollTo(0, -y);
+		switch (mode) {
+			case MODE_PULL_UP_TO_REFRESH:
+				scrollTo(0, y);
+				break;
+			case MODE_PULL_DOWN_TO_REFRESH:
+			default:
+				scrollTo(0, -y);
+				break;
+		}
 	}
 
 	private int getHeaderScroll() {
-		return -getScrollY();
+		switch (mode) {
+			case MODE_PULL_UP_TO_REFRESH:
+				return getScrollY();
+			case MODE_PULL_DOWN_TO_REFRESH:
+			default:
+				return -getScrollY();
+		}
 	}
 
 	private void setRefreshing() {
@@ -415,19 +491,37 @@ public abstract class PullToRefreshBase<T extends AdapterView<ListAdapter>> exte
 		}
 
 		float y = event.getY();
-		int top = adapterView.getTop();
-		lastYs[EVENT_COUNT - 1] = y + top;
+		lastYs[EVENT_COUNT - 1] = y;
 	}
 
-	private boolean isPullingDownToRefresh() {
-		return isPullToRefreshEnabled && state != REFRESHING && isUserDraggingDownwards() && isFirstVisible();
+	private boolean isPullingToRefresh() {
+		if (isPullToRefreshEnabled && state != REFRESHING) {
+			switch (mode) {
+				case MODE_PULL_DOWN_TO_REFRESH:
+					return isUserDraggingDownwards() && isFirstItemVisible();
+				case MODE_PULL_UP_TO_REFRESH:
+					return isUserDraggingUpwards() && isLastItemVisible();
+			}
+		}
+		return false;
 	}
 
-	private boolean isFirstVisible() {
+	private boolean isFirstItemVisible() {
 		if (this.adapterView.getCount() == 0) {
 			return true;
 		} else if (adapterView.getFirstVisiblePosition() == 0) {
 			return adapterView.getChildAt(0).getTop() >= adapterView.getTop();
+		} else {
+			return false;
+		}
+	}
+
+	private boolean isLastItemVisible() {
+		final int count = this.adapterView.getCount();
+		if (count == 0) {
+			return true;
+		} else if (adapterView.getLastVisiblePosition() == count - 1) {
+			return true;
 		} else {
 			return false;
 		}
@@ -440,6 +534,15 @@ public abstract class PullToRefreshBase<T extends AdapterView<ListAdapter>> exte
 	private boolean isUserDraggingDownwards(int from, int to) {
 		return lastYs[from] != 0 && lastYs[to] != 0 && Math.abs(lastYs[from] - lastYs[to]) > 10
 		        && lastYs[from] < lastYs[to];
+	}
+
+	private boolean isUserDraggingUpwards() {
+		return this.isUserDraggingUpwards(0, EVENT_COUNT - 1);
+	}
+
+	private boolean isUserDraggingUpwards(int from, int to) {
+		return lastYs[from] != 0 && lastYs[to] != 0 && Math.abs(lastYs[to] - lastYs[from]) > 10
+		        && lastYs[to] < lastYs[from];
 	}
 
 	private void smoothScrollTo(int y) {

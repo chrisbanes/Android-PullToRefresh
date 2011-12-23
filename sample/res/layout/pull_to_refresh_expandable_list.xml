@@ -13,6 +13,7 @@
         android:layout_width="fill_parent"
         ptr:adapterViewBackground="@android:color/white"
         ptr:headerBackground="@android:color/darker_gray"
-        ptr:headerTextColor="@android:color/white" />
+        ptr:headerTextColor="@android:color/white"
+        ptr:mode="pullUpFromBottom" />
 
 </LinearLayout>
