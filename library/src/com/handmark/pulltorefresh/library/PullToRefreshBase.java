@@ -96,6 +96,7 @@ public abstract class PullToRefreshBase<T extends AbsListView> extends LinearLay
 	private int state = PULL_TO_REFRESH;
 	private int mode = MODE_PULL_DOWN_TO_REFRESH;
 	private int currentMode;
+	private boolean disableScrollingWhileRefreshing = true;
 
 	private T adapterView;
 	private boolean isPullToRefreshEnabled = true;
@@ -157,6 +158,10 @@ public abstract class PullToRefreshBase<T extends AbsListView> extends LinearLay
 	 */
 	public final boolean isPullToRefreshEnabled() {
 		return isPullToRefreshEnabled;
+	}
+
+	public void setDisableScrollingWhileRefreshing(boolean disableScrollingWhileRefreshing) {
+		this.disableScrollingWhileRefreshing = disableScrollingWhileRefreshing;
 	}
 
 	/**
@@ -257,7 +262,7 @@ public abstract class PullToRefreshBase<T extends AbsListView> extends LinearLay
 			// Returning true here stops the ListView being scrollable while we
 			// refresh
 			if (state == REFRESHING) {
-				return true;
+				return disableScrollingWhileRefreshing;
 			} else {
 				return onAdapterViewTouch(view, ev);
 			}
