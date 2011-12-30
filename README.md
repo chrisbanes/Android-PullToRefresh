@@ -83,6 +83,17 @@ By default this library is set to Pull Down to Refresh, but if you instead to Pu
     ptr:mode="pullUpFromBottom" />
 ```
 
+You can even set the View to enable both Pulling Up and Pulling Down using the new 'both' setting. For example:
+
+``` xml
+<com.handmark.pulltorefresh.library.PullToRefreshListView
+    xmlns:ptr="http://schemas.android.com/apk/res/YOUR_APP_PACKAGE_NAME"
+    android:id="@+id/pull_refresh_list"
+    android:layout_height="fill_parent"
+    android:layout_width="fill_parent"
+    ptr:mode="both" />
+```
+
 ## Acknowledgments
 
 * [Stefano Dacchille](https://github.com/stefanodacchille) 
