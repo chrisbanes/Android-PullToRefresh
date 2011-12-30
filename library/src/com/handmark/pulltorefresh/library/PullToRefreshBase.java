@@ -5,22 +5,15 @@ import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.os.Handler;
 import android.util.AttributeSet;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.Animation;
 import android.view.animation.Interpolator;
-import android.view.animation.LinearInterpolator;
-import android.view.animation.RotateAnimation;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 public abstract class PullToRefreshBase<T extends AbsListView> extends LinearLayout implements OnTouchListener,
         OnScrollListener {
@@ -94,6 +87,7 @@ public abstract class PullToRefreshBase<T extends AbsListView> extends LinearLay
 
 	public static final int MODE_PULL_DOWN_TO_REFRESH = 0x1;
 	public static final int MODE_PULL_UP_TO_REFRESH = 0x2;
+	public static final int MODE_BOTH = 0x3;
 
 	// ===========================================================
 	// Fields
@@ -101,14 +95,13 @@ public abstract class PullToRefreshBase<T extends AbsListView> extends LinearLay
 
 	private int state = PULL_TO_REFRESH;
 	private int mode = MODE_PULL_DOWN_TO_REFRESH;
+	private int currentMode;
 
 	private T adapterView;
 	private boolean isPullToRefreshEnabled = true;
 
-	private ProgressBar headerProgress;
-	private TextView headerText;
-	private ImageView headerImage;
-	private Animation rotateToPointUpAnimation, rotateToPointDownAnimation;
+	private LoadingLayout headerLayout;
+	private LoadingLayout footerLayout;
 	private int headerHeight;
 
 	private final Handler handler = new Handler();
@@ -124,10 +117,6 @@ public abstract class PullToRefreshBase<T extends AbsListView> extends LinearLay
 
 	private float startY = -1;
 	private final float[] lastYs = new float[EVENT_COUNT];
-
-	private String releaseLabel;
-	private String pullLabel;
-	private String refreshingLabel;
 
 	// ===========================================================
 	// Constructors
@@ -197,19 +186,30 @@ public abstract class PullToRefreshBase<T extends AbsListView> extends LinearLay
 	}
 
 	public final void setReleaseLabel(String releaseLabel) {
-		this.releaseLabel = releaseLabel;
+		if (null != headerLayout) {
+			headerLayout.setReleaseLabel(releaseLabel);
+		}
+		if (null != footerLayout) {
+			footerLayout.setReleaseLabel(releaseLabel);
+		}
 	}
 
 	public final void setPullLabel(String pullLabel) {
-		this.pullLabel = pullLabel;
+		if (null != headerLayout) {
+			headerLayout.setPullLabel(pullLabel);
+		}
+		if (null != footerLayout) {
+			footerLayout.setPullLabel(pullLabel);
+		}
 	}
 
 	public final void setRefreshingLabel(String refreshingLabel) {
-		this.refreshingLabel = refreshingLabel;
-	}
-
-	public final void setHeaderProgress(ProgressBar headerProgress) {
-		this.headerProgress = headerProgress;
+		if (null != headerLayout) {
+			headerLayout.setRefreshingLabel(refreshingLabel);
+		}
+		if (null != footerLayout) {
+			footerLayout.setRefreshingLabel(refreshingLabel);
+		}
 	}
 
 	// ===========================================================
@@ -290,20 +290,24 @@ public abstract class PullToRefreshBase<T extends AbsListView> extends LinearLay
 		state = PULL_TO_REFRESH;
 		initializeYsHistory();
 		startY = -1;
-		headerImage.setVisibility(View.VISIBLE);
-		headerProgress.setVisibility(View.GONE);
-		headerText.setText(R.string.pull_to_refresh_pull_label);
+
+		if (null != headerLayout) {
+			headerLayout.reset();
+		}
+		if (null != footerLayout) {
+			footerLayout.reset();
+		}
 
 		smoothScrollTo(0);
 	}
 
 	private void init(Context context, AttributeSet attrs) {
 
+		setOrientation(LinearLayout.VERTICAL);
+
 		// Styleables from XML
 		final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.PullToRefresh);
 		mode = a.getInteger(R.styleable.PullToRefresh_mode, MODE_PULL_DOWN_TO_REFRESH);
-
-		setOrientation(LinearLayout.VERTICAL);
 
 		// AdapterView
 		// By passing the attrs, we can add ListView/GridView params via XML
@@ -312,33 +316,37 @@ public abstract class PullToRefreshBase<T extends AbsListView> extends LinearLay
 		adapterView.setOnScrollListener(this);
 		addView(adapterView, new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, 0, 1.0f));
 
-		// Header
-		ViewGroup header = (ViewGroup) LayoutInflater.from(context).inflate(R.layout.pull_to_refresh_header, this,
-		        false);
-		headerText = (TextView) header.findViewById(R.id.pull_to_refresh_text);
-		pullLabel = context.getString(R.string.pull_to_refresh_pull_label);
-		refreshingLabel = context.getString(R.string.pull_to_refresh_refreshing_label);
-		releaseLabel = context.getString(R.string.pull_to_refresh_release_label);
-		headerImage = (ImageView) header.findViewById(R.id.pull_to_refresh_image);
-		headerProgress = (ProgressBar) header.findViewById(R.id.pull_to_refresh_progress);
+		// Loading View Strings
+		String pullLabel = context.getString(R.string.pull_to_refresh_pull_label);
+		String refreshingLabel = context.getString(R.string.pull_to_refresh_refreshing_label);
+		String releaseLabel = context.getString(R.string.pull_to_refresh_release_label);
 
-		int index;
-		if (mode == MODE_PULL_UP_TO_REFRESH) {
-			headerImage.setImageResource(R.drawable.pulltorefresh_up_arrow);
-			index = 1;
-		} else {
-			headerImage.setImageResource(R.drawable.pulltorefresh_down_arrow);
-			index = 0;
+		// Add Loading Views
+		if (mode == MODE_PULL_DOWN_TO_REFRESH || mode == MODE_BOTH) {
+			headerLayout = new LoadingLayout(context, MODE_PULL_DOWN_TO_REFRESH, releaseLabel, pullLabel,
+			        refreshingLabel);
+			addView(headerLayout, 0, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,
+			        ViewGroup.LayoutParams.WRAP_CONTENT));
+			measureView(headerLayout);
+			headerHeight = headerLayout.getMeasuredHeight();
 		}
-
-		addView(header, index, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,
-		        ViewGroup.LayoutParams.WRAP_CONTENT));
-		measureView(header);
-		headerHeight = header.getMeasuredHeight();
+		if (mode == MODE_PULL_UP_TO_REFRESH || mode == MODE_BOTH) {
+			footerLayout = new LoadingLayout(context, MODE_PULL_UP_TO_REFRESH, releaseLabel, pullLabel, refreshingLabel);
+			addView(footerLayout, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,
+			        ViewGroup.LayoutParams.WRAP_CONTENT));
+			measureView(footerLayout);
+			headerHeight = footerLayout.getMeasuredHeight();
+		}
 
 		// Styleables from XML
 		if (a.hasValue(R.styleable.PullToRefresh_headerTextColor)) {
-			headerText.setTextColor(a.getColor(R.styleable.PullToRefresh_headerTextColor, Color.BLACK));
+			final int color = a.getColor(R.styleable.PullToRefresh_headerTextColor, Color.BLACK);
+			if (null != headerLayout) {
+				headerLayout.setTextColor(color);
+			}
+			if (null != footerLayout) {
+				footerLayout.setTextColor(color);
+			}
 		}
 		if (a.hasValue(R.styleable.PullToRefresh_headerBackground)) {
 			this.setBackgroundResource(a.getResourceId(R.styleable.PullToRefresh_headerBackground, Color.WHITE));
@@ -349,22 +357,11 @@ public abstract class PullToRefreshBase<T extends AbsListView> extends LinearLay
 		}
 		a.recycle();
 
-		// Animations
-		final Interpolator interpolator = new LinearInterpolator();
-		rotateToPointUpAnimation = new RotateAnimation(0, -180, Animation.RELATIVE_TO_SELF, 0.5f,
-		        Animation.RELATIVE_TO_SELF, 0.5f);
-		rotateToPointUpAnimation.setInterpolator(interpolator);
-		rotateToPointUpAnimation.setDuration(125);
-		rotateToPointUpAnimation.setFillAfter(true);
-
-		rotateToPointDownAnimation = new RotateAnimation(-180, 0, Animation.RELATIVE_TO_SELF, 0.5f,
-		        Animation.RELATIVE_TO_SELF, 0.5f);
-		rotateToPointDownAnimation.setInterpolator(interpolator);
-		rotateToPointDownAnimation.setDuration(125);
-		rotateToPointDownAnimation.setFillAfter(true);
-
-		// Hide Header View
+		// Hide Loading Views
 		switch (mode) {
+			case MODE_BOTH:
+				setPadding(getPaddingLeft(), -headerHeight, getPaddingRight(), -headerHeight);
+				break;
 			case MODE_PULL_UP_TO_REFRESH:
 				setPadding(getPaddingLeft(), getPaddingTop(), getPaddingRight(), -headerHeight);
 				break;
@@ -372,6 +369,12 @@ public abstract class PullToRefreshBase<T extends AbsListView> extends LinearLay
 			default:
 				setPadding(getPaddingLeft(), -headerHeight, getPaddingRight(), getPaddingBottom());
 				break;
+		}
+
+		// If we're not using MODE_BOTH, then just set currentMode to current
+		// mode
+		if (mode != MODE_BOTH) {
+			currentMode = mode;
 		}
 	}
 
@@ -399,8 +402,15 @@ public abstract class PullToRefreshBase<T extends AbsListView> extends LinearLay
 				updateEventStates(event);
 
 				if (isPullingToRefresh() && startY == -1) {
-					if (startY == -1) {
-						startY = event.getY();
+					startY = event.getY();
+
+					// Need to set current Mode if we're using both
+					if (mode == MODE_BOTH) {
+						if (isUserDraggingDownwards()) {
+							currentMode = MODE_PULL_DOWN_TO_REFRESH;
+						} else if (isUserDraggingUpwards()) {
+							currentMode = MODE_PULL_UP_TO_REFRESH;
+						}
 					}
 					return false;
 				}
@@ -434,80 +444,59 @@ public abstract class PullToRefreshBase<T extends AbsListView> extends LinearLay
 	private void pullEvent(MotionEvent event, float firstY) {
 		float averageY = average(lastYs);
 
-		int height;
-		switch (mode) {
+		final int height;
+		switch (currentMode) {
 			case MODE_PULL_UP_TO_REFRESH:
 				height = (int) Math.max(firstY - averageY, 0);
+				setHeaderScroll(height);
 				break;
 			case MODE_PULL_DOWN_TO_REFRESH:
 			default:
 				height = (int) Math.max(averageY - firstY, 0);
+				setHeaderScroll(-height);
 				break;
 		}
 
-		setHeaderScroll(height);
-
 		if (state == PULL_TO_REFRESH && headerHeight < height) {
 			state = RELEASE_TO_REFRESH;
-			headerText.setText(releaseLabel);
-			headerImage.clearAnimation();
-
-			switch (mode) {
-				case MODE_PULL_UP_TO_REFRESH:
-					headerImage.startAnimation(rotateToPointDownAnimation);
-					break;
-				case MODE_PULL_DOWN_TO_REFRESH:
-				default:
-					headerImage.startAnimation(rotateToPointUpAnimation);
-					break;
+			if (null != headerLayout) {
+				headerLayout.releaseToRefresh();
 			}
-
+			if (null != footerLayout) {
+				footerLayout.releaseToRefresh();
+			}
 		} else if (state == RELEASE_TO_REFRESH && headerHeight >= height) {
 			state = PULL_TO_REFRESH;
-			headerText.setText(pullLabel);
-			headerImage.clearAnimation();
-
-			switch (mode) {
-				case MODE_PULL_UP_TO_REFRESH:
-					headerImage.startAnimation(rotateToPointUpAnimation);
-					break;
-				case MODE_PULL_DOWN_TO_REFRESH:
-				default:
-					headerImage.startAnimation(rotateToPointDownAnimation);
-					break;
+			if (null != headerLayout) {
+				headerLayout.pullToRefresh();
+			}
+			if (null != footerLayout) {
+				footerLayout.pullToRefresh();
 			}
 		}
 	}
 
 	private void setHeaderScroll(int y) {
-		switch (mode) {
-			case MODE_PULL_UP_TO_REFRESH:
-				scrollTo(0, y);
-				break;
-			case MODE_PULL_DOWN_TO_REFRESH:
-			default:
-				scrollTo(0, -y);
-				break;
-		}
-	}
-
-	private int getHeaderScroll() {
-		switch (mode) {
-			case MODE_PULL_UP_TO_REFRESH:
-				return getScrollY();
-			case MODE_PULL_DOWN_TO_REFRESH:
-			default:
-				return -getScrollY();
-		}
+		scrollTo(0, y);
 	}
 
 	private void setRefreshing() {
 		state = REFRESHING;
-		headerText.setText(refreshingLabel);
-		headerImage.clearAnimation();
-		headerImage.setVisibility(View.INVISIBLE);
-		headerProgress.setVisibility(View.VISIBLE);
-		smoothScrollTo(headerHeight);
+		if (null != headerLayout) {
+			headerLayout.refreshing();
+		}
+		if (null != footerLayout) {
+			footerLayout.refreshing();
+		}
+
+		switch (currentMode) {
+			case MODE_PULL_DOWN_TO_REFRESH:
+				smoothScrollTo(-headerHeight);
+				break;
+			case MODE_PULL_UP_TO_REFRESH:
+				smoothScrollTo(headerHeight);
+				break;
+		}
 	}
 
 	private float average(float[] ysArray) {
@@ -537,9 +526,12 @@ public abstract class PullToRefreshBase<T extends AbsListView> extends LinearLay
 		if (isPullToRefreshEnabled && state != REFRESHING) {
 			switch (mode) {
 				case MODE_PULL_DOWN_TO_REFRESH:
-					return isUserDraggingDownwards() && isFirstItemVisible();
+					return isFirstItemVisible() && isUserDraggingDownwards();
 				case MODE_PULL_UP_TO_REFRESH:
-					return isUserDraggingUpwards() && isLastItemVisible();
+					return isLastItemVisible() && isUserDraggingUpwards();
+				case MODE_BOTH:
+					return (isFirstItemVisible() && isUserDraggingDownwards())
+					        || (isLastItemVisible() && isUserDraggingUpwards());
 			}
 		}
 		return false;
@@ -589,7 +581,7 @@ public abstract class PullToRefreshBase<T extends AbsListView> extends LinearLay
 			currentSmoothScrollRunnable.stop();
 		}
 
-		this.currentSmoothScrollRunnable = new SmoothScrollRunnable(handler, getHeaderScroll(), y);
+		this.currentSmoothScrollRunnable = new SmoothScrollRunnable(handler, getScrollY(), y);
 		handler.post(currentSmoothScrollRunnable);
 	}
 
