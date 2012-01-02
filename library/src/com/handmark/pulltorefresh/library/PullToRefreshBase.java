@@ -261,12 +261,17 @@ public abstract class PullToRefreshBase<T extends AbsListView> extends LinearLay
 		if (isPullToRefreshEnabled) {
 			// Returning true here stops the ListView being scrollable while we
 			// refresh
-			if (state == REFRESHING) {
-				return disableScrollingWhileRefreshing;
-			} else {
-				return onAdapterViewTouch(view, ev);
+			if (state == REFRESHING && disableScrollingWhileRefreshing) {
+				return true;
+			} else if (onAdapterViewTouch(view, ev)) {
+				return true;
 			}
 		}
+
+		if (null != onTouchListener) {
+			return onTouchListener.onTouch(view, ev);
+		}
+
 		return false;
 	}
 
@@ -440,9 +445,6 @@ public abstract class PullToRefreshBase<T extends AbsListView> extends LinearLay
 				break;
 		}
 
-		if (null != onTouchListener) {
-			return onTouchListener.onTouch(view, event);
-		}
 		return false;
 	}
 
