@@ -5,8 +5,8 @@
     android:versionName="1.0" >
     
     <uses-sdk
-        minSdkVersion="4"
-        targetSdkVersion="10" />
+        android:minSdkVersion="4"
+        android:targetSdkVersion="10" />
 
     <application
         android:icon="@drawable/icon"
