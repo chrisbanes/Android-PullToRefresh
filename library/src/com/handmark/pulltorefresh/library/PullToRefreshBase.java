@@ -521,11 +521,18 @@ public abstract class PullToRefreshBase<T extends AbsListView> extends LinearLay
 	}
 
 	private void updateEventStates(MotionEvent event) {
+		for (int i = 0, z = event.getHistorySize(); i < z; i++) {
+			this.updateEventStates(event.getHistoricalY(i));
+		}
+
+		this.updateEventStates(event.getY());
+	}
+
+	private void updateEventStates(float y) {
 		for (int i = 0; i < EVENT_COUNT - 1; i++) {
 			lastYs[i] = lastYs[i + 1];
 		}
 
-		float y = event.getY();
 		lastYs[EVENT_COUNT - 1] = y;
 	}
 
