@@ -21,7 +21,7 @@ import com.handmark.pulltorefresh.library.internal.LoadingLayout;
 
 public abstract class PullToRefreshBase<T extends AbsListView> extends LinearLayout implements OnScrollListener {
 
-	private final class SmoothScrollRunnable implements Runnable {
+	final class SmoothScrollRunnable implements Runnable {
 
 		static final int ANIMATION_DURATION_MS = 190;
 		static final int ANIMATION_FPS = 1000 / 60;
@@ -83,9 +83,9 @@ public abstract class PullToRefreshBase<T extends AbsListView> extends LinearLay
 	// Constants
 	// ===========================================================
 
-	static final int PULL_TO_REFRESH = 0;
-	static final int RELEASE_TO_REFRESH = PULL_TO_REFRESH + 1;
-	static final int REFRESHING = RELEASE_TO_REFRESH + 1;
+	static final int PULL_TO_REFRESH = 0x0;
+	static final int RELEASE_TO_REFRESH = 0x1;
+	static final int REFRESHING = 0x2;
 
 	static final int EVENT_COUNT = 3;
 	static final int LAST_EVENT_INDEX = EVENT_COUNT - 1;
@@ -320,11 +320,9 @@ public abstract class PullToRefreshBase<T extends AbsListView> extends LinearLay
 						initializeYsHistory();
 						startY = -1;
 
-						if (state == RELEASE_TO_REFRESH) {
+						if (state == RELEASE_TO_REFRESH && null != onRefreshListener) {
 							setRefreshing();
-							if (onRefreshListener != null) {
-								onRefreshListener.onRefresh();
-							}
+							onRefreshListener.onRefresh();
 						} else {
 							smoothScrollTo(0);
 						}
@@ -512,19 +510,26 @@ public abstract class PullToRefreshBase<T extends AbsListView> extends LinearLay
 
 		if (state == PULL_TO_REFRESH && headerHeight < height) {
 			state = RELEASE_TO_REFRESH;
-			if (null != headerLayout) {
-				headerLayout.releaseToRefresh();
+
+			switch (currentMode) {
+				case MODE_PULL_UP_TO_REFRESH:
+					footerLayout.releaseToRefresh();
+					break;
+				case MODE_PULL_DOWN_TO_REFRESH:
+					headerLayout.releaseToRefresh();
+					break;
 			}
-			if (null != footerLayout) {
-				footerLayout.releaseToRefresh();
-			}
+
 		} else if (state == RELEASE_TO_REFRESH && headerHeight >= height) {
 			state = PULL_TO_REFRESH;
-			if (null != headerLayout) {
-				headerLayout.pullToRefresh();
-			}
-			if (null != footerLayout) {
-				footerLayout.pullToRefresh();
+
+			switch (currentMode) {
+				case MODE_PULL_UP_TO_REFRESH:
+					footerLayout.pullToRefresh();
+					break;
+				case MODE_PULL_DOWN_TO_REFRESH:
+					headerLayout.pullToRefresh();
+					break;
 			}
 		}
 	}
@@ -556,19 +561,15 @@ public abstract class PullToRefreshBase<T extends AbsListView> extends LinearLay
 
 	private void setRefreshing() {
 		state = REFRESHING;
-		if (null != headerLayout) {
-			headerLayout.refreshing();
-		}
-		if (null != footerLayout) {
-			footerLayout.refreshing();
-		}
 
 		switch (currentMode) {
 			case MODE_PULL_DOWN_TO_REFRESH:
 				smoothScrollTo(-headerHeight);
+				headerLayout.refreshing();
 				break;
 			case MODE_PULL_UP_TO_REFRESH:
 				smoothScrollTo(headerHeight);
+				footerLayout.refreshing();
 				break;
 		}
 	}
@@ -588,10 +589,7 @@ public abstract class PullToRefreshBase<T extends AbsListView> extends LinearLay
 	}
 
 	private void updateEventStates(float y) {
-		for (int i = 0; i < EVENT_COUNT - 1; i++) {
-			lastYs[i] = lastYs[i + 1];
-		}
-
+		System.arraycopy(lastYs, 1, lastYs, 0, EVENT_COUNT - 1);
 		lastYs[LAST_EVENT_INDEX] = y;
 	}
 
@@ -624,9 +622,8 @@ public abstract class PullToRefreshBase<T extends AbsListView> extends LinearLay
 			return true;
 		} else if (adapterView.getFirstVisiblePosition() == 0) {
 			return adapterView.getChildAt(0).getTop() >= adapterView.getTop();
-		} else {
-			return false;
 		}
+		return false;
 	}
 
 	private boolean isLastItemVisible() {
@@ -635,25 +632,16 @@ public abstract class PullToRefreshBase<T extends AbsListView> extends LinearLay
 			return true;
 		} else if (adapterView.getLastVisiblePosition() == count - 1) {
 			return true;
-		} else {
-			return false;
 		}
+		return false;
 	}
 
 	private boolean isUserDraggingDownwards() {
-		return this.isUserDraggingDownwards(0, LAST_EVENT_INDEX);
-	}
-
-	private boolean isUserDraggingDownwards(int from, int to) {
-		return lastYs[from] != 0 && lastYs[to] != 0 && lastYs[from] < lastYs[to];
+		return lastYs[0] != 0 && lastYs[LAST_EVENT_INDEX] != 0 && lastYs[0] < lastYs[LAST_EVENT_INDEX];
 	}
 
 	private boolean isUserDraggingUpwards() {
-		return this.isUserDraggingUpwards(0, LAST_EVENT_INDEX);
-	}
-
-	private boolean isUserDraggingUpwards(int from, int to) {
-		return lastYs[from] != 0 && lastYs[to] != 0 && lastYs[to] < lastYs[from];
+		return lastYs[0] != 0 && lastYs[LAST_EVENT_INDEX] != 0 && lastYs[0] > lastYs[LAST_EVENT_INDEX];
 	}
 
 	private void smoothScrollTo(int y) {

@@ -6,6 +6,7 @@
 
 <!-- The PullToRefreshGridView replaces a standard GridView widget. -->
     <com.handmark.pulltorefresh.library.PullToRefreshGridView
+        xmlns:ptr="http://schemas.android.com/apk/res/com.handmark.pulltorefresh.sample"
         android:id="@+id/pull_refresh_grid"
         android:layout_height="fill_parent"
         android:layout_width="fill_parent"
@@ -14,6 +15,7 @@
         android:horizontalSpacing="1dp"
         android:columnWidth="100dp"
         android:stretchMode="columnWidth"
-        android:gravity="fill" />
+        android:gravity="fill"
+        ptr:mode="both" />
 
 </LinearLayout>
