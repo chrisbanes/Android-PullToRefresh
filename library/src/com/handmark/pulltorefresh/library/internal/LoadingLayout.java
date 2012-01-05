@@ -1,4 +1,4 @@
-package com.handmark.pulltorefresh.library;
+package com.handmark.pulltorefresh.library.internal;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -13,7 +13,10 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-class LoadingLayout extends FrameLayout {
+import com.handmark.pulltorefresh.library.PullToRefreshBase;
+import com.handmark.pulltorefresh.library.R;
+
+public class LoadingLayout extends FrameLayout {
 
 	static final int DEFAULT_ROTATION_ANIMATION_DURATION = 150;
 
@@ -27,7 +30,7 @@ class LoadingLayout extends FrameLayout {
 
 	private final Animation rotateAnimation, resetRotateAnimation;
 
-	LoadingLayout(Context context, final int mode, String releaseLabel, String pullLabel, String refreshingLabel) {
+	public LoadingLayout(Context context, final int mode, String releaseLabel, String pullLabel, String refreshingLabel) {
 		super(context);
 		ViewGroup header = (ViewGroup) LayoutInflater.from(context).inflate(R.layout.pull_to_refresh_header, this);
 		headerText = (TextView) header.findViewById(R.id.pull_to_refresh_text);
@@ -62,44 +65,44 @@ class LoadingLayout extends FrameLayout {
 		}
 	}
 
-	void reset() {
+	public void reset() {
 		headerText.setText(pullLabel);
 		headerImage.setVisibility(View.VISIBLE);
 		headerProgress.setVisibility(View.GONE);
 	}
 
-	void releaseToRefresh() {
+	public void releaseToRefresh() {
 		headerText.setText(releaseLabel);
 		headerImage.clearAnimation();
 		headerImage.startAnimation(rotateAnimation);
 	}
 
-	void setPullLabel(String pullLabel) {
+	public void setPullLabel(String pullLabel) {
 		this.pullLabel = pullLabel;
 	}
 
-	void refreshing() {
+	public void refreshing() {
 		headerText.setText(refreshingLabel);
 		headerImage.clearAnimation();
 		headerImage.setVisibility(View.INVISIBLE);
 		headerProgress.setVisibility(View.VISIBLE);
 	}
 
-	void setRefreshingLabel(String refreshingLabel) {
+	public void setRefreshingLabel(String refreshingLabel) {
 		this.refreshingLabel = refreshingLabel;
 	}
 
-	void setReleaseLabel(String releaseLabel) {
+	public void setReleaseLabel(String releaseLabel) {
 		this.releaseLabel = releaseLabel;
 	}
 
-	void pullToRefresh() {
+	public void pullToRefresh() {
 		headerText.setText(pullLabel);
 		headerImage.clearAnimation();
 		headerImage.startAnimation(resetRotateAnimation);
 	}
 
-	void setTextColor(int color) {
+	public void setTextColor(int color) {
 		headerText.setTextColor(color);
 	}
 

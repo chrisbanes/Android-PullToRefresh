@@ -7,16 +7,19 @@ import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
-public abstract class PullToRefreshBase<T extends AbsListView> extends LinearLayout implements OnTouchListener,
-        OnScrollListener {
+import com.handmark.pulltorefresh.library.internal.EmptyViewMethodAccessor;
+import com.handmark.pulltorefresh.library.internal.LoadingLayout;
+
+public abstract class PullToRefreshBase<T extends AbsListView> extends LinearLayout implements OnScrollListener {
 
 	private final class SmoothScrollRunnable implements Runnable {
 
@@ -83,7 +86,11 @@ public abstract class PullToRefreshBase<T extends AbsListView> extends LinearLay
 	static final int PULL_TO_REFRESH = 0;
 	static final int RELEASE_TO_REFRESH = PULL_TO_REFRESH + 1;
 	static final int REFRESHING = RELEASE_TO_REFRESH + 1;
+
 	static final int EVENT_COUNT = 3;
+	static final int LAST_EVENT_INDEX = EVENT_COUNT - 1;
+
+	static final float FRICTION_LEVEL = 1.5f;
 
 	public static final int MODE_PULL_DOWN_TO_REFRESH = 0x1;
 	public static final int MODE_PULL_UP_TO_REFRESH = 0x2;
@@ -98,6 +105,8 @@ public abstract class PullToRefreshBase<T extends AbsListView> extends LinearLay
 	private int currentMode;
 	private boolean disableScrollingWhileRefreshing = true;
 
+	private FrameLayout adapterViewHolder;
+	private View emptyView;
 	private T adapterView;
 	private boolean isPullToRefreshEnabled = true;
 
@@ -107,7 +116,6 @@ public abstract class PullToRefreshBase<T extends AbsListView> extends LinearLay
 
 	private final Handler handler = new Handler();
 
-	private OnTouchListener onTouchListener;
 	private OnRefreshListener onRefreshListener;
 	private OnScrollListener onScrollListener;
 
@@ -116,7 +124,7 @@ public abstract class PullToRefreshBase<T extends AbsListView> extends LinearLay
 
 	private SmoothScrollRunnable currentSmoothScrollRunnable;
 
-	private float startY = -1;
+	private int startY = -1;
 	private final float[] lastYs = new float[EVENT_COUNT];
 
 	// ===========================================================
@@ -172,6 +180,43 @@ public abstract class PullToRefreshBase<T extends AbsListView> extends LinearLay
 		resetHeader();
 	}
 
+	/**
+	 * Sets the Empty View to be used by the Adapter View.
+	 * 
+	 * We need it handle it ourselves so that we can Pull-to-Refresh when the
+	 * Empty View is shown.
+	 * 
+	 * Please note, you do <strong>not</strong> usually need to call this method
+	 * yourself. Calling setEmptyView on the AdapterView will automatically call
+	 * this method and set everything up. This includes when the Android
+	 * Framework automatically sets the Empty View based on it's ID.
+	 * 
+	 * @param newEmptyView
+	 *            - Empty View to be used
+	 */
+	public final void setEmptyView(View newEmptyView) {
+		// If we already have an Empty View, remove it
+		if (null != emptyView) {
+			adapterViewHolder.removeView(emptyView);
+		}
+
+		if (null != newEmptyView) {
+			ViewParent newEmptyViewParent = newEmptyView.getParent();
+			if (null != newEmptyViewParent && newEmptyViewParent instanceof ViewGroup) {
+				((ViewGroup) newEmptyViewParent).removeView(newEmptyView);
+			}
+
+			this.adapterViewHolder.addView(newEmptyView, ViewGroup.LayoutParams.FILL_PARENT,
+			        ViewGroup.LayoutParams.FILL_PARENT);
+		}
+
+		if (adapterView instanceof EmptyViewMethodAccessor) {
+			((EmptyViewMethodAccessor) adapterView).setEmptyViewInternal(newEmptyView);
+		} else {
+			this.adapterView.setEmptyView(newEmptyView);
+		}
+	}
+
 	public final void setOnLastItemVisibleListener(OnLastItemVisibleListener listener) {
 		onLastItemVisibleListener = listener;
 	}
@@ -225,11 +270,6 @@ public abstract class PullToRefreshBase<T extends AbsListView> extends LinearLay
 		onScrollListener = listener;
 	}
 
-	@Override
-	public final void setOnTouchListener(OnTouchListener listener) {
-		onTouchListener = listener;
-	}
-
 	public final void onScroll(final AbsListView view, final int firstVisibleItem, final int visibleItemCount,
 	        final int totalItemCount) {
 
@@ -257,19 +297,66 @@ public abstract class PullToRefreshBase<T extends AbsListView> extends LinearLay
 	}
 
 	@Override
-	public final boolean onTouch(View view, MotionEvent ev) {
+	public final boolean onTouchEvent(MotionEvent event) {
+
 		if (isPullToRefreshEnabled) {
-			// Returning true here stops the ListView being scrollable while we
-			// refresh
+
 			if (state == REFRESHING && disableScrollingWhileRefreshing) {
 				return true;
-			} else if (onAdapterViewTouch(view, ev)) {
-				return true;
+			}
+
+			switch (event.getAction()) {
+				case MotionEvent.ACTION_MOVE:
+					if (startY != -1) {
+						updateEventStates(event);
+						pullEvent(event, startY);
+						return true;
+					} else if (checkEventForInitialPull(event)) {
+						return true;
+					}
+					break;
+				case MotionEvent.ACTION_UP:
+					if (startY != -1) {
+						initializeYsHistory();
+						startY = -1;
+
+						if (state == RELEASE_TO_REFRESH) {
+							setRefreshing();
+							if (onRefreshListener != null) {
+								onRefreshListener.onRefresh();
+							}
+						} else {
+							smoothScrollTo(0);
+						}
+						return true;
+					}
+					break;
+				case MotionEvent.ACTION_DOWN:
+					// We need to return true here so that we can later catch
+					// ACTION_MOVE
+					return true;
 			}
 		}
 
-		if (null != onTouchListener) {
-			return onTouchListener.onTouch(view, ev);
+		return super.onTouchEvent(event);
+	}
+
+	@Override
+	public final boolean onInterceptTouchEvent(MotionEvent event) {
+
+		if (isPullToRefreshEnabled) {
+
+			if (state == REFRESHING && disableScrollingWhileRefreshing) {
+				return true;
+			}
+
+			switch (event.getAction()) {
+				case MotionEvent.ACTION_MOVE:
+					if (checkEventForInitialPull(event)) {
+						return true;
+					}
+					break;
+			}
 		}
 
 		return false;
@@ -322,9 +409,11 @@ public abstract class PullToRefreshBase<T extends AbsListView> extends LinearLay
 		// AdapterView
 		// By passing the attrs, we can add ListView/GridView params via XML
 		adapterView = this.createAdapterView(context, attrs);
-		adapterView.setOnTouchListener(this);
 		adapterView.setOnScrollListener(this);
-		addView(adapterView, new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, 0, 1.0f));
+
+		adapterViewHolder = new FrameLayout(context);
+		adapterViewHolder.addView(adapterView, ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.FILL_PARENT);
+		addView(adapterViewHolder, new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, 0, 1.0f));
 
 		// Loading View Strings
 		String pullLabel = context.getString(R.string.pull_to_refresh_pull_label);
@@ -405,62 +494,19 @@ public abstract class PullToRefreshBase<T extends AbsListView> extends LinearLay
 		child.measure(childWidthSpec, childHeightSpec);
 	}
 
-	private boolean onAdapterViewTouch(View view, MotionEvent event) {
-
-		switch (event.getAction()) {
-			case MotionEvent.ACTION_MOVE:
-				updateEventStates(event);
-
-				if (isPullingToRefresh() && startY == -1) {
-					startY = event.getY();
-
-					// Need to set current Mode if we're using both
-					if (mode == MODE_BOTH) {
-						if (isUserDraggingDownwards()) {
-							currentMode = MODE_PULL_DOWN_TO_REFRESH;
-						} else if (isUserDraggingUpwards()) {
-							currentMode = MODE_PULL_UP_TO_REFRESH;
-						}
-					}
-					return false;
-				}
-
-				if (startY != -1 && !adapterView.isPressed()) {
-					pullEvent(event, startY);
-					return true;
-				}
-				break;
-			case MotionEvent.ACTION_UP:
-				initializeYsHistory();
-				startY = -1;
-
-				if (state == RELEASE_TO_REFRESH) {
-					setRefreshing();
-					if (onRefreshListener != null) {
-						onRefreshListener.onRefresh();
-					}
-				} else {
-					smoothScrollTo(0);
-				}
-				break;
-		}
-
-		return false;
-	}
-
 	private void pullEvent(MotionEvent event, float firstY) {
-		float averageY = average(lastYs);
+		final float scrollY = lastYs[LAST_EVENT_INDEX];
 
-		final int height;
+		final float height;
 		switch (currentMode) {
 			case MODE_PULL_UP_TO_REFRESH:
-				height = (int) Math.max(firstY - averageY, 0);
-				setHeaderScroll(height);
+				height = Math.max(firstY - scrollY, 0);
+				setHeaderScroll(Math.round(height / FRICTION_LEVEL));
 				break;
 			case MODE_PULL_DOWN_TO_REFRESH:
 			default:
-				height = (int) Math.max(averageY - firstY, 0);
-				setHeaderScroll(-height);
+				height = Math.max(scrollY - firstY, 0);
+				setHeaderScroll(Math.round(-height / FRICTION_LEVEL));
 				break;
 		}
 
@@ -481,6 +527,27 @@ public abstract class PullToRefreshBase<T extends AbsListView> extends LinearLay
 				footerLayout.pullToRefresh();
 			}
 		}
+	}
+
+	private boolean checkEventForInitialPull(MotionEvent event) {
+		if (startY == -1 && isReadyForPull()) {
+			updateEventStates(event);
+
+			// Need to set current Mode if we're using both
+			if (mode == MODE_BOTH) {
+				if (isUserDraggingDownwards()) {
+					currentMode = MODE_PULL_DOWN_TO_REFRESH;
+				} else if (isUserDraggingUpwards()) {
+					currentMode = MODE_PULL_UP_TO_REFRESH;
+				}
+			}
+
+			if (isPullingToRefresh()) {
+				startY = (int) event.getY();
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private void setHeaderScroll(int y) {
@@ -506,17 +573,9 @@ public abstract class PullToRefreshBase<T extends AbsListView> extends LinearLay
 		}
 	}
 
-	private float average(float[] ysArray) {
-		float avg = 0;
-		for (int i = 0; i < EVENT_COUNT; i++) {
-			avg += ysArray[i];
-		}
-		return avg / EVENT_COUNT;
-	}
-
 	private void initializeYsHistory() {
 		for (int i = 0; i < EVENT_COUNT; i++) {
-			lastYs[i] = 0;
+			lastYs[i] = 0.0f;
 		}
 	}
 
@@ -533,19 +592,28 @@ public abstract class PullToRefreshBase<T extends AbsListView> extends LinearLay
 			lastYs[i] = lastYs[i + 1];
 		}
 
-		lastYs[EVENT_COUNT - 1] = y;
+		lastYs[LAST_EVENT_INDEX] = y;
+	}
+
+	private boolean isReadyForPull() {
+		switch (mode) {
+			case MODE_PULL_DOWN_TO_REFRESH:
+				return isFirstItemVisible();
+			case MODE_PULL_UP_TO_REFRESH:
+				return isLastItemVisible();
+			case MODE_BOTH:
+				return isFirstItemVisible() || isLastItemVisible();
+		}
+		return false;
 	}
 
 	private boolean isPullingToRefresh() {
-		if (isPullToRefreshEnabled && state != REFRESHING) {
-			switch (mode) {
+		if (state != REFRESHING) {
+			switch (currentMode) {
 				case MODE_PULL_DOWN_TO_REFRESH:
 					return isFirstItemVisible() && isUserDraggingDownwards();
 				case MODE_PULL_UP_TO_REFRESH:
 					return isLastItemVisible() && isUserDraggingUpwards();
-				case MODE_BOTH:
-					return (isFirstItemVisible() && isUserDraggingDownwards())
-					        || (isLastItemVisible() && isUserDraggingUpwards());
 			}
 		}
 		return false;
@@ -573,21 +641,19 @@ public abstract class PullToRefreshBase<T extends AbsListView> extends LinearLay
 	}
 
 	private boolean isUserDraggingDownwards() {
-		return this.isUserDraggingDownwards(0, EVENT_COUNT - 1);
+		return this.isUserDraggingDownwards(0, LAST_EVENT_INDEX);
 	}
 
 	private boolean isUserDraggingDownwards(int from, int to) {
-		return lastYs[from] != 0 && lastYs[to] != 0 && Math.abs(lastYs[from] - lastYs[to]) > 10
-		        && lastYs[from] < lastYs[to];
+		return lastYs[from] != 0 && lastYs[to] != 0 && lastYs[from] < lastYs[to];
 	}
 
 	private boolean isUserDraggingUpwards() {
-		return this.isUserDraggingUpwards(0, EVENT_COUNT - 1);
+		return this.isUserDraggingUpwards(0, LAST_EVENT_INDEX);
 	}
 
 	private boolean isUserDraggingUpwards(int from, int to) {
-		return lastYs[from] != 0 && lastYs[to] != 0 && Math.abs(lastYs[to] - lastYs[from]) > 10
-		        && lastYs[to] < lastYs[from];
+		return lastYs[from] != 0 && lastYs[to] != 0 && lastYs[to] < lastYs[from];
 	}
 
 	private void smoothScrollTo(int y) {
