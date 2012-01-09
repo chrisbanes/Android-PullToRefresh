@@ -7,7 +7,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.GridView;
 
-public class PullToRefreshGridView extends PullToRefreshBase<GridView> {
+public class PullToRefreshGridView extends PullToRefreshAdapterViewBase<GridView> {
 
 	class InternalGridView extends GridView implements EmptyViewMethodAccessor {
 
@@ -36,7 +36,7 @@ public class PullToRefreshGridView extends PullToRefreshBase<GridView> {
 	}
 
 	@Override
-	protected final GridView createAdapterView(Context context, AttributeSet attrs) {
+	protected final GridView createRefreshableView(Context context, AttributeSet attrs) {
 		GridView gv = new InternalGridView(context, attrs);
 
 		// Use Generated ID (from res/values/ids.xml)

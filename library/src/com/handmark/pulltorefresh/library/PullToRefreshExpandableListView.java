@@ -7,7 +7,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ExpandableListView;
 
-public class PullToRefreshExpandableListView extends PullToRefreshBase<ExpandableListView> {
+public class PullToRefreshExpandableListView extends PullToRefreshAdapterViewBase<ExpandableListView> {
 
 	class InternalExpandableListView extends ExpandableListView implements EmptyViewMethodAccessor {
 
@@ -36,7 +36,7 @@ public class PullToRefreshExpandableListView extends PullToRefreshBase<Expandabl
 	}
 
 	@Override
-	protected final ExpandableListView createAdapterView(Context context, AttributeSet attrs) {
+	protected final ExpandableListView createRefreshableView(Context context, AttributeSet attrs) {
 		ExpandableListView lv = new InternalExpandableListView(context, attrs);
 
 		// Set it to this so it can be used in ListActivity/ListFragment

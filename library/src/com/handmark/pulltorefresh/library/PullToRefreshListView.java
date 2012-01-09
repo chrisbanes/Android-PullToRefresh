@@ -7,7 +7,7 @@ import android.widget.ListView;
 
 import com.handmark.pulltorefresh.library.internal.EmptyViewMethodAccessor;
 
-public class PullToRefreshListView extends PullToRefreshBase<ListView> {
+public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView> {
 
 	class InternalListView extends ListView implements EmptyViewMethodAccessor {
 
@@ -36,7 +36,7 @@ public class PullToRefreshListView extends PullToRefreshBase<ListView> {
 	}
 
 	@Override
-	protected final ListView createAdapterView(Context context, AttributeSet attrs) {
+	protected final ListView createRefreshableView(Context context, AttributeSet attrs) {
 		ListView lv = new InternalListView(context, attrs);
 
 		// Set it to this so it can be used in ListActivity/ListFragment

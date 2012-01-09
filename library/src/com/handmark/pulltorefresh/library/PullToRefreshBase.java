@@ -8,18 +8,15 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Interpolator;
-import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
-import com.handmark.pulltorefresh.library.internal.EmptyViewMethodAccessor;
 import com.handmark.pulltorefresh.library.internal.LoadingLayout;
 
-public abstract class PullToRefreshBase<T extends AbsListView> extends LinearLayout implements OnScrollListener {
+public abstract class PullToRefreshBase<T extends View> extends LinearLayout implements OnScrollListener {
 
 	final class SmoothScrollRunnable implements Runnable {
 
@@ -105,9 +102,8 @@ public abstract class PullToRefreshBase<T extends AbsListView> extends LinearLay
 	private int currentMode;
 	private boolean disableScrollingWhileRefreshing = true;
 
-	private FrameLayout adapterViewHolder;
-	private View emptyView;
-	private T adapterView;
+	FrameLayout refreshableViewHolder;
+	T refreshableView;
 	private boolean isPullToRefreshEnabled = true;
 
 	private LoadingLayout headerLayout;
@@ -117,10 +113,6 @@ public abstract class PullToRefreshBase<T extends AbsListView> extends LinearLay
 	private final Handler handler = new Handler();
 
 	private OnRefreshListener onRefreshListener;
-	private OnScrollListener onScrollListener;
-
-	private OnLastItemVisibleListener onLastItemVisibleListener;
-	private int lastSavedFirstVisibleItem = -1;
 
 	private SmoothScrollRunnable currentSmoothScrollRunnable;
 
@@ -150,13 +142,23 @@ public abstract class PullToRefreshBase<T extends AbsListView> extends LinearLay
 	// ===========================================================
 
 	/**
-	 * Get the Wrapped AdapterView. Anything returned here has already been
-	 * added to the content view.
+	 * Deprecated. Use {@link #getRefreshableView()} from now on.
 	 * 
-	 * @return The AdapterView which is currently wrapped
+	 * @deprecated
+	 * @return The Refreshable View which is currently wrapped
 	 */
 	public final T getAdapterView() {
-		return adapterView;
+		return refreshableView;
+	}
+
+	/**
+	 * Get the Wrapped Refreshable View. Anything returned here has already been
+	 * added to the content view.
+	 * 
+	 * @return The View which is currently wrapped
+	 */
+	public final T getRefreshableView() {
+		return refreshableView;
 	}
 
 	/**
@@ -180,53 +182,12 @@ public abstract class PullToRefreshBase<T extends AbsListView> extends LinearLay
 		resetHeader();
 	}
 
-	/**
-	 * Sets the Empty View to be used by the Adapter View.
-	 * 
-	 * We need it handle it ourselves so that we can Pull-to-Refresh when the
-	 * Empty View is shown.
-	 * 
-	 * Please note, you do <strong>not</strong> usually need to call this method
-	 * yourself. Calling setEmptyView on the AdapterView will automatically call
-	 * this method and set everything up. This includes when the Android
-	 * Framework automatically sets the Empty View based on it's ID.
-	 * 
-	 * @param newEmptyView
-	 *            - Empty View to be used
-	 */
-	public final void setEmptyView(View newEmptyView) {
-		// If we already have an Empty View, remove it
-		if (null != emptyView) {
-			adapterViewHolder.removeView(emptyView);
-		}
-
-		if (null != newEmptyView) {
-			ViewParent newEmptyViewParent = newEmptyView.getParent();
-			if (null != newEmptyViewParent && newEmptyViewParent instanceof ViewGroup) {
-				((ViewGroup) newEmptyViewParent).removeView(newEmptyView);
-			}
-
-			this.adapterViewHolder.addView(newEmptyView, ViewGroup.LayoutParams.FILL_PARENT,
-			        ViewGroup.LayoutParams.FILL_PARENT);
-		}
-
-		if (adapterView instanceof EmptyViewMethodAccessor) {
-			((EmptyViewMethodAccessor) adapterView).setEmptyViewInternal(newEmptyView);
-		} else {
-			this.adapterView.setEmptyView(newEmptyView);
-		}
-	}
-
-	public final void setOnLastItemVisibleListener(OnLastItemVisibleListener listener) {
-		onLastItemVisibleListener = listener;
-	}
-
 	public final void setOnRefreshListener(OnRefreshListener listener) {
 		onRefreshListener = listener;
 	}
 
 	/**
-	 * A mutator to enable/disable Pull-to-Refresh for the current AdapterView
+	 * A mutator to enable/disable Pull-to-Refresh for the current View
 	 * 
 	 * @param enable
 	 *            Whether Pull-To-Refresh should be used
@@ -265,36 +226,6 @@ public abstract class PullToRefreshBase<T extends AbsListView> extends LinearLay
 	// ===========================================================
 	// Methods for/from SuperClass/Interfaces
 	// ===========================================================
-
-	public final void setOnScrollListener(OnScrollListener listener) {
-		onScrollListener = listener;
-	}
-
-	public final void onScroll(final AbsListView view, final int firstVisibleItem, final int visibleItemCount,
-	        final int totalItemCount) {
-
-		if (null != onLastItemVisibleListener) {
-			// detect if last item is visible
-			if (visibleItemCount > 0 && visibleItemCount < totalItemCount
-			        && (firstVisibleItem + visibleItemCount == totalItemCount)) {
-				// only process first event
-				if (firstVisibleItem != lastSavedFirstVisibleItem) {
-					lastSavedFirstVisibleItem = firstVisibleItem;
-					onLastItemVisibleListener.onLastItemVisible();
-				}
-			}
-		}
-
-		if (null != onScrollListener) {
-			onScrollListener.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
-		}
-	}
-
-	public final void onScrollStateChanged(final AbsListView view, final int scrollState) {
-		if (null != onScrollListener) {
-			onScrollListener.onScrollStateChanged(view, scrollState);
-		}
-	}
 
 	@Override
 	public final boolean onTouchEvent(MotionEvent event) {
@@ -361,9 +292,9 @@ public abstract class PullToRefreshBase<T extends AbsListView> extends LinearLay
 	}
 
 	/**
-	 * This is implemented by derived classes to return the created AdapterView.
-	 * If you need to use a custom AdapterView (such as a custom ListView),
-	 * override this method and return an instance of your custom class.
+	 * This is implemented by derived classes to return the created View. If you
+	 * need to use a custom View (such as a custom ListView), override this
+	 * method and return an instance of your custom class.
 	 * 
 	 * Be sure to set the ID of the view in this method, especially if you're
 	 * using a ListActivity or ListFragment.
@@ -372,10 +303,28 @@ public abstract class PullToRefreshBase<T extends AbsListView> extends LinearLay
 	 * @param attrs
 	 *            AttributeSet from wrapped class. Means that anything you
 	 *            include in the XML layout declaration will be routed to the
-	 *            AdapterView
-	 * @return New instance of the AdapterView
+	 *            created View
+	 * @return New instance of the Refreshable View
 	 */
-	protected abstract T createAdapterView(Context context, AttributeSet attrs);
+	protected abstract T createRefreshableView(Context context, AttributeSet attrs);
+
+	/**
+	 * Implemented by derived class to return whether the View is in a state
+	 * where the user can Pull to Refresh by scrolling down.
+	 * 
+	 * @return true if the View is currently the correct state (for example, top
+	 *         of a ListView)
+	 */
+	protected abstract boolean isReadyForPullDown();
+
+	/**
+	 * Implemented by derived class to return whether the View is in a state
+	 * where the user can Pull to Refresh by scrolling up.
+	 * 
+	 * @return true if the View is currently in the correct state (for example,
+	 *         bottom of a ListView)
+	 */
+	protected abstract boolean isReadyForPullUp();
 
 	// ===========================================================
 	// Methods
@@ -404,14 +353,14 @@ public abstract class PullToRefreshBase<T extends AbsListView> extends LinearLay
 		final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.PullToRefresh);
 		mode = a.getInteger(R.styleable.PullToRefresh_mode, MODE_PULL_DOWN_TO_REFRESH);
 
-		// AdapterView
+		// Refreshable View
 		// By passing the attrs, we can add ListView/GridView params via XML
-		adapterView = this.createAdapterView(context, attrs);
-		adapterView.setOnScrollListener(this);
+		refreshableView = this.createRefreshableView(context, attrs);
 
-		adapterViewHolder = new FrameLayout(context);
-		adapterViewHolder.addView(adapterView, ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.FILL_PARENT);
-		addView(adapterViewHolder, new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, 0, 1.0f));
+		refreshableViewHolder = new FrameLayout(context);
+		refreshableViewHolder.addView(refreshableView, ViewGroup.LayoutParams.FILL_PARENT,
+		        ViewGroup.LayoutParams.FILL_PARENT);
+		addView(refreshableViewHolder, new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, 0, 1.0f));
 
 		// Loading View Strings
 		String pullLabel = context.getString(R.string.pull_to_refresh_pull_label);
@@ -449,7 +398,7 @@ public abstract class PullToRefreshBase<T extends AbsListView> extends LinearLay
 			this.setBackgroundResource(a.getResourceId(R.styleable.PullToRefresh_headerBackground, Color.WHITE));
 		}
 		if (a.hasValue(R.styleable.PullToRefresh_adapterViewBackground)) {
-			adapterView.setBackgroundResource(a.getResourceId(R.styleable.PullToRefresh_adapterViewBackground,
+			refreshableView.setBackgroundResource(a.getResourceId(R.styleable.PullToRefresh_adapterViewBackground,
 			        Color.WHITE));
 		}
 		a.recycle();
@@ -596,11 +545,11 @@ public abstract class PullToRefreshBase<T extends AbsListView> extends LinearLay
 	private boolean isReadyForPull() {
 		switch (mode) {
 			case MODE_PULL_DOWN_TO_REFRESH:
-				return isFirstItemVisible();
+				return isReadyForPullDown();
 			case MODE_PULL_UP_TO_REFRESH:
-				return isLastItemVisible();
+				return isReadyForPullUp();
 			case MODE_BOTH:
-				return isFirstItemVisible() || isLastItemVisible();
+				return isReadyForPullUp() || isReadyForPullDown();
 		}
 		return false;
 	}
@@ -609,29 +558,10 @@ public abstract class PullToRefreshBase<T extends AbsListView> extends LinearLay
 		if (state != REFRESHING) {
 			switch (currentMode) {
 				case MODE_PULL_DOWN_TO_REFRESH:
-					return isFirstItemVisible() && isUserDraggingDownwards();
+					return isReadyForPullDown() && isUserDraggingDownwards();
 				case MODE_PULL_UP_TO_REFRESH:
-					return isLastItemVisible() && isUserDraggingUpwards();
+					return isReadyForPullUp() && isUserDraggingUpwards();
 			}
-		}
-		return false;
-	}
-
-	private boolean isFirstItemVisible() {
-		if (this.adapterView.getCount() == 0) {
-			return true;
-		} else if (adapterView.getFirstVisiblePosition() == 0) {
-			return adapterView.getChildAt(0).getTop() >= adapterView.getTop();
-		}
-		return false;
-	}
-
-	private boolean isLastItemVisible() {
-		final int count = this.adapterView.getCount();
-		if (count == 0) {
-			return true;
-		} else if (adapterView.getLastVisiblePosition() == count - 1) {
-			return true;
 		}
 		return false;
 	}
