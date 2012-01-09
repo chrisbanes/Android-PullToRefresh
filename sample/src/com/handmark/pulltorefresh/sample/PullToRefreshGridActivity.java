@@ -25,7 +25,7 @@ public class PullToRefreshGridActivity extends Activity {
 		setContentView(R.layout.pull_to_refresh_grid);
 
 		mPullRefreshGridView = (PullToRefreshGridView) findViewById(R.id.pull_refresh_grid);
-		mGridView = mPullRefreshGridView.getAdapterView();
+		mGridView = mPullRefreshGridView.getRefreshableView();
 
 		// Set a listener to be invoked when the list should be refreshed.
 		mPullRefreshGridView.setOnRefreshListener(new OnRefreshListener() {
