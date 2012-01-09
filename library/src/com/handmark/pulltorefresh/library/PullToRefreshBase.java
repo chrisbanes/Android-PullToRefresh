@@ -10,13 +10,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Interpolator;
-import android.widget.AbsListView.OnScrollListener;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 import com.handmark.pulltorefresh.library.internal.LoadingLayout;
 
-public abstract class PullToRefreshBase<T extends View> extends LinearLayout implements OnScrollListener {
+public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 
 	final class SmoothScrollRunnable implements Runnable {
 
@@ -102,7 +100,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	private int currentMode;
 	private boolean disableScrollingWhileRefreshing = true;
 
-	FrameLayout refreshableViewHolder;
 	T refreshableView;
 	private boolean isPullToRefreshEnabled = true;
 
@@ -179,7 +176,9 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	 * Refreshing View
 	 */
 	public final void onRefreshComplete() {
-		resetHeader();
+		if (state != PULL_TO_REFRESH) {
+			resetHeader();
+		}
 	}
 
 	public final void setOnRefreshListener(OnRefreshListener listener) {
@@ -291,6 +290,10 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		return false;
 	}
 
+	protected void addRefreshableView(Context context, T refreshableView) {
+		addView(refreshableView, new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, 0, 1.0f));
+	}
+
 	/**
 	 * This is implemented by derived classes to return the created View. If you
 	 * need to use a custom View (such as a custom ListView), override this
@@ -356,11 +359,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		// Refreshable View
 		// By passing the attrs, we can add ListView/GridView params via XML
 		refreshableView = this.createRefreshableView(context, attrs);
-
-		refreshableViewHolder = new FrameLayout(context);
-		refreshableViewHolder.addView(refreshableView, ViewGroup.LayoutParams.FILL_PARENT,
-		        ViewGroup.LayoutParams.FILL_PARENT);
-		addView(refreshableViewHolder, new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, 0, 1.0f));
+		this.addRefreshableView(context, refreshableView);
 
 		// Loading View Strings
 		String pullLabel = context.getString(R.string.pull_to_refresh_pull_label);

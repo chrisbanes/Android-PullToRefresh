@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
 import com.handmark.pulltorefresh.library.internal.EmptyViewMethodAccessor;
 
@@ -17,6 +19,7 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 	private OnScrollListener onScrollListener;
 	private OnLastItemVisibleListener onLastItemVisibleListener;
 	private View emptyView;
+	private FrameLayout refreshableViewHolder;
 
 	public PullToRefreshAdapterViewBase(Context context) {
 		super(context);
@@ -103,6 +106,13 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 	public final void setOnScrollListener(OnScrollListener listener) {
 		onScrollListener = listener;
 	}
+
+	protected void addRefreshableView(Context context, T refreshableView) {
+		refreshableViewHolder = new FrameLayout(context);
+		refreshableViewHolder.addView(refreshableView, ViewGroup.LayoutParams.FILL_PARENT,
+		        ViewGroup.LayoutParams.FILL_PARENT);
+		addView(refreshableViewHolder, new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, 0, 1.0f));
+	};
 
 	protected boolean isReadyForPullDown() {
 		return isFirstItemVisible();
