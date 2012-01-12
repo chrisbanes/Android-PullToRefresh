@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Interpolator;
@@ -85,8 +86,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	static final int EVENT_COUNT = 3;
 	static final int LAST_EVENT_INDEX = EVENT_COUNT - 1;
 
-	static final float FRICTION_LEVEL = 1.5f;
-
 	public static final int MODE_PULL_DOWN_TO_REFRESH = 0x1;
 	public static final int MODE_PULL_UP_TO_REFRESH = 0x2;
 	public static final int MODE_BOTH = 0x3;
@@ -94,6 +93,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	// ===========================================================
 	// Fields
 	// ===========================================================
+	
+	private float friction;
 
 	private int state = PULL_TO_REFRESH;
 	private int mode = MODE_PULL_DOWN_TO_REFRESH;
@@ -106,6 +107,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	private LoadingLayout headerLayout;
 	private LoadingLayout footerLayout;
 	private int headerHeight;
+	
+	private int headerMaxHeight;
 
 	private final Handler handler = new Handler();
 
@@ -349,6 +352,9 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	}
 
 	private void init(Context context, AttributeSet attrs) {
+		
+		final float ppi = context.getResources().getDisplayMetrics().density * 160.0f;
+		friction = ViewConfiguration.getScrollFriction() * ppi;
 
 		setOrientation(LinearLayout.VERTICAL);
 
@@ -382,6 +388,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 			measureView(footerLayout);
 			headerHeight = footerLayout.getMeasuredHeight();
 		}
+		
+		headerMaxHeight = (int)(headerHeight * friction);
 
 		// Styleables from XML
 		if (a.hasValue(R.styleable.PullToRefresh_headerTextColor)) {
@@ -447,16 +455,16 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		switch (currentMode) {
 			case MODE_PULL_UP_TO_REFRESH:
 				height = Math.max(firstY - scrollY, 0);
-				setHeaderScroll(Math.round(height / FRICTION_LEVEL));
+				setHeaderScroll(Math.round(height / friction));
 				break;
 			case MODE_PULL_DOWN_TO_REFRESH:
 			default:
 				height = Math.max(scrollY - firstY, 0);
-				setHeaderScroll(Math.round(-height / FRICTION_LEVEL));
+				setHeaderScroll(Math.round(-height / friction));
 				break;
 		}
 
-		if (state == PULL_TO_REFRESH && headerHeight < height) {
+		if (state == PULL_TO_REFRESH && headerMaxHeight < height) {
 			state = RELEASE_TO_REFRESH;
 
 			switch (currentMode) {
@@ -468,7 +476,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 					break;
 			}
 
-		} else if (state == RELEASE_TO_REFRESH && headerHeight >= height) {
+		} else if (state == RELEASE_TO_REFRESH && headerMaxHeight >= height) {
 			state = PULL_TO_REFRESH;
 
 			switch (currentMode) {
