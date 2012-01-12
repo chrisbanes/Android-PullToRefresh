@@ -83,9 +83,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	static final int RELEASE_TO_REFRESH = 0x1;
 	static final int REFRESHING = 0x2;
 
-	static final int EVENT_COUNT = 3;
-	static final int LAST_EVENT_INDEX = EVENT_COUNT - 1;
-
 	public static final int MODE_PULL_DOWN_TO_REFRESH = 0x1;
 	public static final int MODE_PULL_UP_TO_REFRESH = 0x2;
 	public static final int MODE_BOTH = 0x3;
@@ -95,6 +92,15 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	// ===========================================================
 	
 	private float friction;
+	private int touchSlop;
+	
+	private static final int INVALID_POINTER = -1;
+	private float initialMotionY;
+	private float lastMotionX;
+	private float lastMotionY;
+	private int activePointerId = INVALID_POINTER;
+	private boolean isBeingDragged = false;
+	private boolean isUnableToDrag = false;
 
 	private int state = PULL_TO_REFRESH;
 	private int mode = MODE_PULL_DOWN_TO_REFRESH;
@@ -115,9 +121,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	private OnRefreshListener onRefreshListener;
 
 	private SmoothScrollRunnable currentSmoothScrollRunnable;
-
-	private int startY = -1;
-	private final float[] lastYs = new float[EVENT_COUNT];
 
 	// ===========================================================
 	// Constructors
@@ -231,66 +234,194 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 
 	@Override
 	public final boolean onTouchEvent(MotionEvent event) {
+		if (isPullToRefreshEnabled == false) {
+			return false;
+		}
+		
+		if (state == REFRESHING && disableScrollingWhileRefreshing == true) {
+			return true;
+		}
+		
+		if (event.getAction() == MotionEvent.ACTION_DOWN && event.getEdgeFlags() != 0) {
+			return false;
+		}
+		
+		switch (event.getAction() & MotionEvent.ACTION_MASK) {
+		
+		case MotionEvent.ACTION_MOVE: {
+			if (isReadyForPull() == true) {
+				if (isBeingDragged == false && activePointerId != INVALID_POINTER) {
+					final int pointerIndex = event.getPointerId(activePointerId);
+					final float x = event.getX(pointerIndex);
+					final float xDiff = Math.abs(x - lastMotionX);
+					final float y = event.getY(pointerIndex);
+					final float dy = y - lastMotionY;
+					final float yDiff = Math.abs(dy);
 
-		if (isPullToRefreshEnabled) {
-
-			if (state == REFRESHING && disableScrollingWhileRefreshing) {
-				return true;
-			}
-
-			switch (event.getAction()) {
-				case MotionEvent.ACTION_MOVE:
-					if (startY != -1) {
-						updateEventStates(event);
-						pullEvent(event, startY);
-						return true;
-					} else if (checkEventForInitialPull(event)) {
-						return true;
-					}
-					break;
-				case MotionEvent.ACTION_UP:
-					if (startY != -1) {
-						initializeYsHistory();
-						startY = -1;
-
-						if (state == RELEASE_TO_REFRESH && null != onRefreshListener) {
-							setRefreshing();
-							onRefreshListener.onRefresh();
+					if (yDiff > touchSlop && yDiff > xDiff) {
+						if (dy >= 0.0001f && isReadyForPullDown()) {
+							if (mode == MODE_PULL_DOWN_TO_REFRESH || mode == MODE_BOTH) {
+								lastMotionY = y;
+								isBeingDragged = true;
+								if (mode == MODE_BOTH) {
+									currentMode = MODE_PULL_DOWN_TO_REFRESH;
+								}
+							}
+						} else if (dy < 0.0001f && isReadyForPullUp()) {
+							if (mode == MODE_PULL_UP_TO_REFRESH || mode == MODE_BOTH) {
+								lastMotionY = y;
+								isBeingDragged = true;
+								if (mode == MODE_BOTH) {
+									currentMode = MODE_PULL_UP_TO_REFRESH;
+								}
+							}
 						} else {
-							smoothScrollTo(0);
+							lastMotionY = initialMotionY = y;
+							activePointerId = INVALID_POINTER;
+							isBeingDragged = false;
 						}
-						return true;
 					}
-					break;
-				case MotionEvent.ACTION_DOWN:
-					// We need to return true here so that we can later catch
-					// ACTION_MOVE
-					return true;
+				}
+				
+				if (isBeingDragged == true) {
+					final int pointerIndex = event.getPointerId(activePointerId);
+					final float y = event.getY(pointerIndex);
+					lastMotionY = y;
+					pullEvent(event, initialMotionY);
+				}
 			}
 		}
-
-		return super.onTouchEvent(event);
+		break;
+		
+		case MotionEvent.ACTION_DOWN: {
+			if (isReadyForPull() == true) {
+				lastMotionY = initialMotionY = event.getY();
+				activePointerId = event.getPointerId(0);
+			}
+		}
+		break;
+		
+		case MotionEvent.ACTION_CANCEL: {
+			if (isBeingDragged) {
+				activePointerId = INVALID_POINTER;
+				isBeingDragged = false;
+				isUnableToDrag = false;
+				if (state == RELEASE_TO_REFRESH && null != onRefreshListener) {
+					setRefreshing();
+					onRefreshListener.onRefresh();
+				} else {
+					smoothScrollTo(0);
+				}
+			}
+		}
+		break;
+		
+		case MotionEvent.ACTION_UP: {
+			if (isBeingDragged) {
+				activePointerId = INVALID_POINTER;
+				isBeingDragged = false;
+				isUnableToDrag = false;
+				if (state == RELEASE_TO_REFRESH && null != onRefreshListener) {
+					setRefreshing();
+					onRefreshListener.onRefresh();
+				} else {
+					smoothScrollTo(0);
+				}
+			}
+		}
+		break;
+		
+		}
+		
+		return true;
 	}
 
 	@Override
 	public final boolean onInterceptTouchEvent(MotionEvent event) {
 
-		if (isPullToRefreshEnabled) {
-
-			if (state == REFRESHING && disableScrollingWhileRefreshing) {
+		if (isPullToRefreshEnabled == false) {
+			return false;
+		}
+		
+		if (state == REFRESHING && disableScrollingWhileRefreshing == true) {
+			return true;
+		}
+		
+		final int action = event.getAction() & MotionEvent.ACTION_MASK;
+		
+		if (action == MotionEvent.ACTION_CANCEL || action == MotionEvent.ACTION_UP) {
+			isBeingDragged = false;
+			isUnableToDrag = false;
+			activePointerId = INVALID_POINTER;
+			return false;
+		}
+		
+		if (action != MotionEvent.ACTION_DOWN) {
+			if (isBeingDragged == true) {
 				return true;
 			}
-
-			switch (event.getAction()) {
-				case MotionEvent.ACTION_MOVE:
-					if (checkEventForInitialPull(event)) {
-						return true;
-					}
-					break;
+			if (isUnableToDrag == true) {
+				return false;
 			}
 		}
+		
+		switch (action) {
 
-		return false;
+		case MotionEvent.ACTION_MOVE: {
+
+			final int activePointer = activePointerId;
+			if (activePointer == INVALID_POINTER) {
+				break;
+			}
+
+			if (isReadyForPull() == true) {
+				final int pointerIndex = event.findPointerIndex(activePointer);
+				final float x = event.getX(pointerIndex);
+				final float dx = x - lastMotionX;
+				final float xDiff = Math.abs(dx);
+				final float y = event.getY(pointerIndex);
+				final float dy = y - lastMotionY;
+				final float yDiff = Math.abs(dy);
+
+				if (yDiff > touchSlop && yDiff > xDiff) {
+					if (dy >= 0.0001f && isReadyForPullDown()) {
+						if (mode == MODE_PULL_DOWN_TO_REFRESH || mode == MODE_BOTH) {
+							lastMotionY = y;
+							isBeingDragged = true;
+							if (mode == MODE_BOTH) {
+								currentMode = MODE_PULL_DOWN_TO_REFRESH;
+							}
+						}
+					} else if (dy < 0.0001f && isReadyForPullUp()) {
+						if (mode == MODE_PULL_UP_TO_REFRESH || mode == MODE_BOTH) {
+							lastMotionY = y;
+							isBeingDragged = true;
+							if (mode == MODE_BOTH) {
+								currentMode = MODE_PULL_UP_TO_REFRESH;
+							}
+						}
+					}
+				} else {
+					if (xDiff > touchSlop) {
+						isUnableToDrag = false;
+					}
+				}
+			}
+		}
+		break;
+
+		case MotionEvent.ACTION_DOWN: {
+			if (isReadyForPull() == true) {
+				lastMotionY = initialMotionY = event.getY();
+				lastMotionX = event.getX();
+				activePointerId = event.getPointerId(0);
+				isBeingDragged = false;
+			}
+		}
+		break;
+		}
+		
+		return isBeingDragged;
 	}
 
 	protected void addRefreshableView(Context context, T refreshableView) {
@@ -338,8 +469,9 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 
 	protected final void resetHeader() {
 		state = PULL_TO_REFRESH;
-		initializeYsHistory();
-		startY = -1;
+		activePointerId = INVALID_POINTER;
+		isBeingDragged = false;
+		isUnableToDrag = false;
 
 		if (null != headerLayout) {
 			headerLayout.reset();
@@ -449,7 +581,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	}
 
 	private void pullEvent(MotionEvent event, float firstY) {
-		final float scrollY = lastYs[LAST_EVENT_INDEX];
+		final float scrollY = lastMotionY;
 
 		final float height;
 		switch (currentMode) {
@@ -490,27 +622,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		}
 	}
 
-	private boolean checkEventForInitialPull(MotionEvent event) {
-		if (startY == -1 && isReadyForPull()) {
-			updateEventStates(event);
-
-			// Need to set current Mode if we're using both
-			if (mode == MODE_BOTH) {
-				if (isUserDraggingDownwards()) {
-					currentMode = MODE_PULL_DOWN_TO_REFRESH;
-				} else if (isUserDraggingUpwards()) {
-					currentMode = MODE_PULL_UP_TO_REFRESH;
-				}
-			}
-
-			if (isPullingToRefresh()) {
-				startY = (int) event.getY();
-				return true;
-			}
-		}
-		return false;
-	}
-
 	private void setHeaderScroll(int y) {
 		scrollTo(0, y);
 	}
@@ -530,25 +641,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		}
 	}
 
-	private void initializeYsHistory() {
-		for (int i = 0; i < EVENT_COUNT; i++) {
-			lastYs[i] = 0.0f;
-		}
-	}
-
-	private void updateEventStates(MotionEvent event) {
-		for (int i = 0, z = event.getHistorySize(); i < z; i++) {
-			this.updateEventStates(event.getHistoricalY(i));
-		}
-
-		this.updateEventStates(event.getY());
-	}
-
-	private void updateEventStates(float y) {
-		System.arraycopy(lastYs, 1, lastYs, 0, EVENT_COUNT - 1);
-		lastYs[LAST_EVENT_INDEX] = y;
-	}
-
 	private boolean isReadyForPull() {
 		switch (mode) {
 			case MODE_PULL_DOWN_TO_REFRESH:
@@ -559,26 +651,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 				return isReadyForPullUp() || isReadyForPullDown();
 		}
 		return false;
-	}
-
-	private boolean isPullingToRefresh() {
-		if (state != REFRESHING) {
-			switch (currentMode) {
-				case MODE_PULL_DOWN_TO_REFRESH:
-					return isReadyForPullDown() && isUserDraggingDownwards();
-				case MODE_PULL_UP_TO_REFRESH:
-					return isReadyForPullUp() && isUserDraggingUpwards();
-			}
-		}
-		return false;
-	}
-
-	private boolean isUserDraggingDownwards() {
-		return lastYs[0] != 0 && lastYs[LAST_EVENT_INDEX] != 0 && lastYs[0] < lastYs[LAST_EVENT_INDEX];
-	}
-
-	private boolean isUserDraggingUpwards() {
-		return lastYs[0] != 0 && lastYs[LAST_EVENT_INDEX] != 0 && lastYs[0] > lastYs[LAST_EVENT_INDEX];
 	}
 
 	private void smoothScrollTo(int y) {
