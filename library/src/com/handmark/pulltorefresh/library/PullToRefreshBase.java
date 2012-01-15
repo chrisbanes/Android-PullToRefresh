@@ -99,7 +99,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	private float lastMotionX;
 	private float lastMotionY;
 	private boolean isBeingDragged = false;
-	private boolean isUnableToDrag = false;
 
 	private int state = PULL_TO_REFRESH;
 	private int mode = MODE_PULL_DOWN_TO_REFRESH;
@@ -231,11 +230,11 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 
 	@Override
 	public final boolean onTouchEvent(MotionEvent event) {
-		if (isPullToRefreshEnabled == false) {
+		if (!isPullToRefreshEnabled) {
 			return false;
 		}
 
-		if (state == REFRESHING && disableScrollingWhileRefreshing == true) {
+		if (state == REFRESHING && disableScrollingWhileRefreshing) {
 			return true;
 		}
 
@@ -255,22 +254,21 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 						final float yDiff = Math.abs(dy);
 
 						if (yDiff > touchSlop && yDiff > xDiff) {
-							if (dy >= 0.0001f && isReadyForPullDown()) {
-								if (mode == MODE_PULL_DOWN_TO_REFRESH || mode == MODE_BOTH) {
-									lastMotionY = y;
-									isBeingDragged = true;
-									if (mode == MODE_BOTH) {
-										currentMode = MODE_PULL_DOWN_TO_REFRESH;
-									}
+							if ((mode == MODE_PULL_DOWN_TO_REFRESH || mode == MODE_BOTH) && dy >= 0.0001f
+							        && isReadyForPullDown()) {
+								lastMotionY = y;
+								isBeingDragged = true;
+								if (mode == MODE_BOTH) {
+									currentMode = MODE_PULL_DOWN_TO_REFRESH;
 								}
-							} else if (dy < -0.0001f && isReadyForPullUp()) {
-								if (mode == MODE_PULL_UP_TO_REFRESH || mode == MODE_BOTH) {
-									lastMotionY = y;
-									isBeingDragged = true;
-									if (mode == MODE_BOTH) {
-										currentMode = MODE_PULL_UP_TO_REFRESH;
-									}
+							} else if ((mode == MODE_PULL_UP_TO_REFRESH || mode == MODE_BOTH) && dy <= -0.0001f
+							        && isReadyForPullUp()) {
+								lastMotionY = y;
+								isBeingDragged = true;
+								if (mode == MODE_BOTH) {
+									currentMode = MODE_PULL_UP_TO_REFRESH;
 								}
+
 							} else {
 								lastMotionY = initialMotionY = y;
 								isBeingDragged = false;
@@ -297,7 +295,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 			case MotionEvent.ACTION_CANCEL: {
 				if (isBeingDragged) {
 					isBeingDragged = false;
-					isUnableToDrag = false;
 					if (state == RELEASE_TO_REFRESH && null != onRefreshListener) {
 						setRefreshing();
 						onRefreshListener.onRefresh();
@@ -311,7 +308,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 			case MotionEvent.ACTION_UP: {
 				if (isBeingDragged) {
 					isBeingDragged = false;
-					isUnableToDrag = false;
 					if (state == RELEASE_TO_REFRESH && null != onRefreshListener) {
 						setRefreshing();
 						onRefreshListener.onRefresh();
@@ -329,11 +325,11 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	@Override
 	public final boolean onInterceptTouchEvent(MotionEvent event) {
 
-		if (isPullToRefreshEnabled == false) {
+		if (!isPullToRefreshEnabled) {
 			return false;
 		}
 
-		if (state == REFRESHING && disableScrollingWhileRefreshing == true) {
+		if (state == REFRESHING && disableScrollingWhileRefreshing) {
 			return true;
 		}
 
@@ -341,16 +337,12 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 
 		if (action == MotionEvent.ACTION_CANCEL || action == MotionEvent.ACTION_UP) {
 			isBeingDragged = false;
-			isUnableToDrag = false;
 			return false;
 		}
 
 		if (action != MotionEvent.ACTION_DOWN) {
 			if (isBeingDragged == true) {
 				return true;
-			}
-			if (isUnableToDrag == true) {
-				return false;
 			}
 		}
 
@@ -374,7 +366,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 							if (mode == MODE_BOTH) {
 								currentMode = MODE_PULL_DOWN_TO_REFRESH;
 							}
-						} else if ((mode == MODE_PULL_UP_TO_REFRESH || mode == MODE_BOTH) && dy < 0.0001f
+						} else if ((mode == MODE_PULL_UP_TO_REFRESH || mode == MODE_BOTH) && dy <= 0.0001f
 						        && isReadyForPullUp()) {
 							lastMotionY = y;
 							isBeingDragged = true;
@@ -382,8 +374,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 								currentMode = MODE_PULL_UP_TO_REFRESH;
 							}
 						}
-					} else if (xDiff > touchSlop) {
-						isUnableToDrag = false;
 					}
 				}
 				break;
@@ -447,7 +437,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	protected final void resetHeader() {
 		state = PULL_TO_REFRESH;
 		isBeingDragged = false;
-		isUnableToDrag = false;
 
 		if (null != headerLayout) {
 			headerLayout.reset();
