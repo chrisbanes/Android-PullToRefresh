@@ -79,6 +79,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	// Constants
 	// ===========================================================
 
+	static final float FRICTION = 2.0f;
+
 	static final int PULL_TO_REFRESH = 0x0;
 	static final int RELEASE_TO_REFRESH = 0x1;
 	static final int REFRESHING = 0x2;
@@ -90,15 +92,12 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	// ===========================================================
 	// Fields
 	// ===========================================================
-	
-	private float friction;
+
 	private int touchSlop;
-	
-	private static final int INVALID_POINTER = -1;
+
 	private float initialMotionY;
 	private float lastMotionX;
 	private float lastMotionY;
-	private int activePointerId = INVALID_POINTER;
 	private boolean isBeingDragged = false;
 	private boolean isUnableToDrag = false;
 
@@ -113,8 +112,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	private LoadingLayout headerLayout;
 	private LoadingLayout footerLayout;
 	private int headerHeight;
-	
-	private int headerMaxHeight;
 
 	private final Handler handler = new Handler();
 
@@ -237,102 +234,95 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		if (isPullToRefreshEnabled == false) {
 			return false;
 		}
-		
+
 		if (state == REFRESHING && disableScrollingWhileRefreshing == true) {
 			return true;
 		}
-		
+
 		if (event.getAction() == MotionEvent.ACTION_DOWN && event.getEdgeFlags() != 0) {
 			return false;
 		}
-		
-		switch (event.getAction() & MotionEvent.ACTION_MASK) {
-		
-		case MotionEvent.ACTION_MOVE: {
-			if (isReadyForPull() == true) {
-				if (isBeingDragged == false && activePointerId != INVALID_POINTER) {
-					final int pointerIndex = event.getPointerId(activePointerId);
-					final float x = event.getX(pointerIndex);
-					final float xDiff = Math.abs(x - lastMotionX);
-					final float y = event.getY(pointerIndex);
-					final float dy = y - lastMotionY;
-					final float yDiff = Math.abs(dy);
 
-					if (yDiff > touchSlop && yDiff > xDiff) {
-						if (dy >= 0.0001f && isReadyForPullDown()) {
-							if (mode == MODE_PULL_DOWN_TO_REFRESH || mode == MODE_BOTH) {
-								lastMotionY = y;
-								isBeingDragged = true;
-								if (mode == MODE_BOTH) {
-									currentMode = MODE_PULL_DOWN_TO_REFRESH;
+		switch (event.getAction()) {
+
+			case MotionEvent.ACTION_MOVE: {
+				if (isReadyForPull()) {
+					if (!isBeingDragged) {
+						final float x = event.getX();
+						final float xDiff = Math.abs(x - lastMotionX);
+						final float y = event.getY();
+						final float dy = y - lastMotionY;
+						final float yDiff = Math.abs(dy);
+
+						if (yDiff > touchSlop && yDiff > xDiff) {
+							if (dy >= 0.0001f && isReadyForPullDown()) {
+								if (mode == MODE_PULL_DOWN_TO_REFRESH || mode == MODE_BOTH) {
+									lastMotionY = y;
+									isBeingDragged = true;
+									if (mode == MODE_BOTH) {
+										currentMode = MODE_PULL_DOWN_TO_REFRESH;
+									}
 								}
-							}
-						} else if (dy < 0.0001f && isReadyForPullUp()) {
-							if (mode == MODE_PULL_UP_TO_REFRESH || mode == MODE_BOTH) {
-								lastMotionY = y;
-								isBeingDragged = true;
-								if (mode == MODE_BOTH) {
-									currentMode = MODE_PULL_UP_TO_REFRESH;
+							} else if (dy < -0.0001f && isReadyForPullUp()) {
+								if (mode == MODE_PULL_UP_TO_REFRESH || mode == MODE_BOTH) {
+									lastMotionY = y;
+									isBeingDragged = true;
+									if (mode == MODE_BOTH) {
+										currentMode = MODE_PULL_UP_TO_REFRESH;
+									}
 								}
+							} else {
+								lastMotionY = initialMotionY = y;
+								isBeingDragged = false;
 							}
-						} else {
-							lastMotionY = initialMotionY = y;
-							activePointerId = INVALID_POINTER;
-							isBeingDragged = false;
 						}
 					}
+
+					if (isBeingDragged) {
+						final float y = event.getY();
+						lastMotionY = y;
+						pullEvent(event, initialMotionY);
+					}
 				}
-				
-				if (isBeingDragged == true) {
-					final int pointerIndex = event.getPointerId(activePointerId);
-					final float y = event.getY(pointerIndex);
-					lastMotionY = y;
-					pullEvent(event, initialMotionY);
+				break;
+			}
+
+			case MotionEvent.ACTION_DOWN: {
+				if (isReadyForPull() == true) {
+					lastMotionY = initialMotionY = event.getY();
 				}
+				break;
+			}
+
+			case MotionEvent.ACTION_CANCEL: {
+				if (isBeingDragged) {
+					isBeingDragged = false;
+					isUnableToDrag = false;
+					if (state == RELEASE_TO_REFRESH && null != onRefreshListener) {
+						setRefreshing();
+						onRefreshListener.onRefresh();
+					} else {
+						smoothScrollTo(0);
+					}
+				}
+				break;
+			}
+
+			case MotionEvent.ACTION_UP: {
+				if (isBeingDragged) {
+					isBeingDragged = false;
+					isUnableToDrag = false;
+					if (state == RELEASE_TO_REFRESH && null != onRefreshListener) {
+						setRefreshing();
+						onRefreshListener.onRefresh();
+					} else {
+						smoothScrollTo(0);
+					}
+				}
+				break;
 			}
 		}
-		break;
-		
-		case MotionEvent.ACTION_DOWN: {
-			if (isReadyForPull() == true) {
-				lastMotionY = initialMotionY = event.getY();
-				activePointerId = event.getPointerId(0);
-			}
-		}
-		break;
-		
-		case MotionEvent.ACTION_CANCEL: {
-			if (isBeingDragged) {
-				activePointerId = INVALID_POINTER;
-				isBeingDragged = false;
-				isUnableToDrag = false;
-				if (state == RELEASE_TO_REFRESH && null != onRefreshListener) {
-					setRefreshing();
-					onRefreshListener.onRefresh();
-				} else {
-					smoothScrollTo(0);
-				}
-			}
-		}
-		break;
-		
-		case MotionEvent.ACTION_UP: {
-			if (isBeingDragged) {
-				activePointerId = INVALID_POINTER;
-				isBeingDragged = false;
-				isUnableToDrag = false;
-				if (state == RELEASE_TO_REFRESH && null != onRefreshListener) {
-					setRefreshing();
-					onRefreshListener.onRefresh();
-				} else {
-					smoothScrollTo(0);
-				}
-			}
-		}
-		break;
-		
-		}
-		
+
 		return true;
 	}
 
@@ -342,20 +332,19 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		if (isPullToRefreshEnabled == false) {
 			return false;
 		}
-		
+
 		if (state == REFRESHING && disableScrollingWhileRefreshing == true) {
 			return true;
 		}
-		
-		final int action = event.getAction() & MotionEvent.ACTION_MASK;
-		
+
+		final int action = event.getAction();
+
 		if (action == MotionEvent.ACTION_CANCEL || action == MotionEvent.ACTION_UP) {
 			isBeingDragged = false;
 			isUnableToDrag = false;
-			activePointerId = INVALID_POINTER;
 			return false;
 		}
-		
+
 		if (action != MotionEvent.ACTION_DOWN) {
 			if (isBeingDragged == true) {
 				return true;
@@ -364,63 +353,51 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 				return false;
 			}
 		}
-		
+
 		switch (action) {
 
-		case MotionEvent.ACTION_MOVE: {
+			case MotionEvent.ACTION_MOVE: {
 
-			final int activePointer = activePointerId;
-			if (activePointer == INVALID_POINTER) {
-				break;
-			}
+				if (isReadyForPull() == true) {
+					final float x = event.getX();
+					final float dx = x - lastMotionX;
+					final float xDiff = Math.abs(dx);
+					final float y = event.getY();
+					final float dy = y - lastMotionY;
+					final float yDiff = Math.abs(dy);
 
-			if (isReadyForPull() == true) {
-				final int pointerIndex = event.findPointerIndex(activePointer);
-				final float x = event.getX(pointerIndex);
-				final float dx = x - lastMotionX;
-				final float xDiff = Math.abs(dx);
-				final float y = event.getY(pointerIndex);
-				final float dy = y - lastMotionY;
-				final float yDiff = Math.abs(dy);
-
-				if (yDiff > touchSlop && yDiff > xDiff) {
-					if (dy >= 0.0001f && isReadyForPullDown()) {
-						if (mode == MODE_PULL_DOWN_TO_REFRESH || mode == MODE_BOTH) {
+					if (yDiff > touchSlop && yDiff > xDiff) {
+						if ((mode == MODE_PULL_DOWN_TO_REFRESH || mode == MODE_BOTH) && dy >= 0.0001f
+						        && isReadyForPullDown()) {
 							lastMotionY = y;
 							isBeingDragged = true;
 							if (mode == MODE_BOTH) {
 								currentMode = MODE_PULL_DOWN_TO_REFRESH;
 							}
-						}
-					} else if (dy < 0.0001f && isReadyForPullUp()) {
-						if (mode == MODE_PULL_UP_TO_REFRESH || mode == MODE_BOTH) {
+						} else if ((mode == MODE_PULL_UP_TO_REFRESH || mode == MODE_BOTH) && dy < 0.0001f
+						        && isReadyForPullUp()) {
 							lastMotionY = y;
 							isBeingDragged = true;
 							if (mode == MODE_BOTH) {
 								currentMode = MODE_PULL_UP_TO_REFRESH;
 							}
 						}
-					}
-				} else {
-					if (xDiff > touchSlop) {
+					} else if (xDiff > touchSlop) {
 						isUnableToDrag = false;
 					}
 				}
+				break;
+			}
+			case MotionEvent.ACTION_DOWN: {
+				if (isReadyForPull() == true) {
+					lastMotionY = initialMotionY = event.getY();
+					lastMotionX = event.getX();
+					isBeingDragged = false;
+				}
+				break;
 			}
 		}
-		break;
 
-		case MotionEvent.ACTION_DOWN: {
-			if (isReadyForPull() == true) {
-				lastMotionY = initialMotionY = event.getY();
-				lastMotionX = event.getX();
-				activePointerId = event.getPointerId(0);
-				isBeingDragged = false;
-			}
-		}
-		break;
-		}
-		
 		return isBeingDragged;
 	}
 
@@ -469,7 +446,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 
 	protected final void resetHeader() {
 		state = PULL_TO_REFRESH;
-		activePointerId = INVALID_POINTER;
 		isBeingDragged = false;
 		isUnableToDrag = false;
 
@@ -484,11 +460,10 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	}
 
 	private void init(Context context, AttributeSet attrs) {
-		
-		final float ppi = context.getResources().getDisplayMetrics().density * 160.0f;
-		friction = ViewConfiguration.getScrollFriction() * ppi;
 
 		setOrientation(LinearLayout.VERTICAL);
+
+		touchSlop = ViewConfiguration.getTouchSlop();
 
 		// Styleables from XML
 		final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.PullToRefresh);
@@ -520,8 +495,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 			measureView(footerLayout);
 			headerHeight = footerLayout.getMeasuredHeight();
 		}
-		
-		headerMaxHeight = (int)(headerHeight * friction);
 
 		// Styleables from XML
 		if (a.hasValue(R.styleable.PullToRefresh_headerTextColor)) {
@@ -581,22 +554,21 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	}
 
 	private void pullEvent(MotionEvent event, float firstY) {
-		final float scrollY = lastMotionY;
 
-		final float height;
+		final int height;
 		switch (currentMode) {
 			case MODE_PULL_UP_TO_REFRESH:
-				height = Math.max(firstY - scrollY, 0);
-				setHeaderScroll(Math.round(height / friction));
+				height = Math.round(Math.max(firstY - lastMotionY, 0) / FRICTION);
 				break;
 			case MODE_PULL_DOWN_TO_REFRESH:
 			default:
-				height = Math.max(scrollY - firstY, 0);
-				setHeaderScroll(Math.round(-height / friction));
+				height = Math.round(Math.min(firstY - lastMotionY, 0) / FRICTION);
 				break;
 		}
 
-		if (state == PULL_TO_REFRESH && headerMaxHeight < height) {
+		setHeaderScroll(height);
+
+		if (state == PULL_TO_REFRESH && headerHeight < Math.abs(height)) {
 			state = RELEASE_TO_REFRESH;
 
 			switch (currentMode) {
@@ -608,7 +580,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 					break;
 			}
 
-		} else if (state == RELEASE_TO_REFRESH && headerMaxHeight >= height) {
+		} else if (state == RELEASE_TO_REFRESH && headerHeight >= Math.abs(height)) {
 			state = PULL_TO_REFRESH;
 
 			switch (currentMode) {
