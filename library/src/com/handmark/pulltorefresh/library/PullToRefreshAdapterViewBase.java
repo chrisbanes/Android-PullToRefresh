@@ -135,7 +135,7 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 		if (count == 0) {
 			return true;
 		} else if (refreshableView.getLastVisiblePosition() == count - 1) {
-			return true;
+				return refreshableView.getChildAt(refreshableView.getChildCount()-1).getBottom() <= refreshableView.getBottom();
 		}
 		return false;
 	}
