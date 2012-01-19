@@ -193,8 +193,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	 * @param enable
 	 *            Whether Pull-To-Refresh should be used
 	 */
-	public final void setPullToRefreshEnabled(boolean enabled) {
-		this.isPullToRefreshEnabled = enabled;
+	public final void setPullToRefreshEnabled(boolean enable) {
+		this.isPullToRefreshEnabled = enable;
 	}
 
 	public final void setReleaseLabel(String releaseLabel) {
