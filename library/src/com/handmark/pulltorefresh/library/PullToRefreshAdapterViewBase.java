@@ -35,7 +35,9 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 		super(context, attrs);
 		refreshableView.setOnScrollListener(this);
 	}
-
+	
+	abstract public ContextMenuInfo getContextMenuInfo();
+	
 	public final void onScroll(final AbsListView view, final int firstVisibleItem, final int visibleItemCount,
 	        final int totalItemCount) {
 

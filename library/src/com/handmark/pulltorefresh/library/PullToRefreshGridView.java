@@ -4,6 +4,7 @@ import com.handmark.pulltorefresh.library.internal.EmptyViewMethodAccessor;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View;
 import android.widget.GridView;
 
@@ -25,6 +26,10 @@ public class PullToRefreshGridView extends PullToRefreshAdapterViewBase<GridView
 			super.setEmptyView(emptyView);
 		}
 
+		@Override
+		public ContextMenuInfo getContextMenuInfo() {
+			return super.getContextMenuInfo();
+		}
 	}
 
 	public PullToRefreshGridView(Context context) {
@@ -44,4 +49,8 @@ public class PullToRefreshGridView extends PullToRefreshAdapterViewBase<GridView
 		return gv;
 	}
 
+	@Override
+	public ContextMenuInfo getContextMenuInfo() {
+		return ((InternalGridView)getRefreshableView()).getContextMenuInfo();
+	}
 }
