@@ -125,7 +125,9 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 		if (this.refreshableView.getCount() == 0) {
 			return true;
 		} else if (refreshableView.getFirstVisiblePosition() == 0) {
-			return refreshableView.getChildAt(0).getTop() >= refreshableView.getTop();
+			if (refreshableView.getChildAt(0)!=null) {
+				return refreshableView.getChildAt(0).getTop() >= refreshableView.getTop();
+			}
 		}
 		return false;
 	}
@@ -135,7 +137,9 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 		if (count == 0) {
 			return true;
 		} else if (refreshableView.getLastVisiblePosition() == count - 1) {
-				return refreshableView.getChildAt(refreshableView.getChildCount()-1).getBottom() <= refreshableView.getBottom();
+			if (refreshableView.getChildAt(refreshableView.getChildCount()-1)!=null) {
+			return refreshableView.getChildAt(refreshableView.getChildCount()-1).getBottom() <= refreshableView.getBottom();
+			}
 		}
 		return false;
 	}
