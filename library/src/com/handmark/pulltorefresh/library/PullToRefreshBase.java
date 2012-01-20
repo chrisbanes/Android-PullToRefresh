@@ -639,4 +639,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 
 	}
 
+	@Override
+	public void setLongClickable(boolean longClickable) {
+		getRefreshableView().setLongClickable(longClickable);
+	}
 }
