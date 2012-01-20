@@ -296,7 +296,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 				if (isBeingDragged) {
 					isBeingDragged = false;
 					if (state == RELEASE_TO_REFRESH && null != onRefreshListener) {
-						setRefreshing();
+						setRefreshing(true);
 						onRefreshListener.onRefresh();
 					} else {
 						smoothScrollTo(0);
@@ -309,7 +309,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 				if (isBeingDragged) {
 					isBeingDragged = false;
 					if (state == RELEASE_TO_REFRESH && null != onRefreshListener) {
-						setRefreshing();
+						setRefreshing(true);
 						onRefreshListener.onRefresh();
 					} else {
 						smoothScrollTo(0);
@@ -587,16 +587,21 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		scrollTo(0, y);
 	}
 
-	private void setRefreshing() {
+	public void setRefreshing(boolean doScroll) {
+		if (state == REFRESHING)
+			return;
+		
 		state = REFRESHING;
 
 		switch (currentMode) {
 			case MODE_PULL_DOWN_TO_REFRESH:
-				smoothScrollTo(-headerHeight);
+				if (doScroll)
+					smoothScrollTo(-headerHeight);
 				headerLayout.refreshing();
 				break;
 			case MODE_PULL_UP_TO_REFRESH:
-				smoothScrollTo(headerHeight);
+				if (doScroll)
+					smoothScrollTo(headerHeight);
 				footerLayout.refreshing();
 				break;
 		}
