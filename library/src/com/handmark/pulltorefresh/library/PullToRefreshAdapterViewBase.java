@@ -5,6 +5,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.FrameLayout;
@@ -35,7 +36,9 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 		super(context, attrs);
 		refreshableView.setOnScrollListener(this);
 	}
-
+	
+	abstract public ContextMenuInfo getContextMenuInfo();
+	
 	public final void onScroll(final AbsListView view, final int firstVisibleItem, final int visibleItemCount,
 	        final int totalItemCount) {
 
