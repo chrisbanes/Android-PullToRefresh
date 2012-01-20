@@ -223,7 +223,11 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 			footerLayout.setRefreshingLabel(refreshingLabel);
 		}
 	}
-
+	
+	public final boolean hasPullFromTop() {
+		return mode != MODE_PULL_UP_TO_REFRESH;
+	}
+	
 	// ===========================================================
 	// Methods for/from SuperClass/Interfaces
 	// ===========================================================
