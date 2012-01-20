@@ -2,6 +2,7 @@ package com.handmark.pulltorefresh.library;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View;
 import android.widget.ListView;
 
@@ -25,6 +26,9 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 			super.setEmptyView(emptyView);
 		}
 
+		public ContextMenuInfo getContextMenuInfo() {
+			return super.getContextMenuInfo();
+		}
 	}
 
 	public PullToRefreshListView(Context context) {
@@ -42,5 +46,10 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		// Set it to this so it can be used in ListActivity/ListFragment
 		lv.setId(android.R.id.list);
 		return lv;
+	}
+
+	@Override
+	public ContextMenuInfo getContextMenuInfo() {
+		return ((InternalListView)getRefreshableView()).getContextMenuInfo();
 	}
 }
