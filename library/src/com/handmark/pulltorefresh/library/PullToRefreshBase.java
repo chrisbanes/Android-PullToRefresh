@@ -224,6 +224,30 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		}
 	}
 	
+	public void setRefreshing() {
+		this.setRefreshing(true);
+	}
+	
+	public void setRefreshing(boolean doScroll) {
+		if (state == REFRESHING)
+			return;
+		
+		state = REFRESHING;
+
+		switch (currentMode) {
+			case MODE_PULL_DOWN_TO_REFRESH:
+				if (doScroll)
+					smoothScrollTo(-headerHeight);
+				headerLayout.refreshing();
+				break;
+			case MODE_PULL_UP_TO_REFRESH:
+				if (doScroll)
+					smoothScrollTo(headerHeight);
+				footerLayout.refreshing();
+				break;
+		}
+	}
+	
 	public final boolean hasPullFromTop() {
 		return mode != MODE_PULL_UP_TO_REFRESH;
 	}
@@ -589,26 +613,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 
 	private void setHeaderScroll(int y) {
 		scrollTo(0, y);
-	}
-
-	public void setRefreshing(boolean doScroll) {
-		if (state == REFRESHING)
-			return;
-		
-		state = REFRESHING;
-
-		switch (currentMode) {
-			case MODE_PULL_DOWN_TO_REFRESH:
-				if (doScroll)
-					smoothScrollTo(-headerHeight);
-				headerLayout.refreshing();
-				break;
-			case MODE_PULL_UP_TO_REFRESH:
-				if (doScroll)
-					smoothScrollTo(headerHeight);
-				footerLayout.refreshing();
-				break;
-		}
 	}
 
 	private boolean isReadyForPull() {
