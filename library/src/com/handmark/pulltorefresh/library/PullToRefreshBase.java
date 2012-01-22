@@ -363,8 +363,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 			return false;
 		}
 
-		if (state == REFRESHING && disableScrollingWhileRefreshing) {
-			return true;
+		if (state == REFRESHING) {
+			return disableScrollingWhileRefreshing;
 		}
 
 		final int action = event.getAction();
