@@ -169,6 +169,13 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		return isPullToRefreshEnabled;
 	}
 
+	/**
+	 * By default the Widget disabled scrolling on the Refreshable View while
+	 * refreshing. This method can change this behaviour.
+	 * 
+	 * @param disableScrollingWhileRefreshing
+	 *            - true if you want to disable scrolling while refreshing
+	 */
 	public void setDisableScrollingWhileRefreshing(boolean disableScrollingWhileRefreshing) {
 		this.disableScrollingWhileRefreshing = disableScrollingWhileRefreshing;
 	}
@@ -183,6 +190,12 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		}
 	}
 
+	/**
+	 * Set OnRefreshListener for the Widget
+	 * 
+	 * @param listener
+	 *            - Listener to be used when the Widget is set to Refresh
+	 */
 	public final void setOnRefreshListener(OnRefreshListener listener) {
 		onRefreshListener = listener;
 	}
@@ -197,6 +210,13 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		this.isPullToRefreshEnabled = enable;
 	}
 
+	/**
+	 * Set Text to show when the Widget is being pulled, and will refresh when
+	 * released
+	 * 
+	 * @param releaseLabel
+	 *            - String to display
+	 */
 	public final void setReleaseLabel(String releaseLabel) {
 		if (null != headerLayout) {
 			headerLayout.setReleaseLabel(releaseLabel);
@@ -206,6 +226,12 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		}
 	}
 
+	/**
+	 * Set Text to show when the Widget is being Pulled
+	 * 
+	 * @param pullLabel
+	 *            - String to display
+	 */
 	public final void setPullLabel(String pullLabel) {
 		if (null != headerLayout) {
 			headerLayout.setPullLabel(pullLabel);
@@ -215,6 +241,12 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		}
 	}
 
+	/**
+	 * Set Text to show when the Widget is refreshing
+	 * 
+	 * @param refreshingLabel
+	 *            - String to display
+	 */
 	public final void setRefreshingLabel(String refreshingLabel) {
 		if (null != headerLayout) {
 			headerLayout.setRefreshingLabel(refreshingLabel);
@@ -228,6 +260,13 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		this.setRefreshing(true);
 	}
 
+	/**
+	 * Sets the Widget to be in the refresh state. The UI will be updated to
+	 * show the 'Refreshing' view.
+	 * 
+	 * @param doScroll
+	 *            - true if you want to force a scroll to the Refreshing view.
+	 */
 	public void setRefreshing(boolean doScroll) {
 		if (state == REFRESHING)
 			return;
@@ -249,7 +288,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	}
 
 	public final boolean hasPullFromTop() {
-		return mode != MODE_PULL_UP_TO_REFRESH;
+		return currentMode != MODE_PULL_UP_TO_REFRESH;
 	}
 
 	// ===========================================================
