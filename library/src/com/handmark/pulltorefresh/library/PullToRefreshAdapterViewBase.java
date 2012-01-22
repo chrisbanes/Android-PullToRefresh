@@ -2,19 +2,21 @@ package com.handmark.pulltorefresh.library;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.handmark.pulltorefresh.library.internal.EmptyViewMethodAccessor;
 
 public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extends PullToRefreshBase<T> implements
-        OnScrollListener {
+		OnScrollListener {
 
 	private int lastSavedFirstVisibleItem = -1;
 	private OnScrollListener onScrollListener;
@@ -36,11 +38,11 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 		super(context, attrs);
 		refreshableView.setOnScrollListener(this);
 	}
-	
+
 	abstract public ContextMenuInfo getContextMenuInfo();
-	
+
 	public final void onScroll(final AbsListView view, final int firstVisibleItem, final int visibleItemCount,
-	        final int totalItemCount) {
+			final int totalItemCount) {
 
 		if (null != onLastItemVisibleListener) {
 			// detect if last item is visible
@@ -91,7 +93,7 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 			}
 
 			this.refreshableViewHolder.addView(newEmptyView, ViewGroup.LayoutParams.FILL_PARENT,
-			        ViewGroup.LayoutParams.FILL_PARENT);
+					ViewGroup.LayoutParams.FILL_PARENT);
 		}
 
 		if (refreshableView instanceof EmptyViewMethodAccessor) {
@@ -112,7 +114,7 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 	protected void addRefreshableView(Context context, T refreshableView) {
 		refreshableViewHolder = new FrameLayout(context);
 		refreshableViewHolder.addView(refreshableView, ViewGroup.LayoutParams.FILL_PARENT,
-		        ViewGroup.LayoutParams.FILL_PARENT);
+				ViewGroup.LayoutParams.FILL_PARENT);
 		addView(refreshableViewHolder, new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, 0, 1.0f));
 	};
 
@@ -128,23 +130,33 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 		if (this.refreshableView.getCount() == 0) {
 			return true;
 		} else if (refreshableView.getFirstVisiblePosition() == 0) {
-			if (refreshableView.getChildAt(0)!=null) {
-				return refreshableView.getChildAt(0).getTop() >= refreshableView.getTop();
+			
+			final View firstVisibleChild = refreshableView.getChildAt(0);
+			
+			if (firstVisibleChild != null) {
+				return firstVisibleChild.getTop() >= refreshableView.getTop();
 			}
 		}
+		
 		return false;
 	}
 
 	private boolean isLastItemVisible() {
 		final int count = this.refreshableView.getCount();
+		final int lastVisiblePosition = refreshableView.getLastVisiblePosition();
+
 		if (count == 0) {
 			return true;
-		} else if (refreshableView.getLastVisiblePosition() == count - 1) {
-			if (refreshableView.getChildAt(refreshableView.getChildCount()-1)!=null) {
-			return refreshableView.getChildAt(refreshableView.getChildCount()-1).getBottom() <= refreshableView.getBottom();
+		} else if (lastVisiblePosition == count - 1) {
+
+			final int childIndex = lastVisiblePosition - refreshableView.getFirstVisiblePosition();
+			final View lastVisibleChild = refreshableView.getChildAt(childIndex);
+
+			if (lastVisibleChild != null) {
+				return lastVisibleChild.getBottom() <= refreshableView.getBottom();
 			}
 		}
+		
 		return false;
 	}
-
 }
