@@ -176,7 +176,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	 * @param disableScrollingWhileRefreshing
 	 *            - true if you want to disable scrolling while refreshing
 	 */
-	public void setDisableScrollingWhileRefreshing(boolean disableScrollingWhileRefreshing) {
+	public final void setDisableScrollingWhileRefreshing(boolean disableScrollingWhileRefreshing) {
 		this.disableScrollingWhileRefreshing = disableScrollingWhileRefreshing;
 	}
 
@@ -256,7 +256,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		}
 	}
 
-	public void setRefreshing() {
+	public final void setRefreshing() {
 		this.setRefreshing(true);
 	}
 
@@ -267,7 +267,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	 * @param doScroll
 	 *            - true if you want to force a scroll to the Refreshing view.
 	 */
-	public void setRefreshing(boolean doScroll) {
+	public final void setRefreshing(boolean doScroll) {
 		if (state == REFRESHING)
 			return;
 
