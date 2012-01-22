@@ -58,7 +58,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 				normalizedTime = Math.max(Math.min(normalizedTime, 1000), 0);
 
 				final int deltaY = Math.round((scrollFromY - scrollToY)
-				        * interpolator.getInterpolation(normalizedTime / 1000f));
+						* interpolator.getInterpolation(normalizedTime / 1000f));
 				this.currentY = scrollFromY - deltaY;
 				setHeaderScroll(currentY);
 			}
@@ -223,15 +223,15 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 			footerLayout.setRefreshingLabel(refreshingLabel);
 		}
 	}
-	
+
 	public void setRefreshing() {
 		this.setRefreshing(true);
 	}
-	
+
 	public void setRefreshing(boolean doScroll) {
 		if (state == REFRESHING)
 			return;
-		
+
 		state = REFRESHING;
 
 		switch (currentMode) {
@@ -247,11 +247,11 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 				break;
 		}
 	}
-	
+
 	public final boolean hasPullFromTop() {
 		return mode != MODE_PULL_UP_TO_REFRESH;
 	}
-	
+
 	// ===========================================================
 	// Methods for/from SuperClass/Interfaces
 	// ===========================================================
@@ -273,48 +273,15 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		switch (event.getAction()) {
 
 			case MotionEvent.ACTION_MOVE: {
-				if (isReadyForPull()) {
-					if (!isBeingDragged) {
-						final float x = event.getX();
-						final float xDiff = Math.abs(x - lastMotionX);
-						final float y = event.getY();
-						final float dy = y - lastMotionY;
-						final float yDiff = Math.abs(dy);
-
-						if (yDiff > touchSlop && yDiff > xDiff) {
-							if ((mode == MODE_PULL_DOWN_TO_REFRESH || mode == MODE_BOTH) && dy >= 0.0001f
-							        && isReadyForPullDown()) {
-								lastMotionY = y;
-								isBeingDragged = true;
-								if (mode == MODE_BOTH) {
-									currentMode = MODE_PULL_DOWN_TO_REFRESH;
-								}
-							} else if ((mode == MODE_PULL_UP_TO_REFRESH || mode == MODE_BOTH) && dy <= -0.0001f
-							        && isReadyForPullUp()) {
-								lastMotionY = y;
-								isBeingDragged = true;
-								if (mode == MODE_BOTH) {
-									currentMode = MODE_PULL_UP_TO_REFRESH;
-								}
-
-							} else {
-								lastMotionY = initialMotionY = y;
-								isBeingDragged = false;
-							}
-						}
-					}
-
-					if (isBeingDragged) {
-						final float y = event.getY();
-						lastMotionY = y;
-						pullEvent(event, initialMotionY);
-					}
+				if (isBeingDragged) {
+					lastMotionY = event.getY();
+					this.pullEvent();
 				}
 				break;
 			}
 
 			case MotionEvent.ACTION_DOWN: {
-				if (isReadyForPull() == true) {
+				if (isReadyForPull()) {
 					lastMotionY = initialMotionY = event.getY();
 				}
 				break;
@@ -368,34 +335,29 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 			return false;
 		}
 
-		if (action != MotionEvent.ACTION_DOWN) {
-			if (isBeingDragged == true) {
-				return true;
-			}
+		if (action != MotionEvent.ACTION_DOWN && isBeingDragged) {
+			return true;
 		}
 
 		switch (action) {
-
 			case MotionEvent.ACTION_MOVE: {
+				if (isReadyForPull()) {
 
-				if (isReadyForPull() == true) {
-					final float x = event.getX();
-					final float dx = x - lastMotionX;
-					final float xDiff = Math.abs(dx);
 					final float y = event.getY();
 					final float dy = y - lastMotionY;
 					final float yDiff = Math.abs(dy);
+					final float xDiff = Math.abs(event.getX() - lastMotionX);
 
 					if (yDiff > touchSlop && yDiff > xDiff) {
 						if ((mode == MODE_PULL_DOWN_TO_REFRESH || mode == MODE_BOTH) && dy >= 0.0001f
-						        && isReadyForPullDown()) {
+								&& isReadyForPullDown()) {
 							lastMotionY = y;
 							isBeingDragged = true;
 							if (mode == MODE_BOTH) {
 								currentMode = MODE_PULL_DOWN_TO_REFRESH;
 							}
 						} else if ((mode == MODE_PULL_UP_TO_REFRESH || mode == MODE_BOTH) && dy <= 0.0001f
-						        && isReadyForPullUp()) {
+								&& isReadyForPullUp()) {
 							lastMotionY = y;
 							isBeingDragged = true;
 							if (mode == MODE_BOTH) {
@@ -407,7 +369,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 				break;
 			}
 			case MotionEvent.ACTION_DOWN: {
-				if (isReadyForPull() == true) {
+				if (isReadyForPull()) {
 					lastMotionY = initialMotionY = event.getY();
 					lastMotionX = event.getX();
 					isBeingDragged = false;
@@ -499,16 +461,16 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		// Add Loading Views
 		if (mode == MODE_PULL_DOWN_TO_REFRESH || mode == MODE_BOTH) {
 			headerLayout = new LoadingLayout(context, MODE_PULL_DOWN_TO_REFRESH, releaseLabel, pullLabel,
-			        refreshingLabel);
+					refreshingLabel);
 			addView(headerLayout, 0, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,
-			        ViewGroup.LayoutParams.WRAP_CONTENT));
+					ViewGroup.LayoutParams.WRAP_CONTENT));
 			measureView(headerLayout);
 			headerHeight = headerLayout.getMeasuredHeight();
 		}
 		if (mode == MODE_PULL_UP_TO_REFRESH || mode == MODE_BOTH) {
 			footerLayout = new LoadingLayout(context, MODE_PULL_UP_TO_REFRESH, releaseLabel, pullLabel, refreshingLabel);
 			addView(footerLayout, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,
-			        ViewGroup.LayoutParams.WRAP_CONTENT));
+					ViewGroup.LayoutParams.WRAP_CONTENT));
 			measureView(footerLayout);
 			headerHeight = footerLayout.getMeasuredHeight();
 		}
@@ -528,7 +490,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		}
 		if (a.hasValue(R.styleable.PullToRefresh_adapterViewBackground)) {
 			refreshableView.setBackgroundResource(a.getResourceId(R.styleable.PullToRefresh_adapterViewBackground,
-			        Color.WHITE));
+					Color.WHITE));
 		}
 		a.recycle();
 
@@ -570,16 +532,16 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		child.measure(childWidthSpec, childHeightSpec);
 	}
 
-	private void pullEvent(MotionEvent event, float firstY) {
+	private void pullEvent() {
 
 		final int height;
 		switch (currentMode) {
 			case MODE_PULL_UP_TO_REFRESH:
-				height = Math.round(Math.max(firstY - lastMotionY, 0) / FRICTION);
+				height = Math.round(Math.max(initialMotionY - lastMotionY, 0) / FRICTION);
 				break;
 			case MODE_PULL_DOWN_TO_REFRESH:
 			default:
-				height = Math.round(Math.min(firstY - lastMotionY, 0) / FRICTION);
+				height = Math.round(Math.min(initialMotionY - lastMotionY, 0) / FRICTION);
 				break;
 		}
 
