@@ -6,12 +6,18 @@ import java.util.LinkedList;
 import android.app.ListActivity;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 
 public class PullToRefreshListActivity extends ListActivity {
+
+	static final int MENU_MANUAL_REFRESH = 0;
+	static final int MENU_DISABLE_SCROLL = 1;
+
 	private LinkedList<String> mListItems;
 	private PullToRefreshListView mPullRefreshListView;
 	private ArrayAdapter<String> mAdapter;
@@ -46,7 +52,7 @@ public class PullToRefreshListActivity extends ListActivity {
 		protected String[] doInBackground(Void... params) {
 			// Simulates a background job.
 			try {
-				Thread.sleep(2000);
+				Thread.sleep(4000);
 			} catch (InterruptedException e) {
 			}
 			return mStrings;
@@ -64,7 +70,46 @@ public class PullToRefreshListActivity extends ListActivity {
 		}
 	}
 
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		menu.add(0, MENU_MANUAL_REFRESH, 0, "Manual Refresh");
+		menu.add(0, MENU_DISABLE_SCROLL, 1,
+				mPullRefreshListView.isDisableScrollingWhileRefreshing() ? "Enable Scrolling while Refreshing"
+						: "Disable Scrolling while Refreshing");
+		return super.onCreateOptionsMenu(menu);
+	}
+
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		MenuItem disableItem = menu.findItem(MENU_DISABLE_SCROLL);
+		disableItem
+				.setTitle(mPullRefreshListView.isDisableScrollingWhileRefreshing() ? "Enable Scrolling while Refreshing"
+						: "Disable Scrolling while Refreshing");
+
+		return super.onPrepareOptionsMenu(menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+
+		switch (item.getItemId()) {
+
+			case MENU_MANUAL_REFRESH:
+				new GetDataTask().execute();
+				mPullRefreshListView.setRefreshing(false);
+				break;
+			case MENU_DISABLE_SCROLL:
+				mPullRefreshListView.setDisableScrollingWhileRefreshing(!mPullRefreshListView
+						.isDisableScrollingWhileRefreshing());
+				break;
+		}
+
+		return super.onOptionsItemSelected(item);
+	}
+
 	private String[] mStrings = { "Abbaye de Belloc", "Abbaye du Mont des Cats", "Abertam", "Abondance", "Ackawi",
-	        "Acorn", "Adelost", "Affidelice au Chablis", "Afuega'l Pitu", "Airag", "Airedale", "Aisy Cendre",
-	        "Allgauer Emmentaler" };
+			"Acorn", "Adelost", "Affidelice au Chablis", "Afuega'l Pitu", "Airag", "Airedale", "Aisy Cendre",
+			"Allgauer Emmentaler", "Abbaye de Belloc", "Abbaye du Mont des Cats", "Abertam", "Abondance", "Ackawi",
+			"Acorn", "Adelost", "Affidelice au Chablis", "Afuega'l Pitu", "Airag", "Airedale", "Aisy Cendre",
+			"Allgauer Emmentaler" };
 }
