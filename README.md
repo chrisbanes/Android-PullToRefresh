@@ -96,7 +96,8 @@ You can even set the View to enable both Pulling Up and Pulling Down using the n
 
 ## Acknowledgments
 
-* [Stefano Dacchille](https://github.com/stefanodacchille) 
+* [Stefano Dacchille](https://github.com/stefanodacchille)
+* [Steve Lhomme](https://github.com/robUx4)
 
 
 ## License
