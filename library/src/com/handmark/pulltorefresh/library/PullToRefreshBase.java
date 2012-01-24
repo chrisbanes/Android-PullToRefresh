@@ -100,6 +100,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	private float lastMotionX;
 	private float lastMotionY;
 	private boolean isBeingDragged = false;
+	private boolean hackDownSent = false;
 
 	private int state = PULL_TO_REFRESH;
 	private int mode = MODE_PULL_DOWN_TO_REFRESH;
@@ -173,7 +174,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	public final boolean isDisableScrollingWhileRefreshing() {
 		return disableScrollingWhileRefreshing;
 	}
-	
+
 	public final boolean isRefreshing() {
 		return state == REFRESHING || state == MANUAL_REFRESHING;
 	}
@@ -280,8 +281,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		this.setRefreshingInternal(doScroll);
 		state = MANUAL_REFRESHING;
 	}
-	
-	
 
 	public final boolean hasPullFromTop() {
 		return currentMode != MODE_PULL_UP_TO_REFRESH;
@@ -310,7 +309,33 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 			case MotionEvent.ACTION_MOVE: {
 				if (isBeingDragged) {
 					lastMotionY = event.getY();
-					this.pullEvent();
+
+					/**
+					 * If we can't handle the ACTION_MOVE ourselves then
+					 * dispatch it to the RefreshableView. This allows
+					 * continuous scrolling
+					 */
+					if (!this.pullEvent()) {
+
+						// Most events need a down before ACTION_MOVE events
+						// work so send a hacked one
+						if (!hackDownSent) {
+							MotionEvent hackDownEvent = MotionEvent.obtain(event);
+							hackDownEvent.setAction(MotionEvent.ACTION_DOWN);
+							refreshableView.dispatchTouchEvent(hackDownEvent);
+							hackDownSent = true;
+						}
+
+						// Dispatch original ACTION_MOVE to RefreshableView
+						refreshableView.dispatchTouchEvent(event);
+
+					} else if (hackDownSent) {
+						// Send a ACTION_UP event just for completeness
+						hackDownSent = false;
+						MotionEvent hackUpEvent = MotionEvent.obtain(event);
+						hackUpEvent.setAction(MotionEvent.ACTION_UP);
+						refreshableView.dispatchTouchEvent(hackUpEvent);
+					}
 					return true;
 				}
 				break;
@@ -324,23 +349,11 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 				break;
 			}
 
-			case MotionEvent.ACTION_CANCEL: {
-				if (isBeingDragged) {
-					isBeingDragged = false;
-					if (state == RELEASE_TO_REFRESH && null != onRefreshListener) {
-						setRefreshingInternal(true);
-						onRefreshListener.onRefresh();
-					} else {
-						smoothScrollTo(0);
-					}
-					return true;
-				}
-				break;
-			}
-
+			case MotionEvent.ACTION_CANCEL:
 			case MotionEvent.ACTION_UP: {
 				if (isBeingDragged) {
 					isBeingDragged = false;
+					hackDownSent = false;
 					if (state == RELEASE_TO_REFRESH && null != onRefreshListener) {
 						setRefreshingInternal(true);
 						onRefreshListener.onRefresh();
@@ -571,45 +584,61 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		child.measure(childWidthSpec, childHeightSpec);
 	}
 
-	private void pullEvent() {
+	/**
+	 * Actions a Pull Event
+	 * 
+	 * @return true if the Event has been handled, false if there has been no
+	 *         change
+	 */
+	private boolean pullEvent() {
 
-		final int height;
+		final int newHeight;
+		final int oldHeight = this.getScrollY();
+
 		switch (currentMode) {
 			case MODE_PULL_UP_TO_REFRESH:
-				height = Math.round(Math.max(initialMotionY - lastMotionY, 0) / FRICTION);
+				newHeight = Math.round(Math.max(initialMotionY - lastMotionY, 0) / FRICTION);
 				break;
 			case MODE_PULL_DOWN_TO_REFRESH:
 			default:
-				height = Math.round(Math.min(initialMotionY - lastMotionY, 0) / FRICTION);
+				newHeight = Math.round(Math.min(initialMotionY - lastMotionY, 0) / FRICTION);
 				break;
 		}
 
-		setHeaderScroll(height);
+		setHeaderScroll(newHeight);
 
-		if (state == PULL_TO_REFRESH && headerHeight < Math.abs(height)) {
-			state = RELEASE_TO_REFRESH;
+		if (newHeight != 0) {
+			if (state == PULL_TO_REFRESH && headerHeight < Math.abs(newHeight)) {
+				state = RELEASE_TO_REFRESH;
 
-			switch (currentMode) {
-				case MODE_PULL_UP_TO_REFRESH:
-					footerLayout.releaseToRefresh();
-					break;
-				case MODE_PULL_DOWN_TO_REFRESH:
-					headerLayout.releaseToRefresh();
-					break;
-			}
+				switch (currentMode) {
+					case MODE_PULL_UP_TO_REFRESH:
+						footerLayout.releaseToRefresh();
+						break;
+					case MODE_PULL_DOWN_TO_REFRESH:
+						headerLayout.releaseToRefresh();
+						break;
+				}
 
-		} else if (state == RELEASE_TO_REFRESH && headerHeight >= Math.abs(height)) {
-			state = PULL_TO_REFRESH;
+				return true;
 
-			switch (currentMode) {
-				case MODE_PULL_UP_TO_REFRESH:
-					footerLayout.pullToRefresh();
-					break;
-				case MODE_PULL_DOWN_TO_REFRESH:
-					headerLayout.pullToRefresh();
-					break;
+			} else if (state == RELEASE_TO_REFRESH && headerHeight >= Math.abs(newHeight)) {
+				state = PULL_TO_REFRESH;
+
+				switch (currentMode) {
+					case MODE_PULL_UP_TO_REFRESH:
+						footerLayout.pullToRefresh();
+						break;
+					case MODE_PULL_DOWN_TO_REFRESH:
+						headerLayout.pullToRefresh();
+						break;
+				}
+
+				return true;
 			}
 		}
+
+		return oldHeight != newHeight;
 	}
 
 	private void setHeaderScroll(int y) {
@@ -627,7 +656,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		}
 		return false;
 	}
-	
+
 	private void setRefreshingInternal(boolean doScroll) {
 		if (isRefreshing())
 			return;
