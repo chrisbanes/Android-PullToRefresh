@@ -326,11 +326,11 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 
 			case MotionEvent.ACTION_CANCEL: {
 				if (isBeingDragged) {
-					isBeingDragged = false;
 					if (state == RELEASE_TO_REFRESH && null != onRefreshListener) {
 						setRefreshingInternal(true);
 						onRefreshListener.onRefresh();
 					} else {
+						isBeingDragged = false;
 						smoothScrollTo(0);
 					}
 					return true;
@@ -340,11 +340,11 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 
 			case MotionEvent.ACTION_UP: {
 				if (isBeingDragged) {
-					isBeingDragged = false;
 					if (state == RELEASE_TO_REFRESH && null != onRefreshListener) {
 						setRefreshingInternal(true);
 						onRefreshListener.onRefresh();
 					} else {
+						isBeingDragged = false;
 						smoothScrollTo(0);
 					}
 					return true;
@@ -411,7 +411,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 				if (isReadyForPull()) {
 					lastMotionY = initialMotionY = event.getY();
 					lastMotionX = event.getX();
-					isBeingDragged = false;
+					//isBeingDragged = false;
 				}
 				break;
 			}
