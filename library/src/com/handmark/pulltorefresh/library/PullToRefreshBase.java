@@ -100,11 +100,11 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	private float lastMotionX;
 	private float lastMotionY;
 	private boolean isBeingDragged = false;
-	private boolean hackDownSent = false;
-
+	
 	private int state = PULL_TO_REFRESH;
 	private int mode = MODE_PULL_DOWN_TO_REFRESH;
 	private int currentMode;
+	
 	private boolean disableScrollingWhileRefreshing = true;
 
 	T refreshableView;
@@ -311,33 +311,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 			case MotionEvent.ACTION_MOVE: {
 				if (isBeingDragged) {
 					lastMotionY = event.getY();
-
-					/**
-					 * If we can't handle the ACTION_MOVE ourselves then
-					 * dispatch it to the RefreshableView. This allows
-					 * continuous scrolling
-					 */
-					if (!this.pullEvent()) {
-
-						// Most events need a down before ACTION_MOVE events
-						// work so send a hacked one
-						if (!hackDownSent) {
-							MotionEvent hackDownEvent = MotionEvent.obtain(event);
-							hackDownEvent.setAction(MotionEvent.ACTION_DOWN);
-							refreshableView.dispatchTouchEvent(hackDownEvent);
-							hackDownSent = true;
-						}
-
-						// Dispatch original ACTION_MOVE to RefreshableView
-						refreshableView.dispatchTouchEvent(event);
-
-					} else if (hackDownSent) {
-						// Send a ACTION_UP event just for completeness
-						hackDownSent = false;
-						MotionEvent hackUpEvent = MotionEvent.obtain(event);
-						hackUpEvent.setAction(MotionEvent.ACTION_UP);
-						refreshableView.dispatchTouchEvent(hackUpEvent);
-					}
+					this.pullEvent();
 					return true;
 				}
 				break;
@@ -355,7 +329,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 			case MotionEvent.ACTION_UP: {
 				if (isBeingDragged) {
 					isBeingDragged = false;
-					hackDownSent = false;
+					
 					if (state == RELEASE_TO_REFRESH && null != onRefreshListener) {
 						setRefreshingInternal(true);
 						onRefreshListener.onRefresh();
