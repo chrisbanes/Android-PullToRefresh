@@ -439,6 +439,22 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	 * @return New instance of the Refreshable View
 	 */
 	protected abstract T createRefreshableView(Context context, AttributeSet attrs);
+	
+	protected final int getCurrentMode() {
+		return currentMode;
+	}
+
+	protected final LoadingLayout getFooterLayout() {
+		return footerLayout;
+	}
+
+	protected final LoadingLayout getHeaderLayout() {
+		return headerLayout;
+	}
+
+	protected final int getHeaderHeight() {
+		return headerHeight;
+	}
 
 	/**
 	 * Implemented by derived class to return whether the View is in a state
@@ -462,7 +478,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	// Methods
 	// ===========================================================
 
-	protected final void resetHeader() {
+	protected void resetHeader() {
 		state = PULL_TO_REFRESH;
 		isBeingDragged = false;
 
@@ -474,6 +490,36 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		}
 
 		smoothScrollTo(0);
+	}
+	
+	protected void setRefreshingInternal(boolean doScroll) {
+		state = REFRESHING;
+
+		switch (currentMode) {
+			case MODE_PULL_DOWN_TO_REFRESH:
+				if (doScroll)
+					smoothScrollTo(-headerHeight);
+				headerLayout.refreshing();
+				break;
+			case MODE_PULL_UP_TO_REFRESH:
+				if (doScroll)
+					smoothScrollTo(headerHeight);
+				footerLayout.refreshing();
+				break;
+		}
+	}
+	
+	protected final void setHeaderScroll(int y) {
+		scrollTo(0, y);
+	}
+	
+	protected final void smoothScrollTo(int y) {
+		if (null != currentSmoothScrollRunnable) {
+			currentSmoothScrollRunnable.stop();
+		}
+
+		this.currentSmoothScrollRunnable = new SmoothScrollRunnable(handler, getScrollY(), y);
+		handler.post(currentSmoothScrollRunnable);
 	}
 
 	private void init(Context context, AttributeSet attrs) {
@@ -627,9 +673,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		return oldHeight != newHeight;
 	}
 
-	private void setHeaderScroll(int y) {
-		scrollTo(0, y);
-	}
+	
 
 	private boolean isReadyForPull() {
 		switch (mode) {
@@ -641,32 +685,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 				return isReadyForPullUp() || isReadyForPullDown();
 		}
 		return false;
-	}
-
-	private void setRefreshingInternal(boolean doScroll) {
-		state = REFRESHING;
-
-		switch (currentMode) {
-			case MODE_PULL_DOWN_TO_REFRESH:
-				if (doScroll)
-					smoothScrollTo(-headerHeight);
-				headerLayout.refreshing();
-				break;
-			case MODE_PULL_UP_TO_REFRESH:
-				if (doScroll)
-					smoothScrollTo(headerHeight);
-				footerLayout.refreshing();
-				break;
-		}
-	}
-
-	private void smoothScrollTo(int y) {
-		if (null != currentSmoothScrollRunnable) {
-			currentSmoothScrollRunnable.stop();
-		}
-
-		this.currentSmoothScrollRunnable = new SmoothScrollRunnable(handler, getScrollY(), y);
-		handler.post(currentSmoothScrollRunnable);
 	}
 
 	// ===========================================================
