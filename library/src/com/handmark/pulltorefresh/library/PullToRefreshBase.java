@@ -278,8 +278,10 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	 *            - true if you want to force a scroll to the Refreshing view.
 	 */
 	public final void setRefreshing(boolean doScroll) {
-		this.setRefreshingInternal(doScroll);
-		state = MANUAL_REFRESHING;
+		if (!isRefreshing()) {
+			setRefreshingInternal(doScroll);
+			state = MANUAL_REFRESHING;
+		}
 	}
 
 	public final boolean hasPullFromTop() {
@@ -658,9 +660,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	}
 
 	private void setRefreshingInternal(boolean doScroll) {
-		if (isRefreshing())
-			return;
-
 		state = REFRESHING;
 
 		switch (currentMode) {
