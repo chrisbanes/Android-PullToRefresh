@@ -171,10 +171,20 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		return isPullToRefreshEnabled;
 	}
 
+	/**
+	 * Returns whether the widget has disabled scrolling on the Refreshable View while
+	 * refreshing. 
+	 * 
+	 * @param true if the widget has disabled scrolling while refreshing
+	 */
 	public final boolean isDisableScrollingWhileRefreshing() {
 		return disableScrollingWhileRefreshing;
 	}
 
+	/**
+	 * Returns whether the Widget is currently in the Refreshing state
+	 * @return true if the Widget is currently refreshing
+	 */
 	public final boolean isRefreshing() {
 		return state == REFRESHING || state == MANUAL_REFRESHING;
 	}
