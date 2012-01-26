@@ -508,7 +508,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		}
 
 		if (doScroll) {
-			smoothScrollTo(mode == MODE_PULL_DOWN_TO_REFRESH ? -headerHeight : headerHeight);
+			smoothScrollTo(currentMode == MODE_PULL_DOWN_TO_REFRESH ? -headerHeight : headerHeight);
 		}
 	}
 
