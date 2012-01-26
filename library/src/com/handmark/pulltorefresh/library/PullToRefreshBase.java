@@ -508,7 +508,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		}
 
 		if (doScroll) {
-			smoothScrollTo(mode == MODE_PULL_DOWN_TO_REFRESH ? headerHeight : -headerHeight);
+			smoothScrollTo(mode == MODE_PULL_DOWN_TO_REFRESH ? -headerHeight : headerHeight);
 		}
 	}
 
@@ -584,14 +584,14 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		// Hide Loading Views
 		switch (mode) {
 			case MODE_BOTH:
-				setPadding(getPaddingLeft(), -headerHeight, getPaddingRight(), -headerHeight);
+				setPadding(0, -headerHeight, 0, -headerHeight);
 				break;
 			case MODE_PULL_UP_TO_REFRESH:
-				setPadding(getPaddingLeft(), getPaddingTop(), getPaddingRight(), -headerHeight);
+				setPadding(0, 0, 0, -headerHeight);
 				break;
 			case MODE_PULL_DOWN_TO_REFRESH:
 			default:
-				setPadding(getPaddingLeft(), -headerHeight, getPaddingRight(), getPaddingBottom());
+				setPadding(0, -headerHeight, 0, 0);
 				break;
 		}
 
