@@ -173,25 +173,31 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		LoadingLayout listViewLoadingLayout;
 
 		int scrollToHeight = getHeaderHeight();
+		final boolean doScroll;
 
 		switch (getCurrentMode()) {
 			case MODE_PULL_UP_TO_REFRESH:
 				originalLoadingLayout = this.getFooterLayout();
 				listViewLoadingLayout = footerLoadingView;
+				doScroll = this.isReadyForPullUp();
 				break;
 			case MODE_PULL_DOWN_TO_REFRESH:
 			default:
 				originalLoadingLayout = this.getHeaderLayout();
 				listViewLoadingLayout = headerLoadingView;
 				scrollToHeight *= -1;
+				doScroll = this.isReadyForPullDown();
 				break;
 		}
 
 		// Set our Original View to Visible
 		originalLoadingLayout.setVisibility(View.VISIBLE);
 
-		// Scroll so our View is at the same Y as the ListView header/footer
-		this.setHeaderScroll(scrollToHeight);
+		// Scroll so our View is at the same Y as the ListView header/footer,
+		// but only scroll if the ListView is at the top/bottom
+		if (doScroll) {
+			this.setHeaderScroll(scrollToHeight);
+		}
 
 		// Hide the ListView Header/Footer
 		listViewLoadingLayout.setVisibility(View.GONE);
