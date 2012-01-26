@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
@@ -38,12 +39,16 @@ public class PullToRefreshListActivity extends ListActivity {
 				new GetDataTask().execute();
 			}
 		});
+		
+		ListView actualListView = mPullRefreshListView.getRefreshableView();
 
 		mListItems = new LinkedList<String>();
 		mListItems.addAll(Arrays.asList(mStrings));
 
 		mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, mListItems);
-		setListAdapter(mAdapter);
+		
+		// You can also just use setListAdapter(mAdapter)
+		actualListView.setAdapter(mAdapter);
 	}
 
 	private class GetDataTask extends AsyncTask<Void, Void, String[]> {
