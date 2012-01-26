@@ -100,11 +100,11 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	private float lastMotionX;
 	private float lastMotionY;
 	private boolean isBeingDragged = false;
-	
+
 	private int state = PULL_TO_REFRESH;
 	private int mode = MODE_PULL_DOWN_TO_REFRESH;
 	private int currentMode;
-	
+
 	private boolean disableScrollingWhileRefreshing = true;
 
 	T refreshableView;
@@ -172,8 +172,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	}
 
 	/**
-	 * Returns whether the widget has disabled scrolling on the Refreshable View while
-	 * refreshing. 
+	 * Returns whether the widget has disabled scrolling on the Refreshable View
+	 * while refreshing.
 	 * 
 	 * @param true if the widget has disabled scrolling while refreshing
 	 */
@@ -183,6 +183,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 
 	/**
 	 * Returns whether the Widget is currently in the Refreshing state
+	 * 
 	 * @return true if the Widget is currently refreshing
 	 */
 	public final boolean isRefreshing() {
@@ -237,7 +238,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	 * @param releaseLabel
 	 *            - String to display
 	 */
-	public final void setReleaseLabel(String releaseLabel) {
+	public void setReleaseLabel(String releaseLabel) {
 		if (null != headerLayout) {
 			headerLayout.setReleaseLabel(releaseLabel);
 		}
@@ -252,7 +253,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	 * @param pullLabel
 	 *            - String to display
 	 */
-	public final void setPullLabel(String pullLabel) {
+	public void setPullLabel(String pullLabel) {
 		if (null != headerLayout) {
 			headerLayout.setPullLabel(pullLabel);
 		}
@@ -267,7 +268,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	 * @param refreshingLabel
 	 *            - String to display
 	 */
-	public final void setRefreshingLabel(String refreshingLabel) {
+	public void setRefreshingLabel(String refreshingLabel) {
 		if (null != headerLayout) {
 			headerLayout.setRefreshingLabel(refreshingLabel);
 		}
@@ -339,7 +340,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 			case MotionEvent.ACTION_UP: {
 				if (isBeingDragged) {
 					isBeingDragged = false;
-					
+
 					if (state == RELEASE_TO_REFRESH && null != onRefreshListener) {
 						setRefreshingInternal(true);
 						onRefreshListener.onRefresh();
@@ -439,7 +440,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	 * @return New instance of the Refreshable View
 	 */
 	protected abstract T createRefreshableView(Context context, AttributeSet attrs);
-	
+
 	protected final int getCurrentMode() {
 		return currentMode;
 	}
@@ -454,6 +455,10 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 
 	protected final int getHeaderHeight() {
 		return headerHeight;
+	}
+
+	protected final int getMode() {
+		return mode;
 	}
 
 	/**
@@ -491,28 +496,26 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 
 		smoothScrollTo(0);
 	}
-	
+
 	protected void setRefreshingInternal(boolean doScroll) {
 		state = REFRESHING;
 
-		switch (currentMode) {
-			case MODE_PULL_DOWN_TO_REFRESH:
-				if (doScroll)
-					smoothScrollTo(-headerHeight);
-				headerLayout.refreshing();
-				break;
-			case MODE_PULL_UP_TO_REFRESH:
-				if (doScroll)
-					smoothScrollTo(headerHeight);
-				footerLayout.refreshing();
-				break;
+		if (null != headerLayout) {
+			headerLayout.refreshing();
+		}
+		if (null != footerLayout) {
+			footerLayout.refreshing();
+		}
+
+		if (doScroll) {
+			smoothScrollTo(mode == MODE_PULL_DOWN_TO_REFRESH ? headerHeight : -headerHeight);
 		}
 	}
-	
+
 	protected final void setHeaderScroll(int y) {
 		scrollTo(0, y);
 	}
-	
+
 	protected final void smoothScrollTo(int y) {
 		if (null != currentSmoothScrollRunnable) {
 			currentSmoothScrollRunnable.stop();
@@ -672,8 +675,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 
 		return oldHeight != newHeight;
 	}
-
-	
 
 	private boolean isReadyForPull() {
 		switch (mode) {
