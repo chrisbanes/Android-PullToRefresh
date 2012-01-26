@@ -106,10 +106,15 @@ You can even set the View to enable both Pulling Up and Pulling Down using the n
 * Fix Padding being doubled when added via XML
 * New Translations
 
+### v1.2.1
+
+* Fix bug where disabling scrolling has no effect when manual refreshing (thanks Maxim Galkin)
+
 ## Acknowledgments
 
 * [Stefano Dacchille](https://github.com/stefanodacchille)
 * [Steve Lhomme](https://github.com/robUx4)
+* [Maxim Galkin](https://github.com/mgalkin)
 
 
 ## License
