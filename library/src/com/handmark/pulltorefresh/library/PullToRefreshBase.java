@@ -521,8 +521,10 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 			currentSmoothScrollRunnable.stop();
 		}
 
-		this.currentSmoothScrollRunnable = new SmoothScrollRunnable(handler, getScrollY(), y);
-		handler.post(currentSmoothScrollRunnable);
+		if (this.getScrollY() != y) {
+			this.currentSmoothScrollRunnable = new SmoothScrollRunnable(handler, getScrollY(), y);
+			handler.post(currentSmoothScrollRunnable);
+		}
 	}
 
 	private void init(Context context, AttributeSet attrs) {
