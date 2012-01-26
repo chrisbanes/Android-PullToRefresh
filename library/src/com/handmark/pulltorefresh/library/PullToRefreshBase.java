@@ -309,7 +309,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 			return false;
 		}
 
-		if (state == REFRESHING && disableScrollingWhileRefreshing) {
+		if (isRefreshing() && disableScrollingWhileRefreshing) {
 			return true;
 		}
 
@@ -363,7 +363,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 			return false;
 		}
 
-		if (state == REFRESHING && disableScrollingWhileRefreshing) {
+		if (isRefreshing() && disableScrollingWhileRefreshing) {
 			return true;
 		}
 
