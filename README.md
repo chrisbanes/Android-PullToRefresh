@@ -100,6 +100,7 @@ You can even set the View to enable both Pulling Up and Pulling Down using the n
 ### v1.2
 
 * New (better) way of handling Touch Events
+* Add new way for PullToRefreshListView to work. Allows the user to scroll while it's refreshing.
 * Fix Pull from Bottom happening when the view wasn't completely at the bottom
 * Allow outside code to update the Widget to be refreshing (see `setRefreshing()`)
 * Fix Padding being doubled when added via XML
