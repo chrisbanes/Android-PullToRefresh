@@ -94,6 +94,17 @@ You can even set the View to enable both Pulling Up and Pulling Down using the n
     ptr:mode="both" />
 ```
 
+
+## Changelog
+
+### v1.2
+
+* New (better) way of handling Touch Events
+* Fix Pull from Bottom happening when the view wasn't completely at the bottom
+* Allow outside code to update the Widget to be refreshing (see `setRefreshing()`)
+* Fix Padding being doubled when added via XML
+* New Translations
+
 ## Acknowledgments
 
 * [Stefano Dacchille](https://github.com/stefanodacchille)
