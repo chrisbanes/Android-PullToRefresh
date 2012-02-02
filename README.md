@@ -94,10 +94,27 @@ You can even set the View to enable both Pulling Up and Pulling Down using the n
     ptr:mode="both" />
 ```
 
+
+## Changelog
+
+### v1.2
+
+* New (better) way of handling Touch Events
+* Add new way for PullToRefreshListView to work. Allows the user to scroll while it's refreshing.
+* Fix Pull from Bottom happening when the view wasn't completely at the bottom
+* Allow outside code to update the Widget to be refreshing (see `setRefreshing()`)
+* Fix Padding being doubled when added via XML
+* New Translations
+
+### v1.2.1
+
+* Fix bug where disabling scrolling has no effect when manual refreshing (thanks Maxim Galkin)
+
 ## Acknowledgments
 
 * [Stefano Dacchille](https://github.com/stefanodacchille)
 * [Steve Lhomme](https://github.com/robUx4)
+* [Maxim Galkin](https://github.com/mgalkin)
 
 
 ## License

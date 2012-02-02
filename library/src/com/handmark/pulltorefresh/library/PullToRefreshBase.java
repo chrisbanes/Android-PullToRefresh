@@ -100,11 +100,11 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	private float lastMotionX;
 	private float lastMotionY;
 	private boolean isBeingDragged = false;
-	private boolean hackDownSent = false;
 
 	private int state = PULL_TO_REFRESH;
 	private int mode = MODE_PULL_DOWN_TO_REFRESH;
 	private int currentMode;
+
 	private boolean disableScrollingWhileRefreshing = true;
 
 	T refreshableView;
@@ -171,10 +171,21 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		return isPullToRefreshEnabled;
 	}
 
+	/**
+	 * Returns whether the widget has disabled scrolling on the Refreshable View
+	 * while refreshing.
+	 * 
+	 * @param true if the widget has disabled scrolling while refreshing
+	 */
 	public final boolean isDisableScrollingWhileRefreshing() {
 		return disableScrollingWhileRefreshing;
 	}
 
+	/**
+	 * Returns whether the Widget is currently in the Refreshing state
+	 * 
+	 * @return true if the Widget is currently refreshing
+	 */
 	public final boolean isRefreshing() {
 		return state == REFRESHING || state == MANUAL_REFRESHING;
 	}
@@ -227,7 +238,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	 * @param releaseLabel
 	 *            - String to display
 	 */
-	public final void setReleaseLabel(String releaseLabel) {
+	public void setReleaseLabel(String releaseLabel) {
 		if (null != headerLayout) {
 			headerLayout.setReleaseLabel(releaseLabel);
 		}
@@ -242,7 +253,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	 * @param pullLabel
 	 *            - String to display
 	 */
-	public final void setPullLabel(String pullLabel) {
+	public void setPullLabel(String pullLabel) {
 		if (null != headerLayout) {
 			headerLayout.setPullLabel(pullLabel);
 		}
@@ -257,7 +268,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	 * @param refreshingLabel
 	 *            - String to display
 	 */
-	public final void setRefreshingLabel(String refreshingLabel) {
+	public void setRefreshingLabel(String refreshingLabel) {
 		if (null != headerLayout) {
 			headerLayout.setRefreshingLabel(refreshingLabel);
 		}
@@ -278,8 +289,10 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	 *            - true if you want to force a scroll to the Refreshing view.
 	 */
 	public final void setRefreshing(boolean doScroll) {
-		this.setRefreshingInternal(doScroll);
-		state = MANUAL_REFRESHING;
+		if (!isRefreshing()) {
+			setRefreshingInternal(doScroll);
+			state = MANUAL_REFRESHING;
+		}
 	}
 
 	public final boolean hasPullFromTop() {
@@ -296,7 +309,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 			return false;
 		}
 
-		if (state == REFRESHING && disableScrollingWhileRefreshing) {
+		if (isRefreshing() && disableScrollingWhileRefreshing) {
 			return true;
 		}
 
@@ -309,33 +322,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 			case MotionEvent.ACTION_MOVE: {
 				if (isBeingDragged) {
 					lastMotionY = event.getY();
-
-					/**
-					 * If we can't handle the ACTION_MOVE ourselves then
-					 * dispatch it to the RefreshableView. This allows
-					 * continuous scrolling
-					 */
-					if (!this.pullEvent()) {
-
-						// Most events need a down before ACTION_MOVE events
-						// work so send a hacked one
-						if (!hackDownSent) {
-							MotionEvent hackDownEvent = MotionEvent.obtain(event);
-							hackDownEvent.setAction(MotionEvent.ACTION_DOWN);
-							refreshableView.dispatchTouchEvent(hackDownEvent);
-							hackDownSent = true;
-						}
-
-						// Dispatch original ACTION_MOVE to RefreshableView
-						refreshableView.dispatchTouchEvent(event);
-
-					} else if (hackDownSent) {
-						// Send a ACTION_UP event just for completeness
-						hackDownSent = false;
-						MotionEvent hackUpEvent = MotionEvent.obtain(event);
-						hackUpEvent.setAction(MotionEvent.ACTION_UP);
-						refreshableView.dispatchTouchEvent(hackUpEvent);
-					}
+					this.pullEvent();
 					return true;
 				}
 				break;
@@ -353,7 +340,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 			case MotionEvent.ACTION_UP: {
 				if (isBeingDragged) {
 					isBeingDragged = false;
-					hackDownSent = false;
+
 					if (state == RELEASE_TO_REFRESH && null != onRefreshListener) {
 						setRefreshingInternal(true);
 						onRefreshListener.onRefresh();
@@ -376,7 +363,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 			return false;
 		}
 
-		if (state == REFRESHING && disableScrollingWhileRefreshing) {
+		if (isRefreshing() && disableScrollingWhileRefreshing) {
 			return true;
 		}
 
@@ -454,6 +441,26 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	 */
 	protected abstract T createRefreshableView(Context context, AttributeSet attrs);
 
+	protected final int getCurrentMode() {
+		return currentMode;
+	}
+
+	protected final LoadingLayout getFooterLayout() {
+		return footerLayout;
+	}
+
+	protected final LoadingLayout getHeaderLayout() {
+		return headerLayout;
+	}
+
+	protected final int getHeaderHeight() {
+		return headerHeight;
+	}
+
+	protected final int getMode() {
+		return mode;
+	}
+
 	/**
 	 * Implemented by derived class to return whether the View is in a state
 	 * where the user can Pull to Refresh by scrolling down.
@@ -476,7 +483,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	// Methods
 	// ===========================================================
 
-	protected final void resetHeader() {
+	protected void resetHeader() {
 		state = PULL_TO_REFRESH;
 		isBeingDragged = false;
 
@@ -488,6 +495,36 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		}
 
 		smoothScrollTo(0);
+	}
+
+	protected void setRefreshingInternal(boolean doScroll) {
+		state = REFRESHING;
+
+		if (null != headerLayout) {
+			headerLayout.refreshing();
+		}
+		if (null != footerLayout) {
+			footerLayout.refreshing();
+		}
+
+		if (doScroll) {
+			smoothScrollTo(currentMode == MODE_PULL_DOWN_TO_REFRESH ? -headerHeight : headerHeight);
+		}
+	}
+
+	protected final void setHeaderScroll(int y) {
+		scrollTo(0, y);
+	}
+
+	protected final void smoothScrollTo(int y) {
+		if (null != currentSmoothScrollRunnable) {
+			currentSmoothScrollRunnable.stop();
+		}
+
+		if (this.getScrollY() != y) {
+			this.currentSmoothScrollRunnable = new SmoothScrollRunnable(handler, getScrollY(), y);
+			handler.post(currentSmoothScrollRunnable);
+		}
 	}
 
 	private void init(Context context, AttributeSet attrs) {
@@ -549,14 +586,14 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		// Hide Loading Views
 		switch (mode) {
 			case MODE_BOTH:
-				setPadding(getPaddingLeft(), -headerHeight, getPaddingRight(), -headerHeight);
+				setPadding(0, -headerHeight, 0, -headerHeight);
 				break;
 			case MODE_PULL_UP_TO_REFRESH:
-				setPadding(getPaddingLeft(), getPaddingTop(), getPaddingRight(), -headerHeight);
+				setPadding(0, 0, 0, -headerHeight);
 				break;
 			case MODE_PULL_DOWN_TO_REFRESH:
 			default:
-				setPadding(getPaddingLeft(), -headerHeight, getPaddingRight(), getPaddingBottom());
+				setPadding(0, -headerHeight, 0, 0);
 				break;
 		}
 
@@ -641,10 +678,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		return oldHeight != newHeight;
 	}
 
-	private void setHeaderScroll(int y) {
-		scrollTo(0, y);
-	}
-
 	private boolean isReadyForPull() {
 		switch (mode) {
 			case MODE_PULL_DOWN_TO_REFRESH:
@@ -655,35 +688,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 				return isReadyForPullUp() || isReadyForPullDown();
 		}
 		return false;
-	}
-
-	private void setRefreshingInternal(boolean doScroll) {
-		if (isRefreshing())
-			return;
-
-		state = REFRESHING;
-
-		switch (currentMode) {
-			case MODE_PULL_DOWN_TO_REFRESH:
-				if (doScroll)
-					smoothScrollTo(-headerHeight);
-				headerLayout.refreshing();
-				break;
-			case MODE_PULL_UP_TO_REFRESH:
-				if (doScroll)
-					smoothScrollTo(headerHeight);
-				footerLayout.refreshing();
-				break;
-		}
-	}
-
-	private void smoothScrollTo(int y) {
-		if (null != currentSmoothScrollRunnable) {
-			currentSmoothScrollRunnable.stop();
-		}
-
-		this.currentSmoothScrollRunnable = new SmoothScrollRunnable(handler, getScrollY(), y);
-		handler.post(currentSmoothScrollRunnable);
 	}
 
 	// ===========================================================
