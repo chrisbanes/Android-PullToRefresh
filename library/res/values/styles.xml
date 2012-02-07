@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="SectionTextViewStyle" parent="@android:style/Widget.TextView">
+        <item name="android:paddingLeft">?sectionListView.sectionTextViewPaddingLeft</item>
+        <item name="android:paddingTop">?sectionListView.sectionTextViewPaddingTop</item>
+        <item name="android:paddingBottom">?sectionListView.sectionTextViewPaddingTop</item>
+        <item name="android:textColor">?sectionListView.sectionTextViewTextColor</item>
+        <item name="android:textSize">?sectionListView.sectionTextViewTextSize</item>
+    </style>
+
+    <style name="SectionItemStyle">
+        <item name="android:padding">?sectionListView.sectionItemPadding</item>
+        <item name="android:background">?sectionListView.sectionItemBackground</item>
+    </style>
+
+</resources>

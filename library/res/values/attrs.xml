@@ -2,14 +2,26 @@
 <resources>
 
     <declare-styleable name="PullToRefresh">
-        <attr name="adapterViewBackground" format="reference|color" />
-        <attr name="headerBackground" format="reference|color" />
-        <attr name="headerTextColor" format="color" />
+        <attr format="reference|color" name="adapterViewBackground" />
+        <attr format="reference|color" name="headerBackground" />
+        <attr format="color" name="headerTextColor" />
         <attr name="mode">
             <flag name="pullDownFromTop" value="0x1" />
             <flag name="pullUpFromBottom" value="0x2" />
             <flag name="both" value="0x3" />
         </attr>
     </declare-styleable>
+
+    <attr format="dimension" name="sectionListView.sectionTextViewPaddingLeft" />
+    <attr format="dimension" name="sectionListView.sectionTextViewPaddingTop" />
+    <attr format="color" name="sectionListView.sectionTextViewTextColor" />
+    <attr format="dimension" name="sectionListView.sectionTextViewTextSize" />
+    <attr format="dimension" name="sectionListView.sectionItemPadding" />
+    <attr format="color|reference" name="sectionListView.sectionItemBackground" />
+    <attr format="dimension" name="sectionListView.listTextViewPadding" />
+    <attr format="color" name="sectionListView.listTextViewTextColor" />
+    <attr format="dimension" name="sectionListView.listTextViewTextSize" />
+    <attr format="dimension" name="sectionListView.listItemPadding" />
+    <attr format="color|reference" name="sectionListView.listItemBackground" />
 
 </resources>
