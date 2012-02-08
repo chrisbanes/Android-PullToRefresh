@@ -129,7 +129,6 @@ public class SectionListAdapter extends BaseAdapter implements ListAdapter, OnIt
     }
 
     private View getSectionView(final View convertView, final String section) {
-        Log.d("TAG", "section = " + section);
         View theView = convertView;
         if (theView == null) {
             theView = createNewSectionView();

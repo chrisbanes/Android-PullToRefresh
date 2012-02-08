@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="60dp"
+    android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:paddingBottom="6dp"
     android:paddingLeft="10dp"
@@ -29,5 +29,11 @@
         android:text="Text Row"
         android:paddingLeft="10dp"
         android:textStyle="bold" />
+    
+    <DatePicker
+                        android:id="@+id/birthday_input"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content" />
+    
 
 </LinearLayout>

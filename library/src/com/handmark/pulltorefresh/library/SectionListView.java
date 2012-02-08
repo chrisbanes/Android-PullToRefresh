@@ -80,13 +80,6 @@ public class SectionListView extends ListView implements EmptyViewMethodAccessor
     public void onScroll(final AbsListView view, final int firstVisibleItem, final int visibleItemCount,
             final int totalItemCount) {
         
-        Log.d("TAG", "The firstVisibleItem = " + firstVisibleItem);
-        Log.d("TAG", "The visibleItemCount = " + visibleItemCount);
-        Log.d("TAG", "The totalItemCount = " + totalItemCount);
-        Log.d("TAG", "The getAdapter() = " + getAdapter());
-        
-        
-        
         if (firstVisibleItem > 0) {
             if (transparentView != null) {
                 this.transparentView.setVisibility(View.VISIBLE);

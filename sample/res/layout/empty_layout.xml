@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" android:background="@drawable/table_continuation">
+
+    <Button
+        android:id="@+id/list_empty_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|center"
+        android:layout_marginTop="6.0dip"
+        android:onClick="onRefresh"
+        android:text="EMpty"
+        android:visibility="gone" />
+
+    
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="18dp"
+        android:gravity="top|center" android:layout_gravity="top|center" >
+
+        <ProgressBar
+            android:id="@+id/list_empty_progress"
+            style="?android:attr/progressBarStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:indeterminate="true" />
+
+        <TextView
+            android:id="@+id/progress_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/solid_black"
+            android:textSize="12sp"
+            android:paddingLeft="6dp"
+            android:text="Loading..."
+            android:gravity="center_vertical"
+            android:layout_gravity="center_vertical"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+</FrameLayout>
