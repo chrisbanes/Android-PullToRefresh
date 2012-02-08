@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="active_label_color">#ff000000</color>
+    <color name="remmeber_me_color">#80a2b2</color>
+    <color name="login_bottom_title_color">#77cae5</color>
+    <color name="normal_label_color">#ff525252</color>
+    
+    <color name="solid_white">#ffffffff</color>
+    <color name="solid_black">#ff000000</color>
+    <color name="soft_black">#ff333333</color>
+    <color name="clear">#00000000</color>
+    <color name="primary_text">#ff424242</color>
+    <color name="secondary_text">#ff999999</color>
+    <color name="title_shadow_color">#929292</color>
+    <color name="link_color">#ff2477b3</color>
+    <color name="section_shadow_color">#ff888888</color>
+    <color name="action_bar">#fff8f8f8</color>
+    <color name="action_bar_pressed">#ffd0d0d0</color>
+    <color name="button_text_disabled">#ffaaaaaa</color>
+    <color name="image_overlay">#22000000</color>
+    <color name="bg_list">#ffe4e4e4</color>
+    <color name="translucent_black">#9a000000</color>
+    <color name="list_divider_color">#ffececec</color>
+    <color name="bg_pressed">#ff45a3e5</color>
+    <color name="bg_focused">#fff8f8f8</color>
+    <color name="signup_error">#ffff0000</color>
+
+    <color name="enrollement_header_text_color">#ffbefbff</color>
+    <color name="signup_bg_color">#ffC4EDFF</color>
+    <color name="custom_selected_text_color">#ff2076A5</color>
+    <color name="instruction_text_color">#ff5388A5</color>
+    
+    <color name="kTealBarButtonFontColorPressed">#ff6CC9D8</color>
+    <color name="kTealBarButtonFontColorInactive">#ff439CCA</color>
+    <color name="kTooltipCopyFontColor">#ffC4EDFF</color>
+    <color name="darkGrayColor">#ff545454</color>
+    <color name="lightGrayColor">#ffa8a8a8</color>
+    <color name="grayColor">#ff888888</color>
+    <color name="redColor">#ffff0000</color>
+    <color name="customGrayColor">#ff232323</color>
+    <color name="customYellowColor">#fffcef57</color>
+    <color name="customOrangeTextColor">#fff77800</color>
+    <color name="customGrayTextColor">#ff353535</color>
+    
+    <color name="edit_background_color">#ffc4edff</color>
+</resources>

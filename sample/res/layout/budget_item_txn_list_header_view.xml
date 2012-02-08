@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="60dp"
+    android:background="@color/customGrayColor"
+    android:gravity="center|left"
+    android:orientation="vertical"
+    android:paddingBottom="6dp"
+    android:paddingLeft="10dp"
+    android:paddingTop="6dp" >
+
+    <TextView
+        android:id="@+id/budget_item_spent_amount"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|left"
+        android:gravity="center|left"
+        android:text="120"
+        android:textColor="@color/customYellowColor"
+        android:textSize="12sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/budget_item_spent_msg"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center|left"
+        android:gravity="center|left"
+        android:textColor="@color/solid_white"
+        android:textSize="24sp"
+        android:text="You can spend this month"
+        android:textStyle="bold" />
+
+</LinearLayout>

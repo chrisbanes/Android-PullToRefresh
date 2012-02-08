@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="SampleTheme" parent="@android:style/Theme.Light.NoTitleBar">
+        <item name="sectionListView.sectionTextViewPaddingLeft">10dip</item>
+        <item name="sectionListView.sectionTextViewPaddingTop">3dip</item>
+        <item name="sectionListView.sectionTextViewTextColor">@android:color/white</item>
+        <item name="sectionListView.sectionTextViewTextSize">12dip</item>
+        
+        <item name="sectionListView.sectionItemPadding">2dip</item>
+        <item name="sectionListView.sectionItemBackground">@drawable/list_header_bg</item>
+        
+        <item name="sectionListView.listTextViewPadding">2dip</item>
+        <item name="sectionListView.listTextViewTextColor">@android:color/white</item>
+        <item name="sectionListView.listTextViewTextSize">22dip</item>
+        
+        <item name="sectionListView.listItemPadding">6dip</item>
+        <item name="sectionListView.listItemBackground">@android:color/white</item>
+    </style>
+
+</resources>
