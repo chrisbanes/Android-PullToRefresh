@@ -36,6 +36,10 @@ public class PullToRefreshGridView extends PullToRefreshAdapterViewBase<GridView
 		super(context);
 	}
 
+	public PullToRefreshGridView(Context context, int mode) {
+		super(context, mode);
+	}
+
 	public PullToRefreshGridView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 	}
@@ -51,6 +55,6 @@ public class PullToRefreshGridView extends PullToRefreshAdapterViewBase<GridView
 
 	@Override
 	public ContextMenuInfo getContextMenuInfo() {
-		return ((InternalGridView)getRefreshableView()).getContextMenuInfo();
+		return ((InternalGridView) getRefreshableView()).getContextMenuInfo();
 	}
 }

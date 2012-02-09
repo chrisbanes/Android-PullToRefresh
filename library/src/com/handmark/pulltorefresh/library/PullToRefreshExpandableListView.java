@@ -35,6 +35,10 @@ public class PullToRefreshExpandableListView extends PullToRefreshAdapterViewBas
 		super(context);
 	}
 
+	public PullToRefreshExpandableListView(Context context, int mode) {
+		super(context, mode);
+	}
+
 	public PullToRefreshExpandableListView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 	}
@@ -50,6 +54,6 @@ public class PullToRefreshExpandableListView extends PullToRefreshAdapterViewBas
 
 	@Override
 	public ContextMenuInfo getContextMenuInfo() {
-		return ((InternalExpandableListView)getRefreshableView()).getContextMenuInfo();
+		return ((InternalExpandableListView) getRefreshableView()).getContextMenuInfo();
 	}
 }
