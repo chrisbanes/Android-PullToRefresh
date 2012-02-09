@@ -113,6 +113,11 @@ I will gladly accept pull requests for fixes and feature enhancements but please
 
 * Fix bug where disabling scrolling has no effect when manual refreshing (thanks Maxim Galkin)
 
+### v1.2.2
+
+* String Updates (thanks to Steve Lhomme)
+* Add Missing Constructor (thanks to mcxiaoke)
+
 ## Acknowledgments
 
 * [Stefano Dacchille](https://github.com/stefanodacchille)
