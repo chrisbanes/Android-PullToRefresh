@@ -125,12 +125,17 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	// ===========================================================
 
 	public PullToRefreshBase(Context context) {
-		this(context, null);
+//		this(context, null);
+		super(context);
+		init(context);
 	}
 
 	public PullToRefreshBase(Context context, int mode) {
-		this(context);
+//		this(context);
+//		this.mode = mode;
+		super(context);
 		this.mode = mode;
+		init(context);
 	}
 
 	public PullToRefreshBase(Context context, AttributeSet attrs) {
@@ -524,6 +529,60 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		if (this.getScrollY() != y) {
 			this.currentSmoothScrollRunnable = new SmoothScrollRunnable(handler, getScrollY(), y);
 			handler.post(currentSmoothScrollRunnable);
+		}
+	}
+	
+	private void init(Context context) {
+
+		setOrientation(LinearLayout.VERTICAL);
+
+		touchSlop = ViewConfiguration.getTouchSlop();
+
+		// Refreshable View
+		// By passing the attrs, we can add ListView/GridView params via XML
+		refreshableView = this.createRefreshableView(context, null);
+		this.addRefreshableView(context, refreshableView);
+
+		// Loading View Strings
+		String pullLabel = context.getString(R.string.pull_to_refresh_pull_label);
+		String refreshingLabel = context.getString(R.string.pull_to_refresh_refreshing_label);
+		String releaseLabel = context.getString(R.string.pull_to_refresh_release_label);
+
+		// Add Loading Views
+		if (mode == MODE_PULL_DOWN_TO_REFRESH || mode == MODE_BOTH) {
+			headerLayout = new LoadingLayout(context, MODE_PULL_DOWN_TO_REFRESH, releaseLabel, pullLabel,
+					refreshingLabel);
+			addView(headerLayout, 0, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,
+					ViewGroup.LayoutParams.WRAP_CONTENT));
+			measureView(headerLayout);
+			headerHeight = headerLayout.getMeasuredHeight();
+		}
+		if (mode == MODE_PULL_UP_TO_REFRESH || mode == MODE_BOTH) {
+			footerLayout = new LoadingLayout(context, MODE_PULL_UP_TO_REFRESH, releaseLabel, pullLabel, refreshingLabel);
+			addView(footerLayout, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,
+					ViewGroup.LayoutParams.WRAP_CONTENT));
+			measureView(footerLayout);
+			headerHeight = footerLayout.getMeasuredHeight();
+		}
+
+		// Hide Loading Views
+		switch (mode) {
+			case MODE_BOTH:
+				setPadding(0, -headerHeight, 0, -headerHeight);
+				break;
+			case MODE_PULL_UP_TO_REFRESH:
+				setPadding(0, 0, 0, -headerHeight);
+				break;
+			case MODE_PULL_DOWN_TO_REFRESH:
+			default:
+				setPadding(0, -headerHeight, 0, 0);
+				break;
+		}
+
+		// If we're not using MODE_BOTH, then just set currentMode to current
+		// mode
+		if (mode != MODE_BOTH) {
+			currentMode = mode;
 		}
 	}
 

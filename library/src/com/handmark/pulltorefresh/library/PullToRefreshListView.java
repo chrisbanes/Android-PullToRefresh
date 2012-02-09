@@ -40,6 +40,11 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		super(context);
 		this.setDisableScrollingWhileRefreshing(false);
 	}
+	
+	public PullToRefreshListView(Context context, int mode) {
+		super(context, mode);
+		this.setDisableScrollingWhileRefreshing(false);
+	}
 
 	public PullToRefreshListView(Context context, AttributeSet attrs) {
 		super(context, attrs);
