@@ -108,7 +108,7 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 			frame.addView(headerLoadingView, FrameLayout.LayoutParams.FILL_PARENT,
 					FrameLayout.LayoutParams.WRAP_CONTENT);
 			headerLoadingView.setVisibility(View.GONE);
-			lv.addHeaderView(frame);
+			lv.addHeaderView(frame, null, false);
 		}
 		if (mode == MODE_PULL_UP_TO_REFRESH || mode == MODE_BOTH) {
 			FrameLayout frame = new FrameLayout(context);
@@ -117,7 +117,7 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 			frame.addView(footerLoadingView, FrameLayout.LayoutParams.FILL_PARENT,
 					FrameLayout.LayoutParams.WRAP_CONTENT);
 			footerLoadingView.setVisibility(View.GONE);
-			lv.addFooterView(frame);
+			lv.addFooterView(frame, null, false);
 		}
 
 		// Set it to this so it can be used in ListActivity/ListFragment
