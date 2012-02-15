@@ -11,7 +11,7 @@ public class PullToRefreshWebView extends PullToRefreshBase<WebView> {
 
 		@Override
 		public void onRefresh() {
-			refreshableView.reload();
+			mRefreshableView.reload();
 		}
 
 	};
@@ -34,7 +34,7 @@ public class PullToRefreshWebView extends PullToRefreshBase<WebView> {
 		 * Added so that by default, Pull-to-Refresh refreshes the page
 		 */
 		setOnRefreshListener(defaultOnRefreshListener);
-		refreshableView.setWebChromeClient(defaultWebChromeClient);
+		mRefreshableView.setWebChromeClient(defaultWebChromeClient);
 	}
 
 	public PullToRefreshWebView(Context context, int mode) {
@@ -44,7 +44,7 @@ public class PullToRefreshWebView extends PullToRefreshBase<WebView> {
 		 * Added so that by default, Pull-to-Refresh refreshes the page
 		 */
 		setOnRefreshListener(defaultOnRefreshListener);
-		refreshableView.setWebChromeClient(defaultWebChromeClient);
+		mRefreshableView.setWebChromeClient(defaultWebChromeClient);
 	}
 
 	public PullToRefreshWebView(Context context, AttributeSet attrs) {
@@ -54,7 +54,7 @@ public class PullToRefreshWebView extends PullToRefreshBase<WebView> {
 		 * Added so that by default, Pull-to-Refresh refreshes the page
 		 */
 		setOnRefreshListener(defaultOnRefreshListener);
-		refreshableView.setWebChromeClient(defaultWebChromeClient);
+		mRefreshableView.setWebChromeClient(defaultWebChromeClient);
 	}
 
 	@Override
@@ -67,11 +67,11 @@ public class PullToRefreshWebView extends PullToRefreshBase<WebView> {
 
 	@Override
 	protected boolean isReadyForPullDown() {
-		return refreshableView.getScrollY() == 0;
+		return mRefreshableView.getScrollY() == 0;
 	}
 
 	@Override
 	protected boolean isReadyForPullUp() {
-		return refreshableView.getScrollY() >= (refreshableView.getContentHeight() - refreshableView.getHeight());
+		return mRefreshableView.getScrollY() >= (mRefreshableView.getContentHeight() - mRefreshableView.getHeight());
 	}
 }

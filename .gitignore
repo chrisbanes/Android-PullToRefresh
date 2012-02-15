@@ -12,13 +12,12 @@ gen
 *.iml
 *.ipr
 *.iws
+out
 
 #Maven
 target
 release.properties
 pom.xml.*
-
-website/_site
 
 #Ant
 build.xml
