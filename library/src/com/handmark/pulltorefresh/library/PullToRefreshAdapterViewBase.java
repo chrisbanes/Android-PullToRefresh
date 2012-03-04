@@ -84,6 +84,9 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 		}
 
 		if (null != newEmptyView) {
+			// New view needs to be clickable so that Android recognizes it as a target for Touch Events
+			newEmptyView.setClickable(true);
+			
 			ViewParent newEmptyViewParent = newEmptyView.getParent();
 			if (null != newEmptyViewParent && newEmptyViewParent instanceof ViewGroup) {
 				((ViewGroup) newEmptyViewParent).removeView(newEmptyView);
@@ -91,12 +94,12 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 
             mRefreshableViewHolder.addView(newEmptyView, ViewGroup.LayoutParams.FILL_PARENT,
                     ViewGroup.LayoutParams.FILL_PARENT);
-		}
-
-		if (mRefreshableView instanceof EmptyViewMethodAccessor) {
-			((EmptyViewMethodAccessor) mRefreshableView).setEmptyViewInternal(newEmptyView);
-		} else {
-			mRefreshableView.setEmptyView(newEmptyView);
+            
+            if (mRefreshableView instanceof EmptyViewMethodAccessor) {
+    			((EmptyViewMethodAccessor) mRefreshableView).setEmptyViewInternal(newEmptyView);
+    		} else {
+    			mRefreshableView.setEmptyView(newEmptyView);
+    		}
 		}
 	}
 
