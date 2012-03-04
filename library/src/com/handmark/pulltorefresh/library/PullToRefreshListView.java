@@ -14,7 +14,7 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 
 	private LoadingLayout mHeaderLoadingView;
 	private LoadingLayout mFooterLoadingView;
-	
+
 	private FrameLayout mLvFooterLoadingFrame;
 	private boolean mAddedLvFooter = false;
 
@@ -23,7 +23,7 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		public InternalListView(Context context, AttributeSet attrs) {
 			super(context, attrs);
 		}
-		
+
 		@Override
 		public void setAdapter(ListAdapter adapter) {
 			// Add the Footer View at the last possible moment
@@ -31,7 +31,7 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 				addFooterView(mLvFooterLoadingFrame, null, false);
 				mAddedLvFooter = true;
 			}
-			
+
 			super.setAdapter(adapter);
 		}
 
@@ -54,7 +54,7 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		super(context);
 		setDisableScrollingWhileRefreshing(false);
 	}
-	
+
 	public PullToRefreshListView(Context context, int mode) {
 		super(context, mode);
 		setDisableScrollingWhileRefreshing(false);
@@ -93,7 +93,7 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 	}
 
 	public void setRefreshingLabel(String refreshingLabel) {
-        super.setRefreshingLabel(refreshingLabel);
+		super.setRefreshingLabel(refreshingLabel);
 
 		if (null != mHeaderLoadingView) {
 			mHeaderLoadingView.setRefreshingLabel(refreshingLabel);
@@ -118,18 +118,18 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		if (mode == MODE_PULL_DOWN_TO_REFRESH || mode == MODE_BOTH) {
 			FrameLayout frame = new FrameLayout(context);
 			mHeaderLoadingView = new LoadingLayout(context, MODE_PULL_DOWN_TO_REFRESH, releaseLabel, pullLabel,
-					refreshingLabel);
+			        refreshingLabel);
 			frame.addView(mHeaderLoadingView, FrameLayout.LayoutParams.FILL_PARENT,
-					FrameLayout.LayoutParams.WRAP_CONTENT);
+			        FrameLayout.LayoutParams.WRAP_CONTENT);
 			mHeaderLoadingView.setVisibility(View.GONE);
 			lv.addHeaderView(frame, null, false);
 		}
 		if (mode == MODE_PULL_UP_TO_REFRESH || mode == MODE_BOTH) {
 			mLvFooterLoadingFrame = new FrameLayout(context);
 			mFooterLoadingView = new LoadingLayout(context, MODE_PULL_UP_TO_REFRESH, releaseLabel, pullLabel,
-					refreshingLabel);
+			        refreshingLabel);
 			mLvFooterLoadingFrame.addView(mFooterLoadingView, FrameLayout.LayoutParams.FILL_PARENT,
-					FrameLayout.LayoutParams.WRAP_CONTENT);
+			        FrameLayout.LayoutParams.WRAP_CONTENT);
 			mFooterLoadingView.setVisibility(View.GONE);
 		}
 
@@ -140,6 +140,15 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 
 	@Override
 	protected void setRefreshingInternal(boolean doScroll) {
+
+		// If we're empty, then the header/footer views won't show so we use the
+		// normal method
+		ListAdapter adapter = mRefreshableView.getAdapter();
+		if (null == adapter || adapter.isEmpty()) {
+			super.setRefreshingInternal(doScroll);
+			return;
+		}
+
 		super.setRefreshingInternal(false);
 
 		final LoadingLayout originalLoadingLayout, listViewLoadingLayout;
@@ -187,6 +196,14 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 	@Override
 	protected void resetHeader() {
 
+		// If we're empty, then the header/footer views won't show so we use the
+		// normal method
+		ListAdapter adapter = mRefreshableView.getAdapter();
+		if (null == adapter || adapter.isEmpty()) {
+			super.resetHeader();
+			return;
+		}
+
 		LoadingLayout originalLoadingLayout;
 		LoadingLayout listViewLoadingLayout;
 
@@ -221,6 +238,14 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		listViewLoadingLayout.setVisibility(View.GONE);
 
 		super.resetHeader();
+	}
+
+	protected int getNumberInternalHeaderViews() {
+		return null != mHeaderLoadingView ? 1 : 0;
+	}
+
+	protected int getNumberInternalFooterViews() {
+		return null != mFooterLoadingView ? 1 : 0;
 	}
 
 }

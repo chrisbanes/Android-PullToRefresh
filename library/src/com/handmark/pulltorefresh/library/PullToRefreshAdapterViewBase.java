@@ -53,12 +53,12 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 		}
 
 		if (null != mOnScrollListener) {
-            mOnScrollListener.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
+			mOnScrollListener.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
 		}
 	}
 
 	public final void onScrollStateChanged(final AbsListView view, final int scrollState) {
-        if (null != mOnScrollListener) {
+		if (null != mOnScrollListener) {
 			mOnScrollListener.onScrollStateChanged(view, scrollState);
 		}
 	}
@@ -80,26 +80,27 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 	public final void setEmptyView(View newEmptyView) {
 		// If we already have an Empty View, remove it
 		if (null != mEmptyView) {
-            mRefreshableViewHolder.removeView(mEmptyView);
+			mRefreshableViewHolder.removeView(mEmptyView);
 		}
 
 		if (null != newEmptyView) {
-			// New view needs to be clickable so that Android recognizes it as a target for Touch Events
+			// New view needs to be clickable so that Android recognizes it as a
+			// target for Touch Events
 			newEmptyView.setClickable(true);
-			
+
 			ViewParent newEmptyViewParent = newEmptyView.getParent();
 			if (null != newEmptyViewParent && newEmptyViewParent instanceof ViewGroup) {
 				((ViewGroup) newEmptyViewParent).removeView(newEmptyView);
-            }
+			}
 
-            mRefreshableViewHolder.addView(newEmptyView, ViewGroup.LayoutParams.FILL_PARENT,
-                    ViewGroup.LayoutParams.FILL_PARENT);
-            
-            if (mRefreshableView instanceof EmptyViewMethodAccessor) {
-    			((EmptyViewMethodAccessor) mRefreshableView).setEmptyViewInternal(newEmptyView);
-    		} else {
-    			mRefreshableView.setEmptyView(newEmptyView);
-    		}
+			mRefreshableViewHolder.addView(newEmptyView, ViewGroup.LayoutParams.FILL_PARENT,
+					ViewGroup.LayoutParams.FILL_PARENT);
+
+			if (mRefreshableView instanceof EmptyViewMethodAccessor) {
+				((EmptyViewMethodAccessor) mRefreshableView).setEmptyViewInternal(newEmptyView);
+			} else {
+				mRefreshableView.setEmptyView(newEmptyView);
+			}
 		}
 	}
 
@@ -112,9 +113,9 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 	}
 
 	protected void addRefreshableView(Context context, T refreshableView) {
-        mRefreshableViewHolder = new FrameLayout(context);
-        mRefreshableViewHolder.addView(refreshableView, ViewGroup.LayoutParams.FILL_PARENT,
-                ViewGroup.LayoutParams.FILL_PARENT);
+		mRefreshableViewHolder = new FrameLayout(context);
+		mRefreshableViewHolder.addView(refreshableView, ViewGroup.LayoutParams.FILL_PARENT,
+				ViewGroup.LayoutParams.FILL_PARENT);
 		addView(mRefreshableViewHolder, new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, 0, 1.0f));
 	};
 
@@ -127,27 +128,27 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 	}
 
 	private boolean isFirstItemVisible() {
-		if (this.mRefreshableView.getCount() == 0) {
+		if (mRefreshableView.getCount() == getNumberInternalViews()) {
 			return true;
 		} else if (mRefreshableView.getFirstVisiblePosition() == 0) {
-			
+
 			final View firstVisibleChild = mRefreshableView.getChildAt(0);
-			
+
 			if (firstVisibleChild != null) {
 				return firstVisibleChild.getTop() >= mRefreshableView.getTop();
 			}
 		}
-		
+
 		return false;
 	}
 
 	private boolean isLastItemVisible() {
-		final int count = this.mRefreshableView.getCount();
+		final int count = mRefreshableView.getCount();
 		final int lastVisiblePosition = mRefreshableView.getLastVisiblePosition();
 
-		if (count == 0) {
+		if (count == getNumberInternalViews()) {
 			return true;
-		} else if (lastVisiblePosition == count - 1) {
+		} else if (lastVisiblePosition == (count - 1 - getNumberInternalFooterViews())) {
 
 			final int childIndex = lastVisiblePosition - mRefreshableView.getFirstVisiblePosition();
 			final View lastVisibleChild = mRefreshableView.getChildAt(childIndex);
@@ -156,7 +157,31 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 				return lastVisibleChild.getBottom() <= mRefreshableView.getBottom();
 			}
 		}
-		
+
 		return false;
+	}
+
+	protected int getNumberInternalViews() {
+		return getNumberInternalHeaderViews() + getNumberInternalFooterViews();
+	}
+
+	/**
+	 * Returns the number of Adapter View Header Views. This will always return
+	 * 0 for non-ListView views.
+	 * 
+	 * @return 0 for non-ListView views, possibly 1 for ListView
+	 */
+	protected int getNumberInternalHeaderViews() {
+		return 0;
+	}
+
+	/**
+	 * Returns the number of Adapter View Footer Views. This will always return
+	 * 0 for non-ListView views.
+	 * 
+	 * @return 0 for non-ListView views, possibly 1 for ListView
+	 */
+	protected int getNumberInternalFooterViews() {
+		return 0;
 	}
 }

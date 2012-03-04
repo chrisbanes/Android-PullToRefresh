@@ -125,6 +125,10 @@ I will gladly accept pull requests for fixes and feature enhancements but please
 * Fix not being able to Pull when the Empty View is show (#40)
 * Add Japanese Translations (thanks to nagoya0)
 
+#### 1.2.3.1
+
+* Properly fix not being able to Pull when the Empty View is show (#40)
+
 ## Acknowledgments
 
 * [Stefano Dacchille](https://github.com/stefanodacchille)
