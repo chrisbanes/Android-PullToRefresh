@@ -118,6 +118,13 @@ I will gladly accept pull requests for fixes and feature enhancements but please
 * String Updates (thanks to Steve Lhomme)
 * Add Missing Constructor (thanks to mcxiaoke)
 
+### v1.2.3
+
+* Fix Header View's being selectable (can cause FCs)
+* Force ListView Footer to be the last visible item (#41)
+* Fix not being able to Pull when the Empty View is show (#40)
+* Add Japanese Translations (thanks to nagoya0)
+
 ## Acknowledgments
 
 * [Stefano Dacchille](https://github.com/stefanodacchille)
