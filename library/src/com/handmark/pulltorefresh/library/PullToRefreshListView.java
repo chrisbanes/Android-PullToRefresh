@@ -5,6 +5,7 @@ import android.util.AttributeSet;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import com.handmark.pulltorefresh.library.internal.EmptyViewMethodAccessor;
 import com.handmark.pulltorefresh.library.internal.LoadingLayout;
@@ -13,11 +14,25 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 
 	private LoadingLayout mHeaderLoadingView;
 	private LoadingLayout mFooterLoadingView;
+	
+	private FrameLayout mLvFooterLoadingFrame;
+	private boolean mAddedLvFooter = false;
 
 	class InternalListView extends ListView implements EmptyViewMethodAccessor {
 
 		public InternalListView(Context context, AttributeSet attrs) {
 			super(context, attrs);
+		}
+		
+		@Override
+		public void setAdapter(ListAdapter adapter) {
+			// Add the Footer View at the last possible moment
+			if (!mAddedLvFooter && null != mLvFooterLoadingFrame) {
+				addFooterView(mLvFooterLoadingFrame, null, false);
+				mAddedLvFooter = true;
+			}
+			
+			super.setAdapter(adapter);
 		}
 
 		@Override
@@ -110,13 +125,12 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 			lv.addHeaderView(frame, null, false);
 		}
 		if (mode == MODE_PULL_UP_TO_REFRESH || mode == MODE_BOTH) {
-			FrameLayout frame = new FrameLayout(context);
+			mLvFooterLoadingFrame = new FrameLayout(context);
 			mFooterLoadingView = new LoadingLayout(context, MODE_PULL_UP_TO_REFRESH, releaseLabel, pullLabel,
 					refreshingLabel);
-			frame.addView(mFooterLoadingView, FrameLayout.LayoutParams.FILL_PARENT,
+			mLvFooterLoadingFrame.addView(mFooterLoadingView, FrameLayout.LayoutParams.FILL_PARENT,
 					FrameLayout.LayoutParams.WRAP_CONTENT);
 			mFooterLoadingView.setVisibility(View.GONE);
-			lv.addFooterView(frame, null, false);
 		}
 
 		// Set it to this so it can be used in ListActivity/ListFragment
