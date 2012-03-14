@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.LinearLayout;
+
 import com.handmark.pulltorefresh.library.internal.LoadingLayout;
 
 public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
@@ -77,6 +78,9 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	// ===========================================================
 	// Constants
 	// ===========================================================
+
+    static final boolean DEBUG = false;
+    static final String LOG_TAG = "PullToRefresh";
 
 	static final float FRICTION = 2.0f;
 
@@ -159,7 +163,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	 * 
 	 * @return The View which is currently wrapped
 	 */
-	public final T getRefreshableView() {
+	public final T getRefreshableView() {		
 		return mRefreshableView;
 	}
 
@@ -553,14 +557,14 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		// Add Loading Views
 		if (mMode == MODE_PULL_DOWN_TO_REFRESH || mMode == MODE_BOTH) {
             mHeaderLayout = new LoadingLayout(context, MODE_PULL_DOWN_TO_REFRESH, releaseLabel, pullLabel,
-					refreshingLabel);
+					refreshingLabel, a);
 			addView(mHeaderLayout, 0, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,
 					ViewGroup.LayoutParams.WRAP_CONTENT));
 			measureView(mHeaderLayout);
 			mHeaderHeight = mHeaderLayout.getMeasuredHeight();
 		}
 		if (mMode == MODE_PULL_UP_TO_REFRESH || mMode == MODE_BOTH) {
-            mFooterLayout = new LoadingLayout(context, MODE_PULL_UP_TO_REFRESH, releaseLabel, pullLabel, refreshingLabel);
+            mFooterLayout = new LoadingLayout(context, MODE_PULL_UP_TO_REFRESH, releaseLabel, pullLabel, refreshingLabel, a);
 			addView(mFooterLayout, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,
 					ViewGroup.LayoutParams.WRAP_CONTENT));
 			measureView(mFooterLayout);
@@ -568,15 +572,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		}
 
 		// Styleables from XML
-        if (a.hasValue(R.styleable.PullToRefresh_headerTextColor)) {
-			final int color = a.getColor(R.styleable.PullToRefresh_headerTextColor, Color.BLACK);
-			if (null != mHeaderLayout) {
-				mHeaderLayout.setTextColor(color);
-			}
-			if (null != mFooterLayout) {
-				mFooterLayout.setTextColor(color);
-			}
-		}
 		if (a.hasValue(R.styleable.PullToRefresh_headerBackground)) {
 			setBackgroundResource(a.getResourceId(R.styleable.PullToRefresh_headerBackground, Color.WHITE));
 		}
@@ -585,6 +580,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 					Color.WHITE));
 		}
 		a.recycle();
+		a = null;
 
 		// Hide Loading Views
 		switch (mMode) {
