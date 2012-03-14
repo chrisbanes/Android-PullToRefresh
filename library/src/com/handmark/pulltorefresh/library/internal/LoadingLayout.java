@@ -1,6 +1,8 @@
 package com.handmark.pulltorefresh.library.internal;
 
 import android.content.Context;
+import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +14,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.R;
 
@@ -29,7 +32,8 @@ public class LoadingLayout extends FrameLayout {
 
 	private final Animation mRotateAnimation, mResetRotateAnimation;
 
-	public LoadingLayout(Context context, final int mode, String releaseLabel, String pullLabel, String refreshingLabel) {
+	public LoadingLayout(Context context, final int mode, String releaseLabel, String pullLabel,
+			String refreshingLabel, TypedArray attrs) {
 		super(context);
 		ViewGroup header = (ViewGroup) LayoutInflater.from(context).inflate(R.layout.pull_to_refresh_header, this);
 		mHeaderText = (TextView) header.findViewById(R.id.pull_to_refresh_text);
@@ -38,13 +42,13 @@ public class LoadingLayout extends FrameLayout {
 
 		final Interpolator interpolator = new LinearInterpolator();
 		mRotateAnimation = new RotateAnimation(0, -180, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
-                0.5f);
-        mRotateAnimation.setInterpolator(interpolator);
+				0.5f);
+		mRotateAnimation.setInterpolator(interpolator);
 		mRotateAnimation.setDuration(DEFAULT_ROTATION_ANIMATION_DURATION);
 		mRotateAnimation.setFillAfter(true);
 
 		mResetRotateAnimation = new RotateAnimation(-180, 0, Animation.RELATIVE_TO_SELF, 0.5f,
-		        Animation.RELATIVE_TO_SELF, 0.5f);
+				Animation.RELATIVE_TO_SELF, 0.5f);
 		mResetRotateAnimation.setInterpolator(interpolator);
 		mResetRotateAnimation.setDuration(DEFAULT_ROTATION_ANIMATION_DURATION);
 		mResetRotateAnimation.setFillAfter(true);
@@ -55,24 +59,29 @@ public class LoadingLayout extends FrameLayout {
 
 		switch (mode) {
 			case PullToRefreshBase.MODE_PULL_UP_TO_REFRESH:
-                mHeaderImage.setImageResource(R.drawable.pulltorefresh_up_arrow);
+				mHeaderImage.setImageResource(R.drawable.pulltorefresh_up_arrow);
 				break;
 			case PullToRefreshBase.MODE_PULL_DOWN_TO_REFRESH:
-            default:
-                mHeaderImage.setImageResource(R.drawable.pulltorefresh_down_arrow);
+			default:
+				mHeaderImage.setImageResource(R.drawable.pulltorefresh_down_arrow);
 				break;
+		}
+
+		if (attrs.hasValue(R.styleable.PullToRefresh_headerTextColor)) {
+			final int color = attrs.getColor(R.styleable.PullToRefresh_headerTextColor, Color.BLACK);
+			setTextColor(color);
 		}
 	}
 
 	public void reset() {
-        mHeaderText.setText(mPullLabel);
+		mHeaderText.setText(mPullLabel);
 		mHeaderImage.setVisibility(View.VISIBLE);
 		mHeaderProgress.setVisibility(View.GONE);
 	}
 
 	public void releaseToRefresh() {
-        mHeaderText.setText(mReleaseLabel);
-        mHeaderImage.clearAnimation();
+		mHeaderText.setText(mReleaseLabel);
+		mHeaderImage.clearAnimation();
 		mHeaderImage.startAnimation(mRotateAnimation);
 	}
 
@@ -81,7 +90,7 @@ public class LoadingLayout extends FrameLayout {
 	}
 
 	public void refreshing() {
-        mHeaderText.setText(mRefreshingLabel);
+		mHeaderText.setText(mRefreshingLabel);
 		mHeaderImage.clearAnimation();
 		mHeaderImage.setVisibility(View.INVISIBLE);
 		mHeaderProgress.setVisibility(View.VISIBLE);
@@ -92,16 +101,16 @@ public class LoadingLayout extends FrameLayout {
 	}
 
 	public void setReleaseLabel(String releaseLabel) {
-	    mReleaseLabel = releaseLabel;
-    }
+		mReleaseLabel = releaseLabel;
+	}
 
-    public void pullToRefresh() {
+	public void pullToRefresh() {
 		mHeaderText.setText(mPullLabel);
 		mHeaderImage.clearAnimation();
 		mHeaderImage.startAnimation(mResetRotateAnimation);
-    }
+	}
 
-    public void setTextColor(int color) {
+	public void setTextColor(int color) {
 		mHeaderText.setTextColor(color);
 	}
 

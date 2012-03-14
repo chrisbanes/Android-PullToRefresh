@@ -1,6 +1,7 @@
 package com.handmark.pulltorefresh.library;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View;
@@ -114,11 +115,14 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		String refreshingLabel = context.getString(R.string.pull_to_refresh_refreshing_label);
 		String releaseLabel = context.getString(R.string.pull_to_refresh_release_label);
 
+		// Get Styles from attrs
+		TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.PullToRefresh);
+		
 		// Add Loading Views
 		if (mode == MODE_PULL_DOWN_TO_REFRESH || mode == MODE_BOTH) {
 			FrameLayout frame = new FrameLayout(context);
 			mHeaderLoadingView = new LoadingLayout(context, MODE_PULL_DOWN_TO_REFRESH, releaseLabel, pullLabel,
-			        refreshingLabel);
+			        refreshingLabel, a);
 			frame.addView(mHeaderLoadingView, FrameLayout.LayoutParams.FILL_PARENT,
 			        FrameLayout.LayoutParams.WRAP_CONTENT);
 			mHeaderLoadingView.setVisibility(View.GONE);
@@ -127,11 +131,13 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		if (mode == MODE_PULL_UP_TO_REFRESH || mode == MODE_BOTH) {
 			mLvFooterLoadingFrame = new FrameLayout(context);
 			mFooterLoadingView = new LoadingLayout(context, MODE_PULL_UP_TO_REFRESH, releaseLabel, pullLabel,
-			        refreshingLabel);
+			        refreshingLabel, a);
 			mLvFooterLoadingFrame.addView(mFooterLoadingView, FrameLayout.LayoutParams.FILL_PARENT,
 			        FrameLayout.LayoutParams.WRAP_CONTENT);
 			mFooterLoadingView.setVisibility(View.GONE);
 		}
+		
+		a.recycle();
 
 		// Set it to this so it can be used in ListActivity/ListFragment
 		lv.setId(android.R.id.list);
