@@ -2,6 +2,7 @@ package com.handmark.pulltorefresh.library;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View;
 import android.view.ViewGroup;
@@ -128,7 +129,7 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 	}
 
 	private boolean isFirstItemVisible() {
-		if (mRefreshableView.getCount() == getNumberInternalViews()) {
+		if (mRefreshableView.getCount() <= getNumberInternalViews()) {
 			return true;
 		} else if (mRefreshableView.getFirstVisiblePosition() == 0) {
 
@@ -145,10 +146,14 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 	private boolean isLastItemVisible() {
 		final int count = mRefreshableView.getCount();
 		final int lastVisiblePosition = mRefreshableView.getLastVisiblePosition();
+		
+		if (DEBUG) {
+			Log.d(LOG_TAG, "isLastItemVisible. Count: " + count + " Last Visible Pos: " + lastVisiblePosition);
+		}
 
-		if (count == getNumberInternalViews()) {
+		if (count <= getNumberInternalViews()) {
 			return true;
-		} else if (lastVisiblePosition == (count - getNumberInternalFooterViews())) {
+		} else if (lastVisiblePosition == count - 1) {
 
 			final int childIndex = lastVisiblePosition - mRefreshableView.getFirstVisiblePosition();
 			final View lastVisibleChild = mRefreshableView.getChildAt(childIndex);
