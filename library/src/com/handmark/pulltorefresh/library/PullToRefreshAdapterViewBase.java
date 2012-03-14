@@ -148,7 +148,7 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 
 		if (count == getNumberInternalViews()) {
 			return true;
-		} else if (lastVisiblePosition == (count - 1 - getNumberInternalFooterViews())) {
+		} else if (lastVisiblePosition == (count - getNumberInternalFooterViews())) {
 
 			final int childIndex = lastVisiblePosition - mRefreshableView.getFirstVisiblePosition();
 			final View lastVisibleChild = mRefreshableView.getChildAt(childIndex);
