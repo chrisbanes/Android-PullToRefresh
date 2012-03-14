@@ -42,8 +42,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		public void run() {
 
 			/**
-			 * Only set mStartTime if this is the first time we're starting, else
-			 * actually calculate the Y delta
+			 * Only set mStartTime if this is the first time we're starting,
+			 * else actually calculate the Y delta
 			 */
 			if (mStartTime == -1) {
 				mStartTime = System.currentTimeMillis();
@@ -58,20 +58,20 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 				normalizedTime = Math.max(Math.min(normalizedTime, 1000), 0);
 
 				final int deltaY = Math.round((mScrollFromY - mScrollToY)
-                        * mInterpolator.getInterpolation(normalizedTime / 1000f));
+						* mInterpolator.getInterpolation(normalizedTime / 1000f));
 				mCurrentY = mScrollFromY - deltaY;
 				setHeaderScroll(mCurrentY);
 			}
 
 			// If we're not at the target Y, keep going...
 			if (mContinueRunning && mScrollToY != mCurrentY) {
-                mHandler.postDelayed(this, ANIMATION_FPS);
+				mHandler.postDelayed(this, ANIMATION_FPS);
 			}
 		}
 
 		public void stop() {
 			mContinueRunning = false;
-            mHandler.removeCallbacks(this);
+			mHandler.removeCallbacks(this);
 		}
 	}
 
@@ -79,8 +79,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	// Constants
 	// ===========================================================
 
-    static final boolean DEBUG = false;
-    static final String LOG_TAG = "PullToRefresh";
+	static final boolean DEBUG = false;
+	static final String LOG_TAG = "PullToRefresh";
 
 	static final float FRICTION = 2.0f;
 
@@ -120,6 +120,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	private final Handler mHandler = new Handler();
 
 	private OnRefreshListener mOnRefreshListener;
+	private OnRefreshListener2 mOnRefreshListener2;
 
 	private SmoothScrollRunnable mCurrentSmoothScrollRunnable;
 
@@ -163,7 +164,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	 * 
 	 * @return The View which is currently wrapped
 	 */
-	public final T getRefreshableView() {		
+	public final T getRefreshableView() {
 		return mRefreshableView;
 	}
 
@@ -227,6 +228,16 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	}
 
 	/**
+	 * Set OnRefreshListener for the Widget
+	 * 
+	 * @param listener
+	 *            - Listener to be used when the Widget is set to Refresh
+	 */
+	public final void setOnRefreshListener(OnRefreshListener2 listener) {
+		mOnRefreshListener2 = listener;
+	}
+
+	/**
 	 * A mutator to enable/disable Pull-to-Refresh for the current View
 	 * 
 	 * @param enable
@@ -245,10 +256,10 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	 */
 	public void setReleaseLabel(String releaseLabel) {
 		if (null != mHeaderLayout) {
-            mHeaderLayout.setReleaseLabel(releaseLabel);
+			mHeaderLayout.setReleaseLabel(releaseLabel);
 		}
 		if (null != mFooterLayout) {
-            mFooterLayout.setReleaseLabel(releaseLabel);
+			mFooterLayout.setReleaseLabel(releaseLabel);
 		}
 	}
 
@@ -259,10 +270,10 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	 *            - String to display
 	 */
 	public void setPullLabel(String pullLabel) {
-        if (null != mHeaderLayout) {
+		if (null != mHeaderLayout) {
 			mHeaderLayout.setPullLabel(pullLabel);
-        }
-        if (null != mFooterLayout) {
+		}
+		if (null != mFooterLayout) {
 			mFooterLayout.setPullLabel(pullLabel);
 		}
 	}
@@ -276,7 +287,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	public void setRefreshingLabel(String refreshingLabel) {
 		if (null != mHeaderLayout) {
 			mHeaderLayout.setRefreshingLabel(refreshingLabel);
-        }
+		}
 		if (null != mFooterLayout) {
 			mFooterLayout.setRefreshingLabel(refreshingLabel);
 		}
@@ -346,12 +357,27 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 				if (mIsBeingDragged) {
 					mIsBeingDragged = false;
 
-					if (mState == RELEASE_TO_REFRESH && null != mOnRefreshListener) {
-                        setRefreshingInternal(true);
-						mOnRefreshListener.onRefresh();
-					} else {
-						smoothScrollTo(0);
+					if (mState == RELEASE_TO_REFRESH) {
+
+						if (null != mOnRefreshListener) {
+							setRefreshingInternal(true);
+							mOnRefreshListener.onRefresh();
+							return true;
+
+						} else if (null != mOnRefreshListener2) {
+							setRefreshingInternal(true);
+							if (mCurrentMode == MODE_PULL_DOWN_TO_REFRESH) {
+								mOnRefreshListener2.onPullDownToRefresh();
+							} else if (mCurrentMode == MODE_PULL_UP_TO_REFRESH) {
+								mOnRefreshListener2.onPullUpToRefresh();
+							}
+							return true;
+						}
+
+						return true;
 					}
+
+					smoothScrollTo(0);
 					return true;
 				}
 				break;
@@ -437,7 +463,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	 * Be sure to set the ID of the view in this method, especially if you're
 	 * using a ListActivity or ListFragment.
 	 * 
-	 * @param context Context to create view with
+	 * @param context
+	 *            Context to create view with
 	 * @param attrs
 	 *            AttributeSet from wrapped class. Means that anything you
 	 *            include in the XML layout declaration will be routed to the
@@ -470,8 +497,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	 * Implemented by derived class to return whether the View is in a mState
 	 * where the user can Pull to Refresh by scrolling down.
 	 * 
-	 * @return true if the View is currently the correct mState (for example, top
-	 *         of a ListView)
+	 * @return true if the View is currently the correct mState (for example,
+	 *         top of a ListView)
 	 */
 	protected abstract boolean isReadyForPullDown();
 
@@ -500,10 +527,10 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		}
 
 		smoothScrollTo(0);
-    }
+	}
 
 	protected void setRefreshingInternal(boolean doScroll) {
-        mState = REFRESHING;
+		mState = REFRESHING;
 
 		if (null != mHeaderLayout) {
 			mHeaderLayout.refreshing();
@@ -522,13 +549,13 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	}
 
 	protected final void smoothScrollTo(int y) {
-        if (null != mCurrentSmoothScrollRunnable) {
+		if (null != mCurrentSmoothScrollRunnable) {
 			mCurrentSmoothScrollRunnable.stop();
 		}
 
 		if (getScrollY() != y) {
 			mCurrentSmoothScrollRunnable = new SmoothScrollRunnable(mHandler, getScrollY(), y);
-            mHandler.post(mCurrentSmoothScrollRunnable);
+			mHandler.post(mCurrentSmoothScrollRunnable);
 		}
 	}
 
@@ -556,7 +583,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 
 		// Add Loading Views
 		if (mMode == MODE_PULL_DOWN_TO_REFRESH || mMode == MODE_BOTH) {
-            mHeaderLayout = new LoadingLayout(context, MODE_PULL_DOWN_TO_REFRESH, releaseLabel, pullLabel,
+			mHeaderLayout = new LoadingLayout(context, MODE_PULL_DOWN_TO_REFRESH, releaseLabel, pullLabel,
 					refreshingLabel, a);
 			addView(mHeaderLayout, 0, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,
 					ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -564,7 +591,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 			mHeaderHeight = mHeaderLayout.getMeasuredHeight();
 		}
 		if (mMode == MODE_PULL_UP_TO_REFRESH || mMode == MODE_BOTH) {
-            mFooterLayout = new LoadingLayout(context, MODE_PULL_UP_TO_REFRESH, releaseLabel, pullLabel, refreshingLabel, a);
+			mFooterLayout = new LoadingLayout(context, MODE_PULL_UP_TO_REFRESH, releaseLabel, pullLabel,
+					refreshingLabel, a);
 			addView(mFooterLayout, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,
 					ViewGroup.LayoutParams.WRAP_CONTENT));
 			measureView(mFooterLayout);
@@ -643,7 +671,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 
 		setHeaderScroll(newHeight);
 
-        if (newHeight != 0) {
+		if (newHeight != 0) {
 			if (mState == PULL_TO_REFRESH && mHeaderHeight < Math.abs(newHeight)) {
 				mState = RELEASE_TO_REFRESH;
 
@@ -693,9 +721,41 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	// Inner and Anonymous Classes
 	// ===========================================================
 
+	/**
+	 * Simple Listener to listen for any callbacks to Refresh.
+	 * 
+	 * @author Chris Banes
+	 */
 	public static interface OnRefreshListener {
 
+		/**
+		 * onRefresh will be called for both Pull Down from top, and Pull Up
+		 * from Bottom
+		 */
 		public void onRefresh();
+
+	}
+
+	/**
+	 * An advanced version of the Listener to listen for callbacks to Refresh.
+	 * This listener is different as it allows you to differentiate between Pull
+	 * Ups, and Pull Downs.
+	 * 
+	 * @author Chris Banes
+	 */
+	public static interface OnRefreshListener2 {
+
+		/**
+		 * onPullDownToRefresh will be called only when the user has Pulled Down
+		 * from the top, and released.
+		 */
+		public void onPullDownToRefresh();
+
+		/**
+		 * onPullUpToRefresh will be called only when the user has Pulled Up
+		 * from the bottom, and released.
+		 */
+		public void onPullUpToRefresh();
 
 	}
 
