@@ -61,7 +61,6 @@ private class GetDataTask extends AsyncTask<Void, Void, String[]> {
     ...
     @Override
     protected void onPostExecute(String[] result) {
-        mListItems.addFirst("Added after refresh...");
         // Call onRefreshComplete when the list has been refreshed.
         pullToRefreshView.onRefreshComplete();
         super.onPostExecute(result);
@@ -128,6 +127,12 @@ I will gladly accept pull requests for fixes and feature enhancements but please
 #### 1.2.3.1
 
 * Properly fix not being able to Pull when the Empty View is show (#40)
+
+### 1.2.4
+
+* Fix bug where Pulling Up stopped working with ListView (#43)
+* Fix bug where the Header/Footer's wouldn't be styled correctly on ListView (#42)
+* Add new Listener, OnRefreshListener2 which allows you to listen for Pull Up/Downs seperately.
 
 ## Acknowledgments
 
