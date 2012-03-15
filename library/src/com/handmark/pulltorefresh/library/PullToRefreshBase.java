@@ -600,11 +600,11 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		}
 
 		// Styleables from XML
-		if (a.hasValue(R.styleable.PullToRefresh_headerBackground)) {
-			setBackgroundResource(a.getResourceId(R.styleable.PullToRefresh_headerBackground, Color.WHITE));
+		if (a.hasValue(R.styleable.PullToRefresh_ptr_headerBackground)) {
+			setBackgroundResource(a.getResourceId(R.styleable.PullToRefresh_ptr_headerBackground, Color.WHITE));
 		}
-		if (a.hasValue(R.styleable.PullToRefresh_adapterViewBackground)) {
-			mRefreshableView.setBackgroundResource(a.getResourceId(R.styleable.PullToRefresh_adapterViewBackground,
+		if (a.hasValue(R.styleable.PullToRefresh_ptr_adapterViewBackground)) {
+			mRefreshableView.setBackgroundResource(a.getResourceId(R.styleable.PullToRefresh_ptr_adapterViewBackground,
 					Color.WHITE));
 		}
 		a.recycle();

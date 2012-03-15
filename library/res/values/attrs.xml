@@ -2,9 +2,9 @@
 <resources>
 
     <declare-styleable name="PullToRefresh">
-        <attr name="adapterViewBackground" format="reference|color" />
-        <attr name="headerBackground" format="reference|color" />
-        <attr name="headerTextColor" format="color" />
+        <attr name="ptr_adapterViewBackground" format="reference|color" />
+        <attr name="ptr_headerBackground" format="reference|color" />
+        <attr name="ptr_headerTextColor" format="color" />
         <attr name="mode">
             <flag name="pullDownFromTop" value="0x1" />
             <flag name="pullUpFromBottom" value="0x2" />
