@@ -293,15 +293,12 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		}
 	}
 
-	/**
-	 * Default version of setRefreshing method, with doScroll set to true
-	 */
 	public final void setRefreshing() {
 		setRefreshing(true);
 	}
 
 	/**
-	 * Sets the Widget to be in the refresh state manually. The UI will be updated to
+	 * Sets the Widget to be in the refresh mState. The UI will be updated to
 	 * show the 'Refreshing' view.
 	 * 
 	 * @param doScroll
