@@ -67,8 +67,8 @@ public class LoadingLayout extends FrameLayout {
 				break;
 		}
 
-		if (attrs.hasValue(R.styleable.PullToRefresh_headerTextColor)) {
-			final int color = attrs.getColor(R.styleable.PullToRefresh_headerTextColor, Color.BLACK);
+		if (attrs.hasValue(R.styleable.PullToRefresh_ptrHeaderTextColor)) {
+			final int color = attrs.getColor(R.styleable.PullToRefresh_ptrHeaderTextColor, Color.BLACK);
 			setTextColor(color);
 		}
 	}

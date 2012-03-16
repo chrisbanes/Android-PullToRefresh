@@ -11,9 +11,9 @@
         android:id="@+id/pull_refresh_expandable_list"
         android:layout_height="fill_parent"
         android:layout_width="fill_parent"
-        ptr:adapterViewBackground="@android:color/white"
-        ptr:headerBackground="@android:color/darker_gray"
-        ptr:headerTextColor="@android:color/white"
-        ptr:mode="pullUpFromBottom" />
+        ptr:ptrAdapterViewBackground="@android:color/white"
+        ptr:ptrHeaderBackground="@android:color/darker_gray"
+        ptr:ptrHeaderTextColor="@android:color/white"
+        ptr:ptrMode="pullUpFromBottom" />
 
 </LinearLayout>
