@@ -11,6 +11,6 @@
         android:id="@+id/pull_refresh_webview"
         android:layout_height="fill_parent"
         android:layout_width="fill_parent"
-        ptr:mode="both" />
+        ptr:ptrMode="both" />
 
 </LinearLayout>

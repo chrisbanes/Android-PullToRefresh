@@ -16,6 +16,6 @@
         android:columnWidth="100dp"
         android:stretchMode="columnWidth"
         android:gravity="fill"
-        ptr:mode="both" />
+        ptr:ptrMode="both" />
 
 </LinearLayout>
