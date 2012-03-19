@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+
 import com.handmark.pulltorefresh.library.internal.EmptyViewMethodAccessor;
 import com.handmark.pulltorefresh.library.internal.LoadingLayout;
 
@@ -117,26 +118,26 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 
 		// Get Styles from attrs
 		TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.PullToRefresh);
-		
+
 		// Add Loading Views
 		if (mode == MODE_PULL_DOWN_TO_REFRESH || mode == MODE_BOTH) {
 			FrameLayout frame = new FrameLayout(context);
 			mHeaderLoadingView = new LoadingLayout(context, MODE_PULL_DOWN_TO_REFRESH, releaseLabel, pullLabel,
-			        refreshingLabel, a);
+					refreshingLabel, a);
 			frame.addView(mHeaderLoadingView, FrameLayout.LayoutParams.FILL_PARENT,
-			        FrameLayout.LayoutParams.WRAP_CONTENT);
+					FrameLayout.LayoutParams.WRAP_CONTENT);
 			mHeaderLoadingView.setVisibility(View.GONE);
 			lv.addHeaderView(frame, null, false);
 		}
 		if (mode == MODE_PULL_UP_TO_REFRESH || mode == MODE_BOTH) {
 			mLvFooterLoadingFrame = new FrameLayout(context);
 			mFooterLoadingView = new LoadingLayout(context, MODE_PULL_UP_TO_REFRESH, releaseLabel, pullLabel,
-			        refreshingLabel, a);
+					refreshingLabel, a);
 			mLvFooterLoadingFrame.addView(mFooterLoadingView, FrameLayout.LayoutParams.FILL_PARENT,
-			        FrameLayout.LayoutParams.WRAP_CONTENT);
+					FrameLayout.LayoutParams.WRAP_CONTENT);
 			mFooterLoadingView.setVisibility(View.GONE);
 		}
-		
+
 		a.recycle();
 
 		// Set it to this so it can be used in ListActivity/ListFragment
@@ -214,20 +215,21 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		LoadingLayout listViewLoadingLayout;
 
 		int scrollToHeight = getHeaderHeight();
-		final boolean doScroll;
+		int selection;
 
 		switch (getCurrentMode()) {
 			case MODE_PULL_UP_TO_REFRESH:
 				originalLoadingLayout = getFooterLayout();
 				listViewLoadingLayout = mFooterLoadingView;
-				doScroll = isReadyForPullUp();
+
+				selection = mRefreshableView.getCount() - 1;
 				break;
 			case MODE_PULL_DOWN_TO_REFRESH:
 			default:
 				originalLoadingLayout = getHeaderLayout();
 				listViewLoadingLayout = mHeaderLoadingView;
 				scrollToHeight *= -1;
-				doScroll = isReadyForPullDown();
+				selection = 0;
 				break;
 		}
 
@@ -235,8 +237,9 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		originalLoadingLayout.setVisibility(View.VISIBLE);
 
 		// Scroll so our View is at the same Y as the ListView header/footer,
-		// but only scroll if the ListView is at the top/bottom
-		if (doScroll) {
+		// but only scroll if we've pulled to refresh
+		if (getState() != MANUAL_REFRESHING) {
+			mRefreshableView.setSelection(selection);
 			setHeaderScroll(scrollToHeight);
 		}
 

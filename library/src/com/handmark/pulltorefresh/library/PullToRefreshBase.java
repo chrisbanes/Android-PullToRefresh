@@ -507,6 +507,10 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	protected final int getHeaderHeight() {
 		return mHeaderHeight;
 	}
+	
+	protected final int getState() {
+		return mState;
+	}
 
 	/**
 	 * Implemented by derived class to return whether the View is in a mState
