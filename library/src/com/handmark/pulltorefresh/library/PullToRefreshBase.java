@@ -178,6 +178,29 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	}
 
 	/**
+	 * Get the mode that this view is currently in. This is only really useful
+	 * when using <code>MODE_BOTH</code>.
+	 * 
+	 * @return int of either <code>MODE_PULL_DOWN_TO_REFRESH</code> or
+	 *         <code>MODE_PULL_UP_TO_REFRESH</code>
+	 */
+	public final int getCurrentMode() {
+		return mCurrentMode;
+	}
+
+	/**
+	 * Get the mode that this view has been set to. If this returns
+	 * <code>MODE_BOTH</code>, you can use <code>getCurrentMode()</code> to
+	 * check which mode the view is currently in
+	 * 
+	 * @return int of either <code>MODE_PULL_DOWN_TO_REFRESH</code>,
+	 *         <code>MODE_PULL_UP_TO_REFRESH</code> or <code>MODE_BOTH</code>
+	 */
+	public final int getMode() {
+		return mMode;
+	}
+
+	/**
 	 * Returns whether the widget has disabled scrolling on the Refreshable View
 	 * while refreshing.
 	 * 
@@ -473,10 +496,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	 */
 	protected abstract T createRefreshableView(Context context, AttributeSet attrs);
 
-	protected final int getCurrentMode() {
-		return mCurrentMode;
-	}
-
 	protected final LoadingLayout getFooterLayout() {
 		return mFooterLayout;
 	}
@@ -487,10 +506,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 
 	protected final int getHeaderHeight() {
 		return mHeaderHeight;
-	}
-
-	protected final int getMode() {
-		return mMode;
 	}
 
 	/**
