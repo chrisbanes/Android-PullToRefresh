@@ -3,7 +3,9 @@ package com.handmark.pulltorefresh.library;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -92,6 +94,12 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	public static final int MODE_PULL_DOWN_TO_REFRESH = 0x1;
 	public static final int MODE_PULL_UP_TO_REFRESH = 0x2;
 	public static final int MODE_BOTH = 0x3;
+
+	static final String STATE_STATE = "ptr_state";
+	static final String STATE_MODE = "ptr_mode";
+	static final String STATE_CURRENT_MODE = "ptr_current_mode";
+	static final String STATE_DISABLE_SCROLLING_REFRESHING = "ptr_disable_scrolling";
+	static final String STATE_SUPER = "ptr_super";
 
 	// ===========================================================
 	// Fields
@@ -507,7 +515,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	protected final int getHeaderHeight() {
 		return mHeaderHeight;
 	}
-	
+
 	protected final int getState() {
 		return mState;
 	}
@@ -529,6 +537,40 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	 *         bottom of a ListView)
 	 */
 	protected abstract boolean isReadyForPullUp();
+
+	@Override
+	protected Parcelable onSaveInstanceState() {
+		Bundle bundle = new Bundle();
+		bundle.putInt(STATE_STATE, mState);
+		bundle.putInt(STATE_MODE, mMode);
+		bundle.putInt(STATE_CURRENT_MODE, mCurrentMode);
+		bundle.putBoolean(STATE_DISABLE_SCROLLING_REFRESHING, mDisableScrollingWhileRefreshing);
+		bundle.putParcelable(STATE_SUPER, super.onSaveInstanceState());
+		return bundle;
+	}
+
+	@Override
+	protected void onRestoreInstanceState(Parcelable state) {
+		if (state instanceof Bundle) {
+			Bundle bundle = (Bundle) state;
+			
+			final int viewState = bundle.getInt(STATE_STATE);
+			mMode = bundle.getInt(STATE_MODE);
+			mCurrentMode = bundle.getInt(STATE_CURRENT_MODE);
+			mDisableScrollingWhileRefreshing = bundle.getBoolean(STATE_DISABLE_SCROLLING_REFRESHING);
+
+			// Let super Restore Itself
+			super.onRestoreInstanceState(bundle.getParcelable(STATE_SUPER));
+
+			if (viewState == REFRESHING) {
+				setRefreshingInternal(true);
+				mState = viewState;
+			}
+			return;
+		}
+
+		super.onRestoreInstanceState(state);
+	}
 
 	// ===========================================================
 	// Methods
