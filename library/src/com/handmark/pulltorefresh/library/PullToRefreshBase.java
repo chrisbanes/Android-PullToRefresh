@@ -339,6 +339,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		if (!isRefreshing()) {
 			setRefreshingInternal(doScroll);
 			mState = MANUAL_REFRESHING;
+			mCurrentMode = MODE_PULL_DOWN_TO_REFRESH;
 		}
 	}
 
