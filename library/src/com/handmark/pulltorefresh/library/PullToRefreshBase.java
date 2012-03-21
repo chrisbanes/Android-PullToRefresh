@@ -339,7 +339,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		if (!isRefreshing()) {
 			setRefreshingInternal(doScroll);
 			mState = MANUAL_REFRESHING;
-			mCurrentMode = MODE_PULL_DOWN_TO_REFRESH;
 		}
 	}
 
@@ -554,7 +553,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	protected void onRestoreInstanceState(Parcelable state) {
 		if (state instanceof Bundle) {
 			Bundle bundle = (Bundle) state;
-			
+
 			final int viewState = bundle.getInt(STATE_STATE);
 			mMode = bundle.getInt(STATE_MODE);
 			mCurrentMode = bundle.getInt(STATE_CURRENT_MODE);
@@ -686,11 +685,9 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 				break;
 		}
 
-		// If we're not using MODE_BOTH, then just set mCurrentMode to current
-		// mMode
-		if (mMode != MODE_BOTH) {
-			mCurrentMode = mMode;
-		}
+		// If we're not using MODE_BOTH, set mCurrentMode to mMode, otherwise
+		// set it to pull down
+		mCurrentMode = mMode != MODE_BOTH ? mMode : MODE_PULL_DOWN_TO_REFRESH;
 	}
 
 	private void measureView(View child) {
