@@ -99,6 +99,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	static final String STATE_MODE = "ptr_mode";
 	static final String STATE_CURRENT_MODE = "ptr_current_mode";
 	static final String STATE_DISABLE_SCROLLING_REFRESHING = "ptr_disable_scrolling";
+	static final String STATE_SHOW_REFRESHING_VIEW = "ptr_show_refreshing_view";
 	static final String STATE_SUPER = "ptr_super";
 
 	// ===========================================================
@@ -116,10 +117,10 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	private int mMode = MODE_PULL_DOWN_TO_REFRESH;
 	private int mCurrentMode;
 
-	private boolean mDisableScrollingWhileRefreshing = true;
-
 	T mRefreshableView;
-	private boolean mIsPullToRefreshEnabled = true;
+	private boolean mPullToRefreshEnabled = true;
+	private boolean mShowViewWhileRefreshing = true;
+	private boolean mDisableScrollingWhileRefreshing = true;
 
 	private LoadingLayout mHeaderLayout;
 	private LoadingLayout mFooterLayout;
@@ -177,12 +178,22 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	}
 
 	/**
+	 * Get whether the 'Refreshing' View should be automatically shown when
+	 * refreshing. Returns true by default.
+	 * 
+	 * @return - true if the Refreshing View will be show
+	 */
+	public final boolean getShowViewWhileRefreshing() {
+		return mShowViewWhileRefreshing;
+	}
+
+	/**
 	 * Whether Pull-to-Refresh is enabled
 	 * 
 	 * @return enabled
 	 */
 	public final boolean isPullToRefreshEnabled() {
-		return mIsPullToRefreshEnabled;
+		return mPullToRefreshEnabled;
 	}
 
 	/**
@@ -275,7 +286,17 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	 *            Whether Pull-To-Refresh should be used
 	 */
 	public final void setPullToRefreshEnabled(boolean enable) {
-		mIsPullToRefreshEnabled = enable;
+		mPullToRefreshEnabled = enable;
+	}
+
+	/**
+	 * A mutator to enable/disable whether the 'Refreshing' View should be
+	 * automatically shown when refreshing.
+	 * 
+	 * @param showView
+	 */
+	public final void setShowViewWhileRefreshing(boolean showView) {
+		mShowViewWhileRefreshing = showView;
 	}
 
 	/**
@@ -352,7 +373,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 
 	@Override
 	public final boolean onTouchEvent(MotionEvent event) {
-		if (!mIsPullToRefreshEnabled) {
+		if (!mPullToRefreshEnabled) {
 			return false;
 		}
 
@@ -421,7 +442,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	@Override
 	public final boolean onInterceptTouchEvent(MotionEvent event) {
 
-		if (!mIsPullToRefreshEnabled) {
+		if (!mPullToRefreshEnabled) {
 			return false;
 		}
 
@@ -545,6 +566,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		bundle.putInt(STATE_MODE, mMode);
 		bundle.putInt(STATE_CURRENT_MODE, mCurrentMode);
 		bundle.putBoolean(STATE_DISABLE_SCROLLING_REFRESHING, mDisableScrollingWhileRefreshing);
+		bundle.putBoolean(STATE_SHOW_REFRESHING_VIEW, mShowViewWhileRefreshing);
 		bundle.putParcelable(STATE_SUPER, super.onSaveInstanceState());
 		return bundle;
 	}
@@ -554,10 +576,11 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		if (state instanceof Bundle) {
 			Bundle bundle = (Bundle) state;
 
-			final int viewState = bundle.getInt(STATE_STATE);
-			mMode = bundle.getInt(STATE_MODE);
-			mCurrentMode = bundle.getInt(STATE_CURRENT_MODE);
-			mDisableScrollingWhileRefreshing = bundle.getBoolean(STATE_DISABLE_SCROLLING_REFRESHING);
+			final int viewState = bundle.getInt(STATE_STATE, PULL_TO_REFRESH);
+			mMode = bundle.getInt(STATE_MODE, MODE_PULL_DOWN_TO_REFRESH);
+			mCurrentMode = bundle.getInt(STATE_CURRENT_MODE, MODE_PULL_DOWN_TO_REFRESH);
+			mDisableScrollingWhileRefreshing = bundle.getBoolean(STATE_DISABLE_SCROLLING_REFRESHING, true);
+			mShowViewWhileRefreshing = bundle.getBoolean(STATE_SHOW_REFRESHING_VIEW, true);
 
 			// Let super Restore Itself
 			super.onRestoreInstanceState(bundle.getParcelable(STATE_SUPER));
@@ -601,7 +624,11 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		}
 
 		if (doScroll) {
-			smoothScrollTo(mCurrentMode == MODE_PULL_DOWN_TO_REFRESH ? -mHeaderHeight : mHeaderHeight);
+			if (mShowViewWhileRefreshing) {
+				smoothScrollTo(mCurrentMode == MODE_PULL_DOWN_TO_REFRESH ? -mHeaderHeight : mHeaderHeight);
+			} else {
+				smoothScrollTo(0);
+			}
 		}
 	}
 

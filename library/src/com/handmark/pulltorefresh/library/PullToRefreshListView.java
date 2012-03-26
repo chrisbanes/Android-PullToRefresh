@@ -148,10 +148,11 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 	@Override
 	protected void setRefreshingInternal(boolean doScroll) {
 
-		// If we're empty, then the header/footer views won't show so we use the
+		// If we're not showing the Refreshing view, or the list is empty, then
+		// the header/footer views won't show so we use the
 		// normal method
 		ListAdapter adapter = mRefreshableView.getAdapter();
-		if (null == adapter || adapter.isEmpty()) {
+		if (!getShowViewWhileRefreshing() || null == adapter || adapter.isEmpty()) {
 			super.setRefreshingInternal(doScroll);
 			return;
 		}
@@ -203,10 +204,11 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 	@Override
 	protected void resetHeader() {
 
-		// If we're empty, then the header/footer views won't show so we use the
+		// If we're not showing the Refreshing view, or the list is empty, then
+		// the header/footer views won't show so we use the
 		// normal method
 		ListAdapter adapter = mRefreshableView.getAdapter();
-		if (null == adapter || adapter.isEmpty()) {
+		if (!getShowViewWhileRefreshing() || null == adapter || adapter.isEmpty()) {
 			super.resetHeader();
 			return;
 		}
