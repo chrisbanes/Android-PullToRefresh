@@ -138,6 +138,10 @@ I will gladly accept pull requests for fixes and feature enhancements but please
 
 * Changed the custom attributes to be prefixed with 'ptr'. Should fixed compatibility with [ActionBarSherlock](http://actionbarsherlock.com) v4.
 
+### 1.2.6
+
+* Fixes for #44, #48, #49
+
 ## Acknowledgments
 
 * [Stefano Dacchille](https://github.com/stefanodacchille)
