@@ -3,6 +3,7 @@ package com.handmark.pulltorefresh.library.internal;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,7 @@ public class LoadingLayout extends FrameLayout {
 	private final ImageView mHeaderImage;
 	private final ProgressBar mHeaderProgress;
 	private final TextView mHeaderText;
+	private final TextView mSubHeaderText;
 
 	private String mPullLabel;
 	private String mRefreshingLabel;
@@ -37,6 +39,7 @@ public class LoadingLayout extends FrameLayout {
 		super(context);
 		ViewGroup header = (ViewGroup) LayoutInflater.from(context).inflate(R.layout.pull_to_refresh_header, this);
 		mHeaderText = (TextView) header.findViewById(R.id.pull_to_refresh_text);
+		mSubHeaderText = (TextView) header.findViewById(R.id.pull_to_refresh_sub_text);
 		mHeaderImage = (ImageView) header.findViewById(R.id.pull_to_refresh_image);
 		mHeaderProgress = (ProgressBar) header.findViewById(R.id.pull_to_refresh_progress);
 
@@ -77,6 +80,11 @@ public class LoadingLayout extends FrameLayout {
 		mHeaderText.setText(mPullLabel);
 		mHeaderImage.setVisibility(View.VISIBLE);
 		mHeaderProgress.setVisibility(View.GONE);
+		if (TextUtils.isEmpty(mSubHeaderText.getText())) {
+			mSubHeaderText.setVisibility(View.GONE);
+		} else {
+			mSubHeaderText.setVisibility(View.VISIBLE);
+		}
 	}
 
 	public void releaseToRefresh() {
@@ -94,6 +102,7 @@ public class LoadingLayout extends FrameLayout {
 		mHeaderImage.clearAnimation();
 		mHeaderImage.setVisibility(View.INVISIBLE);
 		mHeaderProgress.setVisibility(View.VISIBLE);
+		mSubHeaderText.setVisibility(View.GONE);
 	}
 
 	public void setRefreshingLabel(String refreshingLabel) {
@@ -112,6 +121,15 @@ public class LoadingLayout extends FrameLayout {
 
 	public void setTextColor(int color) {
 		mHeaderText.setTextColor(color);
+		mSubHeaderText.setTextColor(color);
 	}
-
+	
+	public void setSubHeaderText(CharSequence text) {
+		mSubHeaderText.setText(text);
+		if (TextUtils.isEmpty(text)) {
+			mSubHeaderText.setVisibility(View.GONE);
+		} else {
+			mSubHeaderText.setVisibility(View.VISIBLE);
+		}
+	}
 }
