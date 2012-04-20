@@ -3,6 +3,7 @@ package com.handmark.pulltorefresh.library.internal;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.text.Html;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -77,7 +78,7 @@ public class LoadingLayout extends FrameLayout {
 	}
 
 	public void reset() {
-		mHeaderText.setText(mPullLabel);
+		mHeaderText.setText(Html.fromHtml(mPullLabel));
 		mHeaderImage.setVisibility(View.VISIBLE);
 		mHeaderProgress.setVisibility(View.GONE);
 		if (TextUtils.isEmpty(mSubHeaderText.getText())) {
@@ -88,7 +89,7 @@ public class LoadingLayout extends FrameLayout {
 	}
 
 	public void releaseToRefresh() {
-		mHeaderText.setText(mReleaseLabel);
+		mHeaderText.setText(Html.fromHtml(mReleaseLabel));
 		mHeaderImage.clearAnimation();
 		mHeaderImage.startAnimation(mRotateAnimation);
 	}
@@ -98,7 +99,7 @@ public class LoadingLayout extends FrameLayout {
 	}
 
 	public void refreshing() {
-		mHeaderText.setText(mRefreshingLabel);
+		mHeaderText.setText(Html.fromHtml(mRefreshingLabel));
 		mHeaderImage.clearAnimation();
 		mHeaderImage.setVisibility(View.INVISIBLE);
 		mHeaderProgress.setVisibility(View.VISIBLE);
@@ -114,7 +115,7 @@ public class LoadingLayout extends FrameLayout {
 	}
 
 	public void pullToRefresh() {
-		mHeaderText.setText(mPullLabel);
+		mHeaderText.setText(Html.fromHtml(mPullLabel));
 		mHeaderImage.clearAnimation();
 		mHeaderImage.startAnimation(mResetRotateAnimation);
 	}
@@ -124,8 +125,8 @@ public class LoadingLayout extends FrameLayout {
 		mSubHeaderText.setTextColor(color);
 	}
 	
-	public void setSubHeaderText(CharSequence text) {
-		mSubHeaderText.setText(text);
+	public void setSubHeaderText(String text) {
+		mSubHeaderText.setText(Html.fromHtml(text));
 		if (TextUtils.isEmpty(text)) {
 			mSubHeaderText.setVisibility(View.GONE);
 		} else {
