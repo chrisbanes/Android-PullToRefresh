@@ -5,15 +5,32 @@
     android:paddingTop="10dp"
     android:paddingBottom="10dip">
     
-     <TextView
-        android:id="@+id/pull_to_refresh_text"
-        android:text="@string/pull_to_refresh_pull_label"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textStyle="bold"
+	<LinearLayout 
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true" />
-
+        android:layout_centerInParent="true"
+        android:orientation="vertical"
+        android:gravity="center">
+        
+		<TextView
+	        android:id="@+id/pull_to_refresh_text"
+	        android:text="@string/pull_to_refresh_pull_label"
+	        android:textAppearance="?android:attr/textAppearanceMedium"
+	        android:textStyle="bold"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_centerInParent="true" />
+		
+		<TextView
+            android:id="@+id/pull_to_refresh_sub_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textSize="11sp"
+            android:visibility="gone" />
+		
+	</LinearLayout>
+	
     <ProgressBar
         android:id="@+id/pull_to_refresh_progress"
         android:indeterminate="true"
@@ -32,7 +49,5 @@
         android:layout_marginLeft="30dip"
         android:layout_marginRight="20dip"
         android:layout_centerVertical="true" />
-
-   
 
 </RelativeLayout>

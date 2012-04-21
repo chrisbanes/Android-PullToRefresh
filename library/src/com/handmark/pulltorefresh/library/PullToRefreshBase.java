@@ -855,4 +855,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	public void setLongClickable(boolean longClickable) {
 		getRefreshableView().setLongClickable(longClickable);
 	}
+	
+	public void setSubHeaderText(String text) {
+		mHeaderLayout.setSubHeaderText(text);
+	}
 }
