@@ -124,12 +124,12 @@ public class LoadingLayout extends FrameLayout {
 		mHeaderText.setTextColor(color);
 		mSubHeaderText.setTextColor(color);
 	}
-	
-	public void setSubHeaderText(String text) {
-		mSubHeaderText.setText(Html.fromHtml(text));
-		if (TextUtils.isEmpty(text)) {
+
+	public void setSubHeaderText(CharSequence label) {
+		if (TextUtils.isEmpty(label)) {
 			mSubHeaderText.setVisibility(View.GONE);
 		} else {
+			mSubHeaderText.setText(label);
 			mSubHeaderText.setVisibility(View.VISIBLE);
 		}
 	}

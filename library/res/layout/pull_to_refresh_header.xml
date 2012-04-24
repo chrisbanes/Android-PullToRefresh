@@ -2,52 +2,51 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:paddingTop="10dp"
-    android:paddingBottom="10dip">
-    
-	<LinearLayout 
+    android:paddingBottom="10dip"
+    android:paddingTop="10dp" >
+
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:orientation="vertical"
-        android:gravity="center">
-        
-		<TextView
-	        android:id="@+id/pull_to_refresh_text"
-	        android:text="@string/pull_to_refresh_pull_label"
-	        android:textAppearance="?android:attr/textAppearanceMedium"
-	        android:textStyle="bold"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_centerInParent="true" />
-		
-		<TextView
+        android:gravity="center"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/pull_to_refresh_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/pull_to_refresh_pull_label"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textStyle="bold" />
+
+        <TextView
             android:id="@+id/pull_to_refresh_sub_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textSize="11sp"
+            android:layout_gravity="center"
+            android:textAppearance="?android:attr/textAppearanceSmall"
             android:visibility="gone" />
-		
-	</LinearLayout>
-	
+    </LinearLayout>
+
     <ProgressBar
         android:id="@+id/pull_to_refresh_progress"
-        android:indeterminate="true"
+        style="?android:attr/progressBarStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
         android:layout_marginLeft="30dip"
         android:layout_marginRight="20dip"
-        android:visibility="gone"
-        android:layout_centerVertical="true"
-        style="?android:attr/progressBarStyleSmall" />
+        android:indeterminate="true"
+        android:visibility="gone" />
 
     <ImageView
         android:id="@+id/pull_to_refresh_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
         android:layout_marginLeft="30dip"
-        android:layout_marginRight="20dip"
-        android:layout_centerVertical="true" />
+        android:layout_marginRight="20dip" />
 
 </RelativeLayout>

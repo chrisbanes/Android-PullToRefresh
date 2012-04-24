@@ -363,6 +363,17 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		}
 	}
 
+	/**
+	 * Set the Last Updated Text. This displayed under the main label when
+	 * Pulling
+	 * 
+	 * @param label
+	 *            - Label to set
+	 */
+	public void setLastUpdatedLabel(CharSequence label) {
+		mHeaderLayout.setSubHeaderText(label);
+	}
+
 	public final boolean hasPullFromTop() {
 		return mCurrentMode != MODE_PULL_UP_TO_REFRESH;
 	}
@@ -855,8 +866,5 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	public void setLongClickable(boolean longClickable) {
 		getRefreshableView().setLongClickable(longClickable);
 	}
-	
-	public void setSubHeaderText(String text) {
-		mHeaderLayout.setSubHeaderText(text);
-	}
+
 }

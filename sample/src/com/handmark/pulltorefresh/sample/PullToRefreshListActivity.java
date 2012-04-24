@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import android.app.ListActivity;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.format.DateUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
@@ -35,18 +36,22 @@ public class PullToRefreshListActivity extends ListActivity {
 		mPullRefreshListView.setOnRefreshListener(new OnRefreshListener() {
 			@Override
 			public void onRefresh() {
+				mPullRefreshListView.setLastUpdatedLabel(DateUtils.formatDateTime(getApplicationContext(),
+						System.currentTimeMillis(), DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_DATE
+								| DateUtils.FORMAT_ABBREV_ALL));
+
 				// Do work to refresh the list here.
 				new GetDataTask().execute();
 			}
 		});
-		
+
 		ListView actualListView = mPullRefreshListView.getRefreshableView();
 
 		mListItems = new LinkedList<String>();
 		mListItems.addAll(Arrays.asList(mStrings));
 
 		mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, mListItems);
-		
+
 		// You can also just use setListAdapter(mAdapter)
 		actualListView.setAdapter(mAdapter);
 	}
