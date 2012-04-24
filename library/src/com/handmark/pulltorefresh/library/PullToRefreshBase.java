@@ -661,8 +661,9 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	private void init(Context context, AttributeSet attrs) {
 
 		setOrientation(LinearLayout.VERTICAL);
-
-		mTouchSlop = ViewConfiguration.getTouchSlop();
+		
+		ViewConfiguration config = ViewConfiguration.get(context);
+		mTouchSlop = config.getScaledTouchSlop();
 
 		// Styleables from XML
 		TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.PullToRefresh);
