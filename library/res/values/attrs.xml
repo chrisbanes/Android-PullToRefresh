@@ -4,7 +4,7 @@
     <declare-styleable name="PullToRefresh">
         <attr name="ptrAdapterViewBackground" format="reference|color" />
         <attr name="ptrHeaderBackground" format="reference|color" />
-        <attr name="ptrHeaderTextColor" format="color" />
+        <attr name="ptrHeaderTextColor" format="reference|color" />
         <attr name="ptrMode">
             <flag name="pullDownFromTop" value="0x1" />
             <flag name="pullUpFromBottom" value="0x2" />

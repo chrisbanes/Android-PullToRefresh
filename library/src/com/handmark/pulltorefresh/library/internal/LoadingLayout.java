@@ -1,8 +1,8 @@
 package com.handmark.pulltorefresh.library.internal;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
-import android.graphics.Color;
 import android.text.Html;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -72,8 +72,8 @@ public class LoadingLayout extends FrameLayout {
 		}
 
 		if (attrs.hasValue(R.styleable.PullToRefresh_ptrHeaderTextColor)) {
-			final int color = attrs.getColor(R.styleable.PullToRefresh_ptrHeaderTextColor, Color.BLACK);
-			setTextColor(color);
+			ColorStateList colors = attrs.getColorStateList(R.styleable.PullToRefresh_ptrHeaderTextColor);
+			setTextColor(null != colors ? colors : ColorStateList.valueOf(0xFF000000));
 		}
 	}
 
@@ -120,9 +120,13 @@ public class LoadingLayout extends FrameLayout {
 		mHeaderImage.startAnimation(mResetRotateAnimation);
 	}
 
-	public void setTextColor(int color) {
+	public void setTextColor(ColorStateList color) {
 		mHeaderText.setTextColor(color);
 		mSubHeaderText.setTextColor(color);
+	}
+
+	public void setTextColor(int color) {
+		setTextColor(ColorStateList.valueOf(color));
 	}
 
 	public void setSubHeaderText(CharSequence label) {

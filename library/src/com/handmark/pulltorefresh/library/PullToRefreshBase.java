@@ -3,6 +3,7 @@ package com.handmark.pulltorefresh.library;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
@@ -661,7 +662,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	private void init(Context context, AttributeSet attrs) {
 
 		setOrientation(LinearLayout.VERTICAL);
-		
+
 		ViewConfiguration config = ViewConfiguration.get(context);
 		mTouchSlop = config.getScaledTouchSlop();
 
@@ -701,11 +702,16 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 
 		// Styleables from XML
 		if (a.hasValue(R.styleable.PullToRefresh_ptrHeaderBackground)) {
-			setBackgroundResource(a.getResourceId(R.styleable.PullToRefresh_ptrHeaderBackground, Color.WHITE));
+			Drawable background = a.getDrawable(R.styleable.PullToRefresh_ptrHeaderBackground);
+			if (null != background) {
+				setBackgroundDrawable(background);
+			}
 		}
 		if (a.hasValue(R.styleable.PullToRefresh_ptrAdapterViewBackground)) {
-			mRefreshableView.setBackgroundResource(a.getResourceId(R.styleable.PullToRefresh_ptrAdapterViewBackground,
-					Color.WHITE));
+			Drawable background = a.getDrawable(R.styleable.PullToRefresh_ptrAdapterViewBackground);
+			if (null != background) {
+				mRefreshableView.setBackgroundDrawable(background);
+			}
 		}
 		a.recycle();
 		a = null;
