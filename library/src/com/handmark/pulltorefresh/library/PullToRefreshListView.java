@@ -2,6 +2,7 @@ package com.handmark.pulltorefresh.library;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View;
@@ -49,6 +50,20 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 
 		public ContextMenuInfo getContextMenuInfo() {
 			return super.getContextMenuInfo();
+		}
+
+		@Override
+		public void draw(Canvas canvas) {
+			/**
+			 * This is a bit hacky, but ListView has got a bug in it when using
+			 * Header/Footer Views and the list is empty. This masks the issue
+			 * so that it doesn't cause an FC. See Issue #66.
+			 */
+			try {
+				super.draw(canvas);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
