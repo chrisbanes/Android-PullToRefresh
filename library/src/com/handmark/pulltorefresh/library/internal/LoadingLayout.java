@@ -58,7 +58,7 @@ public class LoadingLayout extends FrameLayout {
 
 		switch (mode) {
 			case PullToRefreshBase.MODE_PULL_UP_TO_REFRESH:
-				
+
 				// Load in labels
 				mHeaderImage.setImageResource(R.drawable.pulltorefresh_up_arrow);
 				mPullLabel = context.getString(R.string.pull_to_refresh_from_bottom_pull_label);
@@ -70,9 +70,9 @@ public class LoadingLayout extends FrameLayout {
 				mHeaderImage.setImageResource(R.drawable.pulltorefresh_down_arrow);
 
 				// Load in labels
-				mPullLabel = context.getString(R.string.pull_to_refresh_from_top_pull_label);
-				mRefreshingLabel = context.getString(R.string.pull_to_refresh_from_top_refreshing_label);
-				mReleaseLabel = context.getString(R.string.pull_to_refresh_from_top_release_label);
+				mPullLabel = context.getString(R.string.pull_to_refresh_pull_label);
+				mRefreshingLabel = context.getString(R.string.pull_to_refresh_refreshing_label);
+				mReleaseLabel = context.getString(R.string.pull_to_refresh_release_label);
 				break;
 		}
 
