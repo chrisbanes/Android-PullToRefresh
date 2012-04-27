@@ -35,8 +35,7 @@ public class LoadingLayout extends FrameLayout {
 
 	private final Animation mRotateAnimation, mResetRotateAnimation;
 
-	public LoadingLayout(Context context, final int mode, String releaseLabel, String pullLabel,
-			String refreshingLabel, TypedArray attrs) {
+	public LoadingLayout(Context context, final int mode, TypedArray attrs) {
 		super(context);
 		ViewGroup header = (ViewGroup) LayoutInflater.from(context).inflate(R.layout.pull_to_refresh_header, this);
 		mHeaderText = (TextView) header.findViewById(R.id.pull_to_refresh_text);
@@ -57,17 +56,23 @@ public class LoadingLayout extends FrameLayout {
 		mResetRotateAnimation.setDuration(DEFAULT_ROTATION_ANIMATION_DURATION);
 		mResetRotateAnimation.setFillAfter(true);
 
-		mReleaseLabel = releaseLabel;
-		mPullLabel = pullLabel;
-		mRefreshingLabel = refreshingLabel;
-
 		switch (mode) {
 			case PullToRefreshBase.MODE_PULL_UP_TO_REFRESH:
+				
+				// Load in labels
 				mHeaderImage.setImageResource(R.drawable.pulltorefresh_up_arrow);
+				mPullLabel = context.getString(R.string.pull_to_refresh_from_bottom_pull_label);
+				mRefreshingLabel = context.getString(R.string.pull_to_refresh_from_bottom_refreshing_label);
+				mReleaseLabel = context.getString(R.string.pull_to_refresh_from_bottom_release_label);
 				break;
 			case PullToRefreshBase.MODE_PULL_DOWN_TO_REFRESH:
 			default:
 				mHeaderImage.setImageResource(R.drawable.pulltorefresh_down_arrow);
+
+				// Load in labels
+				mPullLabel = context.getString(R.string.pull_to_refresh_from_top_pull_label);
+				mRefreshingLabel = context.getString(R.string.pull_to_refresh_from_top_refreshing_label);
+				mReleaseLabel = context.getString(R.string.pull_to_refresh_from_top_release_label);
 				break;
 		}
 
@@ -75,6 +80,8 @@ public class LoadingLayout extends FrameLayout {
 			ColorStateList colors = attrs.getColorStateList(R.styleable.PullToRefresh_ptrHeaderTextColor);
 			setTextColor(null != colors ? colors : ColorStateList.valueOf(0xFF000000));
 		}
+
+		reset();
 	}
 
 	public void reset() {

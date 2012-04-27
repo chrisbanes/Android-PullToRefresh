@@ -87,35 +87,35 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		return ((InternalListView) getRefreshableView()).getContextMenuInfo();
 	}
 
-	public void setReleaseLabel(String releaseLabel) {
-		super.setReleaseLabel(releaseLabel);
+	public void setReleaseLabel(String releaseLabel, int mode) {
+		super.setReleaseLabel(releaseLabel, mode);
 
-		if (null != mHeaderLoadingView) {
+		if (null != mHeaderLoadingView && (mode == MODE_PULL_DOWN_TO_REFRESH || mode == MODE_BOTH)) {
 			mHeaderLoadingView.setReleaseLabel(releaseLabel);
 		}
-		if (null != mFooterLoadingView) {
+		if (null != mFooterLoadingView && (mode == MODE_PULL_UP_TO_REFRESH || mode == MODE_BOTH)) {
 			mFooterLoadingView.setReleaseLabel(releaseLabel);
 		}
 	}
 
-	public void setPullLabel(String pullLabel) {
-		super.setPullLabel(pullLabel);
+	public void setPullLabel(String pullLabel, int mode) {
+		super.setPullLabel(pullLabel, mode);
 
-		if (null != mHeaderLoadingView) {
+		if (null != mHeaderLoadingView && (mode == MODE_PULL_DOWN_TO_REFRESH || mode == MODE_BOTH)) {
 			mHeaderLoadingView.setPullLabel(pullLabel);
 		}
-		if (null != mFooterLoadingView) {
+		if (null != mFooterLoadingView && (mode == MODE_PULL_UP_TO_REFRESH || mode == MODE_BOTH)) {
 			mFooterLoadingView.setPullLabel(pullLabel);
 		}
 	}
 
-	public void setRefreshingLabel(String refreshingLabel) {
-		super.setRefreshingLabel(refreshingLabel);
+	public void setRefreshingLabel(String refreshingLabel, int mode) {
+		super.setRefreshingLabel(refreshingLabel, mode);
 
-		if (null != mHeaderLoadingView) {
+		if (null != mHeaderLoadingView && (mode == MODE_PULL_DOWN_TO_REFRESH || mode == MODE_BOTH)) {
 			mHeaderLoadingView.setRefreshingLabel(refreshingLabel);
 		}
-		if (null != mFooterLoadingView) {
+		if (null != mFooterLoadingView && (mode == MODE_PULL_UP_TO_REFRESH || mode == MODE_BOTH)) {
 			mFooterLoadingView.setRefreshingLabel(refreshingLabel);
 		}
 	}
@@ -126,19 +126,13 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 
 		final int mode = getMode();
 
-		// Loading View Strings
-		String pullLabel = context.getString(R.string.pull_to_refresh_pull_label);
-		String refreshingLabel = context.getString(R.string.pull_to_refresh_refreshing_label);
-		String releaseLabel = context.getString(R.string.pull_to_refresh_release_label);
-
 		// Get Styles from attrs
 		TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.PullToRefresh);
 
 		// Add Loading Views
 		if (mode == MODE_PULL_DOWN_TO_REFRESH || mode == MODE_BOTH) {
 			FrameLayout frame = new FrameLayout(context);
-			mHeaderLoadingView = new LoadingLayout(context, MODE_PULL_DOWN_TO_REFRESH, releaseLabel, pullLabel,
-					refreshingLabel, a);
+			mHeaderLoadingView = new LoadingLayout(context, MODE_PULL_DOWN_TO_REFRESH, a);
 			frame.addView(mHeaderLoadingView, FrameLayout.LayoutParams.FILL_PARENT,
 					FrameLayout.LayoutParams.WRAP_CONTENT);
 			mHeaderLoadingView.setVisibility(View.GONE);
@@ -146,8 +140,7 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		}
 		if (mode == MODE_PULL_UP_TO_REFRESH || mode == MODE_BOTH) {
 			mLvFooterLoadingFrame = new FrameLayout(context);
-			mFooterLoadingView = new LoadingLayout(context, MODE_PULL_UP_TO_REFRESH, releaseLabel, pullLabel,
-					refreshingLabel, a);
+			mFooterLoadingView = new LoadingLayout(context, MODE_PULL_UP_TO_REFRESH, a);
 			mLvFooterLoadingFrame.addView(mFooterLoadingView, FrameLayout.LayoutParams.FILL_PARENT,
 					FrameLayout.LayoutParams.WRAP_CONTENT);
 			mFooterLoadingView.setVisibility(View.GONE);

@@ -2,7 +2,6 @@ package com.handmark.pulltorefresh.library;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -302,16 +301,54 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 
 	/**
 	 * Set Text to show when the Widget is being pulled, and will refresh when
-	 * released
+	 * released. This is the same as calling
+	 * <code>setReleaseLabel(releaseLabel, MODE_BOTH)</code>
 	 * 
 	 * @param releaseLabel
 	 *            - String to display
 	 */
 	public void setReleaseLabel(String releaseLabel) {
-		if (null != mHeaderLayout) {
+		setReleaseLabel(releaseLabel, MODE_BOTH);
+	}
+
+	/**
+	 * Set Text to show when the Widget is being Pulled
+	 * <code>setPullLabel(releaseLabel, MODE_BOTH)</code>
+	 * 
+	 * @param releaseLabel
+	 *            - String to display
+	 */
+	public void setPullLabel(String pullLabel) {
+		setPullLabel(pullLabel, MODE_BOTH);
+	}
+
+	/**
+	 * Set Text to show when the Widget is refreshing
+	 * <code>setRefreshingLabel(releaseLabel, MODE_BOTH)</code>
+	 * 
+	 * @param releaseLabel
+	 *            - String to display
+	 */
+	public void setRefreshingLabel(String refreshingLabel) {
+		setRefreshingLabel(refreshingLabel, MODE_BOTH);
+	}
+
+	/**
+	 * Set Text to show when the Widget is being pulled, and will refresh when
+	 * released
+	 * 
+	 * @param releaseLabel
+	 *            - String to display
+	 * @param mode
+	 *            - Either <code>MODE_PULL_DOWN_TO_REFRESH</code>,
+	 *            <code>MODE_PULL_UP_TO_REFRESH</code> or <code>MODE_BOTH</code>
+	 *            depending on which label you want to change
+	 */
+	public void setReleaseLabel(String releaseLabel, int mode) {
+		if (null != mHeaderLayout && (mode == MODE_PULL_DOWN_TO_REFRESH || mode == MODE_BOTH)) {
 			mHeaderLayout.setReleaseLabel(releaseLabel);
 		}
-		if (null != mFooterLayout) {
+		if (null != mFooterLayout && (mode == MODE_PULL_UP_TO_REFRESH || mode == MODE_BOTH)) {
 			mFooterLayout.setReleaseLabel(releaseLabel);
 		}
 	}
@@ -321,12 +358,16 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	 * 
 	 * @param pullLabel
 	 *            - String to display
+	 * @param mode
+	 *            - Either <code>MODE_PULL_DOWN_TO_REFRESH</code>,
+	 *            <code>MODE_PULL_UP_TO_REFRESH</code> or <code>MODE_BOTH</code>
+	 *            depending on which label you want to change
 	 */
-	public void setPullLabel(String pullLabel) {
-		if (null != mHeaderLayout) {
+	public void setPullLabel(String pullLabel, int mode) {
+		if (null != mHeaderLayout && (mode == MODE_PULL_DOWN_TO_REFRESH || mode == MODE_BOTH)) {
 			mHeaderLayout.setPullLabel(pullLabel);
 		}
-		if (null != mFooterLayout) {
+		if (null != mFooterLayout && (mode == MODE_PULL_UP_TO_REFRESH || mode == MODE_BOTH)) {
 			mFooterLayout.setPullLabel(pullLabel);
 		}
 	}
@@ -336,12 +377,16 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	 * 
 	 * @param refreshingLabel
 	 *            - String to display
+	 * @param mode
+	 *            - Either <code>MODE_PULL_DOWN_TO_REFRESH</code>,
+	 *            <code>MODE_PULL_UP_TO_REFRESH</code> or <code>MODE_BOTH</code>
+	 *            depending on which label you want to change
 	 */
-	public void setRefreshingLabel(String refreshingLabel) {
-		if (null != mHeaderLayout) {
+	public void setRefreshingLabel(String refreshingLabel, int mode) {
+		if (null != mHeaderLayout && (mode == MODE_PULL_DOWN_TO_REFRESH || mode == MODE_BOTH)) {
 			mHeaderLayout.setRefreshingLabel(refreshingLabel);
 		}
-		if (null != mFooterLayout) {
+		if (null != mFooterLayout && (mode == MODE_PULL_UP_TO_REFRESH || mode == MODE_BOTH)) {
 			mFooterLayout.setRefreshingLabel(refreshingLabel);
 		}
 	}
@@ -677,23 +722,16 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		mRefreshableView = createRefreshableView(context, attrs);
 		addRefreshableView(context, mRefreshableView);
 
-		// Loading View Strings
-		String pullLabel = context.getString(R.string.pull_to_refresh_pull_label);
-		String refreshingLabel = context.getString(R.string.pull_to_refresh_refreshing_label);
-		String releaseLabel = context.getString(R.string.pull_to_refresh_release_label);
-
 		// Add Loading Views
 		if (mMode == MODE_PULL_DOWN_TO_REFRESH || mMode == MODE_BOTH) {
-			mHeaderLayout = new LoadingLayout(context, MODE_PULL_DOWN_TO_REFRESH, releaseLabel, pullLabel,
-					refreshingLabel, a);
+			mHeaderLayout = new LoadingLayout(context, MODE_PULL_DOWN_TO_REFRESH, a);
 			addView(mHeaderLayout, 0, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,
 					ViewGroup.LayoutParams.WRAP_CONTENT));
 			measureView(mHeaderLayout);
 			mHeaderHeight = mHeaderLayout.getMeasuredHeight();
 		}
 		if (mMode == MODE_PULL_UP_TO_REFRESH || mMode == MODE_BOTH) {
-			mFooterLayout = new LoadingLayout(context, MODE_PULL_UP_TO_REFRESH, releaseLabel, pullLabel,
-					refreshingLabel, a);
+			mFooterLayout = new LoadingLayout(context, MODE_PULL_UP_TO_REFRESH, a);
 			addView(mFooterLayout, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,
 					ViewGroup.LayoutParams.WRAP_CONTENT));
 			measureView(mFooterLayout);

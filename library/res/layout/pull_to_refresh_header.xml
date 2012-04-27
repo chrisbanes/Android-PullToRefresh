@@ -17,7 +17,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="@string/pull_to_refresh_pull_label"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textStyle="bold" />
 
