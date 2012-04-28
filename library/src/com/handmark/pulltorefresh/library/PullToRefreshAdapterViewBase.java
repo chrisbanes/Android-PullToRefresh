@@ -16,7 +16,7 @@ import com.handmark.pulltorefresh.library.internal.EmptyViewMethodAccessor;
 public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extends PullToRefreshBase<T> implements
 		OnScrollListener {
 
-	private int mLastSavedFirstVisibleItem = -1;
+	private int mSavedLastVisibleIndex = -1;
 	private OnScrollListener mOnScrollListener;
 	private OnLastItemVisibleListener mOnLastItemVisibleListener;
 	private View mEmptyView;
@@ -44,10 +44,18 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 
 		if (null != mOnLastItemVisibleListener) {
 			// detect if last item is visible
-			if (visibleItemCount > 0 && (firstVisibleItem + visibleItemCount == totalItemCount)) {
+			int lastVisibleItemIndex = firstVisibleItem + visibleItemCount;
+
+			/**
+			 * Check that we have any items, and that the last item is visible.
+			 * lastVisibleItemIndex is a zero-based index, so we add one to it
+			 * to check against totalItemCount.
+			 */
+			if (visibleItemCount > 0 && (lastVisibleItemIndex + 1) == totalItemCount) {
+
 				// only process first event
-				if (firstVisibleItem != mLastSavedFirstVisibleItem) {
-					mLastSavedFirstVisibleItem = firstVisibleItem;
+				if (lastVisibleItemIndex != mSavedLastVisibleIndex) {
+					mSavedLastVisibleIndex = lastVisibleItemIndex;
 					mOnLastItemVisibleListener.onLastItemVisible();
 				}
 			}
@@ -146,7 +154,7 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 	private boolean isLastItemVisible() {
 		final int count = mRefreshableView.getCount();
 		final int lastVisiblePosition = mRefreshableView.getLastVisiblePosition();
-		
+
 		if (DEBUG) {
 			Log.d(LOG_TAG, "isLastItemVisible. Count: " + count + " Last Visible Pos: " + lastVisiblePosition);
 		}
