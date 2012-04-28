@@ -142,6 +142,13 @@ I will gladly accept pull requests for fixes and feature enhancements but please
 
 * Fixes for #44, #48, #49
 
+### 1.2.7
+
+* Fixed PullToRefreshWebView so that pulling from the bottom works (thanks nagoya0)
+* Can now display last update label using then new `setLastUpdatedLabel()` method (thanks 	Peter Elliott)
+* Strings are now separate for Pulling Up and Pulling Up views, necessary for certain languages. There also new label setter methods so you change each one separately.
+* Bug fixes, including #66, #62 and #64
+
 ## Acknowledgments
 
 * [Stefano Dacchille](https://github.com/stefanodacchille)
