@@ -19,9 +19,10 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 	private LoadingLayout mFooterLoadingView;
 
 	private FrameLayout mLvFooterLoadingFrame;
-	private boolean mAddedLvFooter = false;
 
 	class InternalListView extends ListView implements EmptyViewMethodAccessor {
+
+		private boolean mAddedLvFooter = false;
 
 		public InternalListView(Context context, AttributeSet attrs) {
 			super(context, attrs);
@@ -30,7 +31,7 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		@Override
 		public void setAdapter(ListAdapter adapter) {
 			// Add the Footer View at the last possible moment
-			if (!mAddedLvFooter && null != mLvFooterLoadingFrame) {
+			if (!mAddedLvFooter) {
 				addFooterView(mLvFooterLoadingFrame, null, false);
 				mAddedLvFooter = true;
 			}
@@ -124,27 +125,21 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 	protected final ListView createRefreshableView(Context context, AttributeSet attrs) {
 		ListView lv = new InternalListView(context, attrs);
 
-		final int mode = getMode();
-
 		// Get Styles from attrs
 		TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.PullToRefresh);
 
-		// Add Loading Views
-		if (mode == MODE_PULL_DOWN_TO_REFRESH || mode == MODE_BOTH) {
-			FrameLayout frame = new FrameLayout(context);
-			mHeaderLoadingView = new LoadingLayout(context, MODE_PULL_DOWN_TO_REFRESH, a);
-			frame.addView(mHeaderLoadingView, FrameLayout.LayoutParams.FILL_PARENT,
-					FrameLayout.LayoutParams.WRAP_CONTENT);
-			mHeaderLoadingView.setVisibility(View.GONE);
-			lv.addHeaderView(frame, null, false);
-		}
-		if (mode == MODE_PULL_UP_TO_REFRESH || mode == MODE_BOTH) {
-			mLvFooterLoadingFrame = new FrameLayout(context);
-			mFooterLoadingView = new LoadingLayout(context, MODE_PULL_UP_TO_REFRESH, a);
-			mLvFooterLoadingFrame.addView(mFooterLoadingView, FrameLayout.LayoutParams.FILL_PARENT,
-					FrameLayout.LayoutParams.WRAP_CONTENT);
-			mFooterLoadingView.setVisibility(View.GONE);
-		}
+		// Create Loading Views ready for use later
+		FrameLayout frame = new FrameLayout(context);
+		mHeaderLoadingView = new LoadingLayout(context, MODE_PULL_DOWN_TO_REFRESH, a);
+		frame.addView(mHeaderLoadingView, FrameLayout.LayoutParams.FILL_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT);
+		mHeaderLoadingView.setVisibility(View.GONE);
+		lv.addHeaderView(frame, null, false);
+
+		mLvFooterLoadingFrame = new FrameLayout(context);
+		mFooterLoadingView = new LoadingLayout(context, MODE_PULL_UP_TO_REFRESH, a);
+		mLvFooterLoadingFrame.addView(mFooterLoadingView, FrameLayout.LayoutParams.FILL_PARENT,
+				FrameLayout.LayoutParams.WRAP_CONTENT);
+		mFooterLoadingView.setVisibility(View.GONE);
 
 		a.recycle();
 

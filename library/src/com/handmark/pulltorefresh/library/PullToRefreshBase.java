@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
@@ -81,7 +82,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	// Constants
 	// ===========================================================
 
-	static final boolean DEBUG = false;
+	static final boolean DEBUG = true;
 	static final String LOG_TAG = "PullToRefresh";
 
 	static final float FRICTION = 2.0f;
@@ -217,6 +218,23 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	 */
 	public final int getMode() {
 		return mMode;
+	}
+
+	/**
+	 * Set the mode of Pull-to-Refresh that this view will use.
+	 * 
+	 * @param mode
+	 *            - Either <code>MODE_PULL_DOWN_TO_REFRESH</code>,
+	 *            <code>MODE_PULL_UP_TO_REFRESH</code> or <code>MODE_BOTH</code>
+	 */
+	public final void setMode(int mode) {
+		if (mode != mMode) {
+			if (DEBUG) {
+				Log.d(LOG_TAG, "Setting mode to: " + mode);
+			}
+			mMode = mode;
+			updateUIForMode();
+		}
 	}
 
 	/**
@@ -660,10 +678,10 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		mState = PULL_TO_REFRESH;
 		mIsBeingDragged = false;
 
-		if (null != mHeaderLayout) {
+		if (mMode == MODE_PULL_DOWN_TO_REFRESH || mMode == MODE_BOTH) {
 			mHeaderLayout.reset();
 		}
-		if (null != mFooterLayout) {
+		if (mMode == MODE_PULL_UP_TO_REFRESH || mMode == MODE_BOTH) {
 			mFooterLayout.reset();
 		}
 
@@ -673,10 +691,10 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	protected void setRefreshingInternal(boolean doScroll) {
 		mState = REFRESHING;
 
-		if (null != mHeaderLayout) {
+		if (mMode == MODE_PULL_DOWN_TO_REFRESH || mMode == MODE_BOTH) {
 			mHeaderLayout.refreshing();
 		}
-		if (null != mFooterLayout) {
+		if (mMode == MODE_PULL_UP_TO_REFRESH || mMode == MODE_BOTH) {
 			mFooterLayout.refreshing();
 		}
 
@@ -704,6 +722,52 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		}
 	}
 
+	/**
+	 * Updates the View State when the mode has been set. This does not do any
+	 * checking that the mode is different to current state so always updates.
+	 */
+	protected void updateUIForMode() {
+		// Remove Header, and then add Header Loading View again if needed
+		if (this == mHeaderLayout.getParent()) {
+			removeView(mHeaderLayout);
+		}
+		if (mMode == MODE_PULL_DOWN_TO_REFRESH || mMode == MODE_BOTH) {
+			addView(mHeaderLayout, 0, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,
+					ViewGroup.LayoutParams.WRAP_CONTENT));
+			measureView(mHeaderLayout);
+			mHeaderHeight = mHeaderLayout.getMeasuredHeight();
+		}
+
+		// Remove Footer, and then add Footer Loading View again if needed
+		if (this == mFooterLayout.getParent()) {
+			removeView(mFooterLayout);
+		}
+		if (mMode == MODE_PULL_UP_TO_REFRESH || mMode == MODE_BOTH) {
+			addView(mFooterLayout, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,
+					ViewGroup.LayoutParams.WRAP_CONTENT));
+			measureView(mFooterLayout);
+			mHeaderHeight = mFooterLayout.getMeasuredHeight();
+		}
+
+		// Hide Loading Views
+		switch (mMode) {
+			case MODE_BOTH:
+				setPadding(0, -mHeaderHeight, 0, -mHeaderHeight);
+				break;
+			case MODE_PULL_UP_TO_REFRESH:
+				setPadding(0, 0, 0, -mHeaderHeight);
+				break;
+			case MODE_PULL_DOWN_TO_REFRESH:
+			default:
+				setPadding(0, -mHeaderHeight, 0, 0);
+				break;
+		}
+
+		// If we're not using MODE_BOTH, set mCurrentMode to mMode, otherwise
+		// set it to pull down
+		mCurrentMode = (mMode != MODE_BOTH) ? mMode : MODE_PULL_DOWN_TO_REFRESH;
+	}
+
 	private void init(Context context, AttributeSet attrs) {
 
 		setOrientation(LinearLayout.VERTICAL);
@@ -722,21 +786,12 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		mRefreshableView = createRefreshableView(context, attrs);
 		addRefreshableView(context, mRefreshableView);
 
-		// Add Loading Views
-		if (mMode == MODE_PULL_DOWN_TO_REFRESH || mMode == MODE_BOTH) {
-			mHeaderLayout = new LoadingLayout(context, MODE_PULL_DOWN_TO_REFRESH, a);
-			addView(mHeaderLayout, 0, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,
-					ViewGroup.LayoutParams.WRAP_CONTENT));
-			measureView(mHeaderLayout);
-			mHeaderHeight = mHeaderLayout.getMeasuredHeight();
-		}
-		if (mMode == MODE_PULL_UP_TO_REFRESH || mMode == MODE_BOTH) {
-			mFooterLayout = new LoadingLayout(context, MODE_PULL_UP_TO_REFRESH, a);
-			addView(mFooterLayout, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,
-					ViewGroup.LayoutParams.WRAP_CONTENT));
-			measureView(mFooterLayout);
-			mHeaderHeight = mFooterLayout.getMeasuredHeight();
-		}
+		// We need to create now layouts now
+		mHeaderLayout = new LoadingLayout(context, MODE_PULL_DOWN_TO_REFRESH, a);
+		mFooterLayout = new LoadingLayout(context, MODE_PULL_UP_TO_REFRESH, a);
+
+		// Add Header/Footer Views
+		updateUIForMode();
 
 		// Styleables from XML
 		if (a.hasValue(R.styleable.PullToRefresh_ptrHeaderBackground)) {
@@ -753,24 +808,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		}
 		a.recycle();
 		a = null;
-
-		// Hide Loading Views
-		switch (mMode) {
-			case MODE_BOTH:
-				setPadding(0, -mHeaderHeight, 0, -mHeaderHeight);
-				break;
-			case MODE_PULL_UP_TO_REFRESH:
-				setPadding(0, 0, 0, -mHeaderHeight);
-				break;
-			case MODE_PULL_DOWN_TO_REFRESH:
-			default:
-				setPadding(0, -mHeaderHeight, 0, 0);
-				break;
-		}
-
-		// If we're not using MODE_BOTH, set mCurrentMode to mMode, otherwise
-		// set it to pull down
-		mCurrentMode = mMode != MODE_BOTH ? mMode : MODE_PULL_DOWN_TO_REFRESH;
 	}
 
 	private void measureView(View child) {

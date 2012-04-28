@@ -7,15 +7,21 @@ import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener2;
 import com.handmark.pulltorefresh.library.PullToRefreshGridView;
 
 public class PullToRefreshGridActivity extends Activity {
+
+	static final int MENU_SET_MODE = 0;
+
 	private LinkedList<String> mListItems;
 	private PullToRefreshGridView mPullRefreshGridView;
 	private GridView mGridView;
@@ -32,7 +38,7 @@ public class PullToRefreshGridActivity extends Activity {
 
 		// Set a listener to be invoked when the list should be refreshed.
 		mPullRefreshGridView.setOnRefreshListener(new OnRefreshListener2() {
-			
+
 			@Override
 			public void onPullDownToRefresh() {
 				Toast.makeText(PullToRefreshGridActivity.this, "Pull Down!", Toast.LENGTH_SHORT).show();
@@ -44,7 +50,7 @@ public class PullToRefreshGridActivity extends Activity {
 				Toast.makeText(PullToRefreshGridActivity.this, "Pull Up!", Toast.LENGTH_SHORT).show();
 				new GetDataTask().execute();
 			}
-			
+
 		});
 
 		mListItems = new LinkedList<String>();
@@ -81,6 +87,36 @@ public class PullToRefreshGridActivity extends Activity {
 
 			super.onPostExecute(result);
 		}
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		menu.add(0, MENU_SET_MODE, 0,
+				mPullRefreshGridView.getMode() == PullToRefreshBase.MODE_BOTH ? "Change to MODE_PULL_DOWN"
+						: "Change to MODE_PULL_BOTH");
+		return super.onCreateOptionsMenu(menu);
+	}
+
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		MenuItem setModeItem = menu.findItem(MENU_SET_MODE);
+		setModeItem.setTitle(mPullRefreshGridView.getMode() == PullToRefreshBase.MODE_BOTH ? "Change to MODE_PULL_DOWN"
+				: "Change to MODE_PULL_BOTH");
+
+		return super.onPrepareOptionsMenu(menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+			case MENU_SET_MODE:
+				mPullRefreshGridView
+						.setMode(mPullRefreshGridView.getMode() == PullToRefreshBase.MODE_BOTH ? PullToRefreshBase.MODE_PULL_DOWN_TO_REFRESH
+								: PullToRefreshBase.MODE_BOTH);
+				break;
+		}
+
+		return super.onOptionsItemSelected(item);
 	}
 
 	private String[] mStrings = { "Abbaye de Belloc", "Abbaye du Mont des Cats", "Abertam", "Abondance", "Ackawi",
