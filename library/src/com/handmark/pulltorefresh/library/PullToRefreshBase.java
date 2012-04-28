@@ -92,7 +92,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	// Constants
 	// ===========================================================
 
-	static final boolean DEBUG = true;
+	static final boolean DEBUG = false;
 	static final String LOG_TAG = "PullToRefresh";
 
 	static final float FRICTION = 2.0f;
