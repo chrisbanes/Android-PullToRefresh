@@ -35,6 +35,73 @@ import com.handmark.pulltorefresh.library.internal.LoadingLayout;
 
 public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 
+	public static enum Mode {
+		/**
+		 * Only allow the user to Pull Down from the top to refresh, this is
+		 * the default.
+		 */
+		PULL_DOWN_TO_REFRESH(0x1),
+
+		/**
+		 * Only allow the user to Pull Up from the bottom to refresh.
+		 */
+		PULL_UP_TO_REFRESH(0x2),
+
+		/**
+		 * Allow the user to both Pull Down from the top, and Pull Up from the
+		 * bottom to refresh.
+		 */
+		BOTH(0x3);
+
+		private int mIntValue;
+
+		// The modeInt values need to match those from attrs.xml
+		Mode(int modeInt) {
+			mIntValue = modeInt;
+		}
+
+		int getIntValue() {
+			return mIntValue;
+		}
+
+		/**
+		 * @return true if this mode permits Pulling Down from the top
+		 */
+		boolean canPullDown() {
+			return this == PULL_DOWN_TO_REFRESH || this == BOTH;
+		}
+
+		/**
+		 * @return true if this mode permits Pulling Up from the bottom
+		 */
+		boolean canPullUp() {
+			return this == PULL_UP_TO_REFRESH || this == BOTH;
+		}
+
+		/**
+		 * Maps an int to a specific mode. This is needed when saving state, or
+		 * inflating the view from XML where the mode is given through a attr
+		 * int.
+		 * 
+		 * @param modeInt
+		 *            - int to map a Mode to
+		 * @return Mode that modeInt maps to, or PULL_DOWN_TO_REFRESH by
+		 *         default.
+		 */
+		public static Mode mapIntToMode(int modeInt) {
+			switch (modeInt) {
+				case 0x1:
+				default:
+					return PULL_DOWN_TO_REFRESH;
+				case 0x2:
+					return PULL_UP_TO_REFRESH;
+				case 0x3:
+					return BOTH;
+			}
+		}
+
+	}
+
 	final class SmoothScrollRunnable implements Runnable {
 
 		static final int ANIMATION_DURATION_MS = 190;
@@ -107,10 +174,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	static final int REFRESHING = 0x2;
 	static final int MANUAL_REFRESHING = 0x3;
 
-	public static final int MODE_PULL_DOWN_TO_REFRESH = 0x1;
-	public static final int MODE_PULL_UP_TO_REFRESH = 0x2;
-	public static final int MODE_BOTH = 0x3;
-
 	static final String STATE_STATE = "ptr_state";
 	static final String STATE_MODE = "ptr_mode";
 	static final String STATE_CURRENT_MODE = "ptr_current_mode";
@@ -130,8 +193,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	private boolean mIsBeingDragged = false;
 
 	private int mState = PULL_TO_REFRESH;
-	private int mMode = MODE_PULL_DOWN_TO_REFRESH;
-	private int mCurrentMode;
+	private Mode mMode = Mode.PULL_DOWN_TO_REFRESH;
+	private Mode mCurrentMode;
 
 	T mRefreshableView;
 	private boolean mPullToRefreshEnabled = true;
@@ -158,7 +221,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		init(context, null);
 	}
 
-	public PullToRefreshBase(Context context, int mode) {
+	public PullToRefreshBase(Context context, Mode mode) {
 		super(context);
 		mMode = mode;
 		init(context, null);
@@ -172,16 +235,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	// ===========================================================
 	// Getter & Setter
 	// ===========================================================
-
-	/**
-	 * Deprecated. Use {@link #getRefreshableView()} from now on.
-	 * 
-	 * @deprecated
-	 * @return The Refreshable View which is currently wrapped
-	 */
-	public final T getAdapterView() {
-		return mRefreshableView;
-	}
 
 	/**
 	 * Get the Wrapped Refreshable View. Anything returned here has already been
@@ -214,24 +267,22 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 
 	/**
 	 * Get the mode that this view is currently in. This is only really useful
-	 * when using <code>MODE_BOTH</code>.
+	 * when using <code>Mode.BOTH</code>.
 	 * 
-	 * @return int of either <code>MODE_PULL_DOWN_TO_REFRESH</code> or
-	 *         <code>MODE_PULL_UP_TO_REFRESH</code>
+	 * @return Mode that the view is currently in
 	 */
-	public final int getCurrentMode() {
+	public final Mode getCurrentMode() {
 		return mCurrentMode;
 	}
 
 	/**
 	 * Get the mode that this view has been set to. If this returns
-	 * <code>MODE_BOTH</code>, you can use <code>getCurrentMode()</code> to
+	 * <code>Mode.BOTH</code>, you can use <code>getCurrentMode()</code> to
 	 * check which mode the view is currently in
 	 * 
-	 * @return int of either <code>MODE_PULL_DOWN_TO_REFRESH</code>,
-	 *         <code>MODE_PULL_UP_TO_REFRESH</code> or <code>MODE_BOTH</code>
+	 * @return Mode that the view has been set to
 	 */
-	public final int getMode() {
+	public final Mode getMode() {
 		return mMode;
 	}
 
@@ -239,10 +290,9 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	 * Set the mode of Pull-to-Refresh that this view will use.
 	 * 
 	 * @param mode
-	 *            - Either <code>MODE_PULL_DOWN_TO_REFRESH</code>,
-	 *            <code>MODE_PULL_UP_TO_REFRESH</code> or <code>MODE_BOTH</code>
+	 *            - Mode to set the View to
 	 */
-	public final void setMode(int mode) {
+	public final void setMode(Mode mode) {
 		if (mode != mMode) {
 			if (DEBUG) {
 				Log.d(LOG_TAG, "Setting mode to: " + mode);
@@ -335,35 +385,35 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	/**
 	 * Set Text to show when the Widget is being pulled, and will refresh when
 	 * released. This is the same as calling
-	 * <code>setReleaseLabel(releaseLabel, MODE_BOTH)</code>
+	 * <code>setReleaseLabel(releaseLabel, Mode.BOTH)</code>
 	 * 
 	 * @param releaseLabel
 	 *            - String to display
 	 */
 	public void setReleaseLabel(String releaseLabel) {
-		setReleaseLabel(releaseLabel, MODE_BOTH);
+		setReleaseLabel(releaseLabel, Mode.BOTH);
 	}
 
 	/**
 	 * Set Text to show when the Widget is being Pulled
-	 * <code>setPullLabel(releaseLabel, MODE_BOTH)</code>
+	 * <code>setPullLabel(releaseLabel, Mode.BOTH)</code>
 	 * 
 	 * @param releaseLabel
 	 *            - String to display
 	 */
 	public void setPullLabel(String pullLabel) {
-		setPullLabel(pullLabel, MODE_BOTH);
+		setPullLabel(pullLabel, Mode.BOTH);
 	}
 
 	/**
 	 * Set Text to show when the Widget is refreshing
-	 * <code>setRefreshingLabel(releaseLabel, MODE_BOTH)</code>
+	 * <code>setRefreshingLabel(releaseLabel, Mode.BOTH)</code>
 	 * 
 	 * @param releaseLabel
 	 *            - String to display
 	 */
 	public void setRefreshingLabel(String refreshingLabel) {
-		setRefreshingLabel(refreshingLabel, MODE_BOTH);
+		setRefreshingLabel(refreshingLabel, Mode.BOTH);
 	}
 
 	/**
@@ -373,15 +423,13 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	 * @param releaseLabel
 	 *            - String to display
 	 * @param mode
-	 *            - Either <code>MODE_PULL_DOWN_TO_REFRESH</code>,
-	 *            <code>MODE_PULL_UP_TO_REFRESH</code> or <code>MODE_BOTH</code>
-	 *            depending on which label you want to change
+	 *            - Mode to use depending on which label you want to change
 	 */
-	public void setReleaseLabel(String releaseLabel, int mode) {
-		if (null != mHeaderLayout && (mode == MODE_PULL_DOWN_TO_REFRESH || mode == MODE_BOTH)) {
+	public void setReleaseLabel(String releaseLabel, Mode mode) {
+		if (null != mHeaderLayout && mMode.canPullDown()) {
 			mHeaderLayout.setReleaseLabel(releaseLabel);
 		}
-		if (null != mFooterLayout && (mode == MODE_PULL_UP_TO_REFRESH || mode == MODE_BOTH)) {
+		if (null != mFooterLayout && mMode.canPullUp()) {
 			mFooterLayout.setReleaseLabel(releaseLabel);
 		}
 	}
@@ -392,15 +440,13 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	 * @param pullLabel
 	 *            - String to display
 	 * @param mode
-	 *            - Either <code>MODE_PULL_DOWN_TO_REFRESH</code>,
-	 *            <code>MODE_PULL_UP_TO_REFRESH</code> or <code>MODE_BOTH</code>
-	 *            depending on which label you want to change
+	 *            - Mode to use depending on which label you want to change
 	 */
-	public void setPullLabel(String pullLabel, int mode) {
-		if (null != mHeaderLayout && (mode == MODE_PULL_DOWN_TO_REFRESH || mode == MODE_BOTH)) {
+	public void setPullLabel(String pullLabel, Mode mode) {
+		if (null != mHeaderLayout && mMode.canPullDown()) {
 			mHeaderLayout.setPullLabel(pullLabel);
 		}
-		if (null != mFooterLayout && (mode == MODE_PULL_UP_TO_REFRESH || mode == MODE_BOTH)) {
+		if (null != mFooterLayout && mMode.canPullUp()) {
 			mFooterLayout.setPullLabel(pullLabel);
 		}
 	}
@@ -411,15 +457,13 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	 * @param refreshingLabel
 	 *            - String to display
 	 * @param mode
-	 *            - Either <code>MODE_PULL_DOWN_TO_REFRESH</code>,
-	 *            <code>MODE_PULL_UP_TO_REFRESH</code> or <code>MODE_BOTH</code>
-	 *            depending on which label you want to change
+	 *            - Mode to use depending on which label you want to change
 	 */
-	public void setRefreshingLabel(String refreshingLabel, int mode) {
-		if (null != mHeaderLayout && (mode == MODE_PULL_DOWN_TO_REFRESH || mode == MODE_BOTH)) {
+	public void setRefreshingLabel(String refreshingLabel, Mode mode) {
+		if (null != mHeaderLayout && mMode.canPullDown()) {
 			mHeaderLayout.setRefreshingLabel(refreshingLabel);
 		}
-		if (null != mFooterLayout && (mode == MODE_PULL_UP_TO_REFRESH || mode == MODE_BOTH)) {
+		if (null != mFooterLayout && mMode.canPullUp()) {
 			mFooterLayout.setRefreshingLabel(refreshingLabel);
 		}
 	}
@@ -453,8 +497,12 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		mHeaderLayout.setSubHeaderText(label);
 	}
 
+	/**
+	 * @deprecated Use the value from <code>getCurrentMode()</code> instead
+	 * @return true if the current mode is Mode.PULL_DOWN_TO_REFRESH
+	 */
 	public final boolean hasPullFromTop() {
-		return mCurrentMode != MODE_PULL_UP_TO_REFRESH;
+		return mCurrentMode == Mode.PULL_DOWN_TO_REFRESH;
 	}
 
 	// ===========================================================
@@ -508,9 +556,9 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 
 						} else if (null != mOnRefreshListener2) {
 							setRefreshingInternal(true);
-							if (mCurrentMode == MODE_PULL_DOWN_TO_REFRESH) {
+							if (mCurrentMode == Mode.PULL_DOWN_TO_REFRESH) {
 								mOnRefreshListener2.onPullDownToRefresh();
-							} else if (mCurrentMode == MODE_PULL_UP_TO_REFRESH) {
+							} else if (mCurrentMode == Mode.PULL_UP_TO_REFRESH) {
 								mOnRefreshListener2.onPullUpToRefresh();
 							}
 							return true;
@@ -561,19 +609,17 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 					final float xDiff = Math.abs(event.getX() - mLastMotionX);
 
 					if (yDiff > mTouchSlop && yDiff > xDiff) {
-						if ((mMode == MODE_PULL_DOWN_TO_REFRESH || mMode == MODE_BOTH) && dy >= 0.0001f
-								&& isReadyForPullDown()) {
+						if (mMode.canPullDown() && dy >= 1f && isReadyForPullDown()) {
 							mLastMotionY = y;
 							mIsBeingDragged = true;
-							if (mMode == MODE_BOTH) {
-								mCurrentMode = MODE_PULL_DOWN_TO_REFRESH;
+							if (mMode == Mode.BOTH) {
+								mCurrentMode = Mode.PULL_DOWN_TO_REFRESH;
 							}
-						} else if ((mMode == MODE_PULL_UP_TO_REFRESH || mMode == MODE_BOTH) && dy <= 0.0001f
-								&& isReadyForPullUp()) {
+						} else if (mMode.canPullUp() && dy <= -1f && isReadyForPullUp()) {
 							mLastMotionY = y;
 							mIsBeingDragged = true;
-							if (mMode == MODE_BOTH) {
-								mCurrentMode = MODE_PULL_UP_TO_REFRESH;
+							if (mMode == Mode.BOTH) {
+								mCurrentMode = Mode.PULL_UP_TO_REFRESH;
 							}
 						}
 					}
@@ -653,8 +699,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	protected Parcelable onSaveInstanceState() {
 		Bundle bundle = new Bundle();
 		bundle.putInt(STATE_STATE, mState);
-		bundle.putInt(STATE_MODE, mMode);
-		bundle.putInt(STATE_CURRENT_MODE, mCurrentMode);
+		bundle.putInt(STATE_MODE, mMode.ordinal());
+		bundle.putInt(STATE_CURRENT_MODE, mCurrentMode.ordinal());
 		bundle.putBoolean(STATE_DISABLE_SCROLLING_REFRESHING, mDisableScrollingWhileRefreshing);
 		bundle.putBoolean(STATE_SHOW_REFRESHING_VIEW, mShowViewWhileRefreshing);
 		bundle.putParcelable(STATE_SUPER, super.onSaveInstanceState());
@@ -666,15 +712,16 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		if (state instanceof Bundle) {
 			Bundle bundle = (Bundle) state;
 
-			final int viewState = bundle.getInt(STATE_STATE, PULL_TO_REFRESH);
-			mMode = bundle.getInt(STATE_MODE, MODE_PULL_DOWN_TO_REFRESH);
-			mCurrentMode = bundle.getInt(STATE_CURRENT_MODE, MODE_PULL_DOWN_TO_REFRESH);
+			mMode = Mode.mapIntToMode(bundle.getInt(STATE_MODE, 0));
+			mCurrentMode = Mode.mapIntToMode(bundle.getInt(STATE_CURRENT_MODE, 0));
+
 			mDisableScrollingWhileRefreshing = bundle.getBoolean(STATE_DISABLE_SCROLLING_REFRESHING, true);
 			mShowViewWhileRefreshing = bundle.getBoolean(STATE_SHOW_REFRESHING_VIEW, true);
 
 			// Let super Restore Itself
 			super.onRestoreInstanceState(bundle.getParcelable(STATE_SUPER));
 
+			final int viewState = bundle.getInt(STATE_STATE, PULL_TO_REFRESH);
 			if (viewState == REFRESHING) {
 				setRefreshingInternal(true);
 				mState = viewState;
@@ -693,10 +740,10 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		mState = PULL_TO_REFRESH;
 		mIsBeingDragged = false;
 
-		if (mMode == MODE_PULL_DOWN_TO_REFRESH || mMode == MODE_BOTH) {
+		if (mMode.canPullDown()) {
 			mHeaderLayout.reset();
 		}
-		if (mMode == MODE_PULL_UP_TO_REFRESH || mMode == MODE_BOTH) {
+		if (mMode.canPullUp()) {
 			mFooterLayout.reset();
 		}
 
@@ -706,16 +753,16 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	protected void setRefreshingInternal(boolean doScroll) {
 		mState = REFRESHING;
 
-		if (mMode == MODE_PULL_DOWN_TO_REFRESH || mMode == MODE_BOTH) {
+		if (mMode.canPullDown()) {
 			mHeaderLayout.refreshing();
 		}
-		if (mMode == MODE_PULL_UP_TO_REFRESH || mMode == MODE_BOTH) {
+		if (mMode.canPullUp()) {
 			mFooterLayout.refreshing();
 		}
 
 		if (doScroll) {
 			if (mShowViewWhileRefreshing) {
-				smoothScrollTo(mCurrentMode == MODE_PULL_DOWN_TO_REFRESH ? -mHeaderHeight : mHeaderHeight);
+				smoothScrollTo(mCurrentMode == Mode.PULL_DOWN_TO_REFRESH ? -mHeaderHeight : mHeaderHeight);
 			} else {
 				smoothScrollTo(0);
 			}
@@ -746,7 +793,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		if (this == mHeaderLayout.getParent()) {
 			removeView(mHeaderLayout);
 		}
-		if (mMode == MODE_PULL_DOWN_TO_REFRESH || mMode == MODE_BOTH) {
+		if (mMode.canPullDown()) {
 			addView(mHeaderLayout, 0, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,
 					ViewGroup.LayoutParams.WRAP_CONTENT));
 			measureView(mHeaderLayout);
@@ -757,7 +804,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		if (this == mFooterLayout.getParent()) {
 			removeView(mFooterLayout);
 		}
-		if (mMode == MODE_PULL_UP_TO_REFRESH || mMode == MODE_BOTH) {
+		if (mMode.canPullUp()) {
 			addView(mFooterLayout, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,
 					ViewGroup.LayoutParams.WRAP_CONTENT));
 			measureView(mFooterLayout);
@@ -766,21 +813,21 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 
 		// Hide Loading Views
 		switch (mMode) {
-			case MODE_BOTH:
+			case BOTH:
 				setPadding(0, -mHeaderHeight, 0, -mHeaderHeight);
 				break;
-			case MODE_PULL_UP_TO_REFRESH:
+			case PULL_UP_TO_REFRESH:
 				setPadding(0, 0, 0, -mHeaderHeight);
 				break;
-			case MODE_PULL_DOWN_TO_REFRESH:
+			case PULL_DOWN_TO_REFRESH:
 			default:
 				setPadding(0, -mHeaderHeight, 0, 0);
 				break;
 		}
 
-		// If we're not using MODE_BOTH, set mCurrentMode to mMode, otherwise
+		// If we're not using Mode.BOTH, set mCurrentMode to mMode, otherwise
 		// set it to pull down
-		mCurrentMode = (mMode != MODE_BOTH) ? mMode : MODE_PULL_DOWN_TO_REFRESH;
+		mCurrentMode = (mMode != Mode.BOTH) ? mMode : Mode.PULL_DOWN_TO_REFRESH;
 	}
 
 	private void init(Context context, AttributeSet attrs) {
@@ -793,7 +840,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		// Styleables from XML
 		TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.PullToRefresh);
 		if (a.hasValue(R.styleable.PullToRefresh_ptrMode)) {
-			mMode = a.getInteger(R.styleable.PullToRefresh_ptrMode, MODE_PULL_DOWN_TO_REFRESH);
+			mMode = Mode.mapIntToMode(a.getInteger(R.styleable.PullToRefresh_ptrMode, 0));
 		}
 
 		// Refreshable View
@@ -802,8 +849,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		addRefreshableView(context, mRefreshableView);
 
 		// We need to create now layouts now
-		mHeaderLayout = new LoadingLayout(context, MODE_PULL_DOWN_TO_REFRESH, a);
-		mFooterLayout = new LoadingLayout(context, MODE_PULL_UP_TO_REFRESH, a);
+		mHeaderLayout = new LoadingLayout(context, Mode.PULL_DOWN_TO_REFRESH, a);
+		mFooterLayout = new LoadingLayout(context, Mode.PULL_UP_TO_REFRESH, a);
 
 		// Add Header/Footer Views
 		updateUIForMode();
@@ -854,10 +901,10 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		final int oldHeight = getScrollY();
 
 		switch (mCurrentMode) {
-			case MODE_PULL_UP_TO_REFRESH:
+			case PULL_UP_TO_REFRESH:
 				newHeight = Math.round(Math.max(mInitialMotionY - mLastMotionY, 0) / FRICTION);
 				break;
-			case MODE_PULL_DOWN_TO_REFRESH:
+			case PULL_DOWN_TO_REFRESH:
 			default:
 				newHeight = Math.round(Math.min(mInitialMotionY - mLastMotionY, 0) / FRICTION);
 				break;
@@ -870,10 +917,10 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 				mState = RELEASE_TO_REFRESH;
 
 				switch (mCurrentMode) {
-					case MODE_PULL_UP_TO_REFRESH:
+					case PULL_UP_TO_REFRESH:
 						mFooterLayout.releaseToRefresh();
 						break;
-					case MODE_PULL_DOWN_TO_REFRESH:
+					case PULL_DOWN_TO_REFRESH:
 						mHeaderLayout.releaseToRefresh();
 						break;
 				}
@@ -884,10 +931,10 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 				mState = PULL_TO_REFRESH;
 
 				switch (mCurrentMode) {
-					case MODE_PULL_UP_TO_REFRESH:
+					case PULL_UP_TO_REFRESH:
 						mFooterLayout.pullToRefresh();
 						break;
-					case MODE_PULL_DOWN_TO_REFRESH:
+					case PULL_DOWN_TO_REFRESH:
 						mHeaderLayout.pullToRefresh();
 						break;
 				}
@@ -901,11 +948,11 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 
 	private boolean isReadyForPull() {
 		switch (mMode) {
-			case MODE_PULL_DOWN_TO_REFRESH:
+			case PULL_DOWN_TO_REFRESH:
 				return isReadyForPullDown();
-			case MODE_PULL_UP_TO_REFRESH:
+			case PULL_UP_TO_REFRESH:
 				return isReadyForPullUp();
-			case MODE_BOTH:
+			case BOTH:
 				return isReadyForPullUp() || isReadyForPullDown();
 		}
 		return false;

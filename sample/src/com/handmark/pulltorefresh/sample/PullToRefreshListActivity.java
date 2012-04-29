@@ -27,7 +27,7 @@ import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.handmark.pulltorefresh.library.PullToRefreshBase;
+import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 
@@ -104,7 +104,7 @@ public class PullToRefreshListActivity extends ListActivity {
 				mPullRefreshListView.isDisableScrollingWhileRefreshing() ? "Enable Scrolling while Refreshing"
 						: "Disable Scrolling while Refreshing");
 		menu.add(0, MENU_SET_MODE, 0,
-				mPullRefreshListView.getMode() == PullToRefreshBase.MODE_BOTH ? "Change to MODE_PULL_DOWN"
+				mPullRefreshListView.getMode() == Mode.BOTH ? "Change to MODE_PULL_DOWN"
 						: "Change to MODE_PULL_BOTH");
 		return super.onCreateOptionsMenu(menu);
 	}
@@ -117,7 +117,7 @@ public class PullToRefreshListActivity extends ListActivity {
 						: "Disable Scrolling while Refreshing");
 
 		MenuItem setModeItem = menu.findItem(MENU_SET_MODE);
-		setModeItem.setTitle(mPullRefreshListView.getMode() == PullToRefreshBase.MODE_BOTH ? "Change to MODE_PULL_DOWN"
+		setModeItem.setTitle(mPullRefreshListView.getMode() == Mode.BOTH ? "Change to MODE_PULL_DOWN"
 				: "Change to MODE_PULL_BOTH");
 
 		return super.onPrepareOptionsMenu(menu);
@@ -137,8 +137,8 @@ public class PullToRefreshListActivity extends ListActivity {
 				break;
 			case MENU_SET_MODE:
 				mPullRefreshListView
-						.setMode(mPullRefreshListView.getMode() == PullToRefreshBase.MODE_BOTH ? PullToRefreshBase.MODE_PULL_DOWN_TO_REFRESH
-								: PullToRefreshBase.MODE_BOTH);
+						.setMode(mPullRefreshListView.getMode() == Mode.BOTH ? Mode.PULL_DOWN_TO_REFRESH
+								: Mode.BOTH);
 				break;
 		}
 

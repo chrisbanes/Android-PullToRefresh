@@ -29,7 +29,7 @@ import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.handmark.pulltorefresh.library.PullToRefreshBase;
+import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener2;
 import com.handmark.pulltorefresh.library.PullToRefreshGridView;
 
@@ -107,7 +107,7 @@ public class PullToRefreshGridActivity extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		menu.add(0, MENU_SET_MODE, 0,
-				mPullRefreshGridView.getMode() == PullToRefreshBase.MODE_BOTH ? "Change to MODE_PULL_DOWN"
+				mPullRefreshGridView.getMode() == Mode.BOTH ? "Change to MODE_PULL_DOWN"
 						: "Change to MODE_PULL_BOTH");
 		return super.onCreateOptionsMenu(menu);
 	}
@@ -115,7 +115,7 @@ public class PullToRefreshGridActivity extends Activity {
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		MenuItem setModeItem = menu.findItem(MENU_SET_MODE);
-		setModeItem.setTitle(mPullRefreshGridView.getMode() == PullToRefreshBase.MODE_BOTH ? "Change to MODE_PULL_DOWN"
+		setModeItem.setTitle(mPullRefreshGridView.getMode() == Mode.BOTH ? "Change to MODE_PULL_DOWN"
 				: "Change to MODE_PULL_BOTH");
 
 		return super.onPrepareOptionsMenu(menu);
@@ -126,8 +126,8 @@ public class PullToRefreshGridActivity extends Activity {
 		switch (item.getItemId()) {
 			case MENU_SET_MODE:
 				mPullRefreshGridView
-						.setMode(mPullRefreshGridView.getMode() == PullToRefreshBase.MODE_BOTH ? PullToRefreshBase.MODE_PULL_DOWN_TO_REFRESH
-								: PullToRefreshBase.MODE_BOTH);
+						.setMode(mPullRefreshGridView.getMode() == Mode.BOTH ? Mode.PULL_DOWN_TO_REFRESH
+								: Mode.BOTH);
 				break;
 		}
 

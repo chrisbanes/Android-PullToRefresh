@@ -52,7 +52,7 @@ public class PullToRefreshWebView extends PullToRefreshBase<WebView> {
 		mRefreshableView.setWebChromeClient(defaultWebChromeClient);
 	}
 
-	public PullToRefreshWebView(Context context, int mode) {
+	public PullToRefreshWebView(Context context, Mode mode) {
 		super(context, mode);
 
 		/**

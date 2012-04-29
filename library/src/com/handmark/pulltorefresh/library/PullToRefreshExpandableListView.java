@@ -50,7 +50,7 @@ public class PullToRefreshExpandableListView extends PullToRefreshAdapterViewBas
 		super(context);
 	}
 
-	public PullToRefreshExpandableListView(Context context, int mode) {
+	public PullToRefreshExpandableListView(Context context, Mode mode) {
 		super(context, mode);
 	}
 

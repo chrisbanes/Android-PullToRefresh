@@ -33,7 +33,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.handmark.pulltorefresh.library.PullToRefreshBase;
+import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.handmark.pulltorefresh.library.R;
 
 public class LoadingLayout extends FrameLayout {
@@ -51,7 +51,7 @@ public class LoadingLayout extends FrameLayout {
 
 	private final Animation mRotateAnimation, mResetRotateAnimation;
 
-	public LoadingLayout(Context context, final int mode, TypedArray attrs) {
+	public LoadingLayout(Context context, final Mode mode, TypedArray attrs) {
 		super(context);
 		ViewGroup header = (ViewGroup) LayoutInflater.from(context).inflate(R.layout.pull_to_refresh_header, this);
 		mHeaderText = (TextView) header.findViewById(R.id.pull_to_refresh_text);
@@ -73,18 +73,17 @@ public class LoadingLayout extends FrameLayout {
 		mResetRotateAnimation.setFillAfter(true);
 
 		switch (mode) {
-			case PullToRefreshBase.MODE_PULL_UP_TO_REFRESH:
-
+			case PULL_UP_TO_REFRESH:
 				// Load in labels
 				mHeaderImage.setImageResource(R.drawable.pulltorefresh_up_arrow);
 				mPullLabel = context.getString(R.string.pull_to_refresh_from_bottom_pull_label);
 				mRefreshingLabel = context.getString(R.string.pull_to_refresh_from_bottom_refreshing_label);
 				mReleaseLabel = context.getString(R.string.pull_to_refresh_from_bottom_release_label);
 				break;
-			case PullToRefreshBase.MODE_PULL_DOWN_TO_REFRESH:
+				
+			case PULL_DOWN_TO_REFRESH:
 			default:
 				mHeaderImage.setImageResource(R.drawable.pulltorefresh_down_arrow);
-
 				// Load in labels
 				mPullLabel = context.getString(R.string.pull_to_refresh_pull_label);
 				mRefreshingLabel = context.getString(R.string.pull_to_refresh_refreshing_label);

@@ -88,7 +88,7 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		setDisableScrollingWhileRefreshing(false);
 	}
 
-	public PullToRefreshListView(Context context, int mode) {
+	public PullToRefreshListView(Context context, Mode mode) {
 		super(context, mode);
 		setDisableScrollingWhileRefreshing(false);
 	}
@@ -103,35 +103,35 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		return ((InternalListView) getRefreshableView()).getContextMenuInfo();
 	}
 
-	public void setReleaseLabel(String releaseLabel, int mode) {
+	public void setReleaseLabel(String releaseLabel, Mode mode) {
 		super.setReleaseLabel(releaseLabel, mode);
 
-		if (null != mHeaderLoadingView && (mode == MODE_PULL_DOWN_TO_REFRESH || mode == MODE_BOTH)) {
+		if (null != mHeaderLoadingView && mode.canPullDown()) {
 			mHeaderLoadingView.setReleaseLabel(releaseLabel);
 		}
-		if (null != mFooterLoadingView && (mode == MODE_PULL_UP_TO_REFRESH || mode == MODE_BOTH)) {
+		if (null != mFooterLoadingView && mode.canPullUp()) {
 			mFooterLoadingView.setReleaseLabel(releaseLabel);
 		}
 	}
 
-	public void setPullLabel(String pullLabel, int mode) {
+	public void setPullLabel(String pullLabel, Mode mode) {
 		super.setPullLabel(pullLabel, mode);
 
-		if (null != mHeaderLoadingView && (mode == MODE_PULL_DOWN_TO_REFRESH || mode == MODE_BOTH)) {
+		if (null != mHeaderLoadingView && mode.canPullDown()) {
 			mHeaderLoadingView.setPullLabel(pullLabel);
 		}
-		if (null != mFooterLoadingView && (mode == MODE_PULL_UP_TO_REFRESH || mode == MODE_BOTH)) {
+		if (null != mFooterLoadingView && mode.canPullUp()) {
 			mFooterLoadingView.setPullLabel(pullLabel);
 		}
 	}
 
-	public void setRefreshingLabel(String refreshingLabel, int mode) {
+	public void setRefreshingLabel(String refreshingLabel, Mode mode) {
 		super.setRefreshingLabel(refreshingLabel, mode);
 
-		if (null != mHeaderLoadingView && (mode == MODE_PULL_DOWN_TO_REFRESH || mode == MODE_BOTH)) {
+		if (null != mHeaderLoadingView && mode.canPullDown()) {
 			mHeaderLoadingView.setRefreshingLabel(refreshingLabel);
 		}
-		if (null != mFooterLoadingView && (mode == MODE_PULL_UP_TO_REFRESH || mode == MODE_BOTH)) {
+		if (null != mFooterLoadingView && mode.canPullUp()) {
 			mFooterLoadingView.setRefreshingLabel(refreshingLabel);
 		}
 	}
@@ -145,13 +145,13 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 
 		// Create Loading Views ready for use later
 		FrameLayout frame = new FrameLayout(context);
-		mHeaderLoadingView = new LoadingLayout(context, MODE_PULL_DOWN_TO_REFRESH, a);
+		mHeaderLoadingView = new LoadingLayout(context, Mode.PULL_DOWN_TO_REFRESH, a);
 		frame.addView(mHeaderLoadingView, FrameLayout.LayoutParams.FILL_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT);
 		mHeaderLoadingView.setVisibility(View.GONE);
 		lv.addHeaderView(frame, null, false);
 
 		mLvFooterLoadingFrame = new FrameLayout(context);
-		mFooterLoadingView = new LoadingLayout(context, MODE_PULL_UP_TO_REFRESH, a);
+		mFooterLoadingView = new LoadingLayout(context, Mode.PULL_UP_TO_REFRESH, a);
 		mLvFooterLoadingFrame.addView(mFooterLoadingView, FrameLayout.LayoutParams.FILL_PARENT,
 				FrameLayout.LayoutParams.WRAP_CONTENT);
 		mFooterLoadingView.setVisibility(View.GONE);
@@ -181,13 +181,13 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		final int selection, scrollToY;
 
 		switch (getCurrentMode()) {
-			case MODE_PULL_UP_TO_REFRESH:
+			case PULL_UP_TO_REFRESH:
 				originalLoadingLayout = getFooterLayout();
 				listViewLoadingLayout = mFooterLoadingView;
 				selection = mRefreshableView.getCount() - 1;
 				scrollToY = getScrollY() - getHeaderHeight();
 				break;
-			case MODE_PULL_DOWN_TO_REFRESH:
+			case PULL_DOWN_TO_REFRESH:
 			default:
 				originalLoadingLayout = getHeaderLayout();
 				listViewLoadingLayout = mHeaderLoadingView;
@@ -238,13 +238,13 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		int selection;
 
 		switch (getCurrentMode()) {
-			case MODE_PULL_UP_TO_REFRESH:
+			case PULL_UP_TO_REFRESH:
 				originalLoadingLayout = getFooterLayout();
 				listViewLoadingLayout = mFooterLoadingView;
 
 				selection = mRefreshableView.getCount() - 1;
 				break;
-			case MODE_PULL_DOWN_TO_REFRESH:
+			case PULL_DOWN_TO_REFRESH:
 			default:
 				originalLoadingLayout = getHeaderLayout();
 				listViewLoadingLayout = mHeaderLoadingView;
