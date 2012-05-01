@@ -173,6 +173,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	static final int RELEASE_TO_REFRESH = 0x1;
 	static final int REFRESHING = 0x2;
 	static final int MANUAL_REFRESHING = 0x3;
+	
+	static final Mode DEFAULT_MODE = Mode.PULL_DOWN_TO_REFRESH;
 
 	static final String STATE_STATE = "ptr_state";
 	static final String STATE_MODE = "ptr_mode";
@@ -193,7 +195,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	private boolean mIsBeingDragged = false;
 
 	private int mState = PULL_TO_REFRESH;
-	private Mode mMode = Mode.PULL_DOWN_TO_REFRESH;
+	private Mode mMode = DEFAULT_MODE;
 	private Mode mCurrentMode;
 
 	T mRefreshableView;
@@ -699,8 +701,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	protected Parcelable onSaveInstanceState() {
 		Bundle bundle = new Bundle();
 		bundle.putInt(STATE_STATE, mState);
-		bundle.putInt(STATE_MODE, mMode.ordinal());
-		bundle.putInt(STATE_CURRENT_MODE, mCurrentMode.ordinal());
+		bundle.putInt(STATE_MODE, mMode.getIntValue());
+		bundle.putInt(STATE_CURRENT_MODE, mCurrentMode.getIntValue());
 		bundle.putBoolean(STATE_DISABLE_SCROLLING_REFRESHING, mDisableScrollingWhileRefreshing);
 		bundle.putBoolean(STATE_SHOW_REFRESHING_VIEW, mShowViewWhileRefreshing);
 		bundle.putParcelable(STATE_SUPER, super.onSaveInstanceState());
