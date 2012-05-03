@@ -236,13 +236,14 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 
 		int scrollToHeight = getHeaderHeight();
 		int selection;
+		boolean scroll;
 
 		switch (getCurrentMode()) {
 			case PULL_UP_TO_REFRESH:
 				originalLoadingLayout = getFooterLayout();
 				listViewLoadingLayout = mFooterLoadingView;
-
 				selection = mRefreshableView.getCount() - 1;
+				scroll = mRefreshableView.getLastVisiblePosition() == selection;
 				break;
 			case PULL_DOWN_TO_REFRESH:
 			default:
@@ -250,15 +251,19 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 				listViewLoadingLayout = mHeaderLoadingView;
 				scrollToHeight *= -1;
 				selection = 0;
+				scroll = mRefreshableView.getFirstVisiblePosition() == selection;
 				break;
 		}
 
 		// Set our Original View to Visible
 		originalLoadingLayout.setVisibility(View.VISIBLE);
 
-		// Scroll so our View is at the same Y as the ListView header/footer,
-		// but only scroll if we've pulled to refresh
-		if (getState() != MANUAL_REFRESHING) {
+		/**
+		 * Scroll so the View is at the same Y as the ListView header/footer,
+		 * but only scroll if we've pulled to refresh and it's positioned
+		 * correctly
+		 */
+		if (scroll && getState() != MANUAL_REFRESHING) {
 			mRefreshableView.setSelection(selection);
 			setHeaderScroll(scrollToHeight);
 		}
