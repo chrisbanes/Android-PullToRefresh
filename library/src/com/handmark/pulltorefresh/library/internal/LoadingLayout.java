@@ -95,6 +95,10 @@ public class LoadingLayout extends FrameLayout {
 			ColorStateList colors = attrs.getColorStateList(R.styleable.PullToRefresh_ptrHeaderTextColor);
 			setTextColor(null != colors ? colors : ColorStateList.valueOf(0xFF000000));
 		}
+		if (attrs.hasValue(R.styleable.PullToRefresh_ptrHeaderSubTextColor)) {
+			ColorStateList colors = attrs.getColorStateList(R.styleable.PullToRefresh_ptrHeaderSubTextColor);
+			setSubTextColor(null != colors ? colors : ColorStateList.valueOf(0xFF000000));
+		}
 		if (attrs.hasValue(R.styleable.PullToRefresh_ptrHeaderBackground)) {
 			Drawable background = attrs.getDrawable(R.styleable.PullToRefresh_ptrHeaderBackground);
 			if (null != background) {
@@ -153,8 +157,16 @@ public class LoadingLayout extends FrameLayout {
 		mSubHeaderText.setTextColor(color);
 	}
 
+	public void setSubTextColor(ColorStateList color) {
+		mSubHeaderText.setTextColor(color);
+	}
+
 	public void setTextColor(int color) {
 		setTextColor(ColorStateList.valueOf(color));
+	}
+
+	public void setSubTextColor(int color) {
+		setSubTextColor(ColorStateList.valueOf(color));
 	}
 
 	public void setSubHeaderText(CharSequence label) {

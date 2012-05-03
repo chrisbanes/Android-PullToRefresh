@@ -496,7 +496,12 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	 *            - Label to set
 	 */
 	public void setLastUpdatedLabel(CharSequence label) {
-		mHeaderLayout.setSubHeaderText(label);
+		if (null != mHeaderLayout) {
+			mHeaderLayout.setSubHeaderText(label);
+		}
+		if (null != mFooterLayout) {
+			mFooterLayout.setSubHeaderText(label);
+		}
 	}
 
 	/**
