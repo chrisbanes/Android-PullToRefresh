@@ -35,7 +35,7 @@ It can also be styled using XML, such as in the sample ExpandableListView Sample
 
 ``` xml
 <com.handmark.pulltorefresh.library.PullToRefreshExpandableListView
-    xmlns:ptr="http://schemas.android.com/apk/res/YOUR_APP_PACKAGE_NAME"
+    xmlns:ptr="http://schemas.android.com/apk/res-auto"
     android:id="@+id/pull_refresh_expandable_list"
     android:layout_height="fill_parent"
     android:layout_width="fill_parent"
@@ -75,7 +75,7 @@ By default this library is set to Pull Down to Refresh, but if you instead to Pu
 
 ``` xml
 <com.handmark.pulltorefresh.library.PullToRefreshListView
-    xmlns:ptr="http://schemas.android.com/apk/res/YOUR_APP_PACKAGE_NAME"
+    xmlns:ptr="http://schemas.android.com/apk/res-auto"
     android:id="@+id/pull_refresh_list"
     android:layout_height="fill_parent"
     android:layout_width="fill_parent"
@@ -86,7 +86,7 @@ You can even set the View to enable both Pulling Up and Pulling Down using the n
 
 ``` xml
 <com.handmark.pulltorefresh.library.PullToRefreshListView
-    xmlns:ptr="http://schemas.android.com/apk/res/YOUR_APP_PACKAGE_NAME"
+    xmlns:ptr="http://schemas.android.com/apk/res-auto"
     android:id="@+id/pull_refresh_list"
     android:layout_height="fill_parent"
     android:layout_width="fill_parent"
