@@ -72,6 +72,13 @@ public class LoadingLayout extends FrameLayout {
 		mResetRotateAnimation.setDuration(DEFAULT_ROTATION_ANIMATION_DURATION);
 		mResetRotateAnimation.setFillAfter(true);
 
+		if (attrs.hasValue(R.styleable.PullToRefresh_ptrHeaderBackground)) {
+        Drawable background = attrs.getDrawable(R.styleable.PullToRefresh_ptrHeaderBackground);
+        if (null != background) {
+            setBackgroundDrawable(background);
+        }
+		}
+
 		switch (mode) {
 			case PULL_UP_TO_REFRESH:
 				// Load in labels
