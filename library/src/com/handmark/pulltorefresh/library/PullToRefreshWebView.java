@@ -17,6 +17,7 @@ package com.handmark.pulltorefresh.library;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.FloatMath;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 
@@ -87,7 +88,7 @@ public class PullToRefreshWebView extends PullToRefreshBase<WebView> {
 
 	@Override
 	protected boolean isReadyForPullUp() {
-		int exactContentHeight = (int) Math.floor(mRefreshableView.getContentHeight() * mRefreshableView.getScale());
+		float exactContentHeight = FloatMath.floor(mRefreshableView.getContentHeight() * mRefreshableView.getScale());
 		return mRefreshableView.getScrollY() >= (exactContentHeight - mRefreshableView.getHeight());
 	}
 }
