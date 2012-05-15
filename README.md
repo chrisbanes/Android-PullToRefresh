@@ -149,6 +149,14 @@ I will gladly accept pull requests for fixes and feature enhancements but please
 * Strings are now separate for Pulling Up and Pulling Up views, necessary for certain languages. There also new label setter methods so you change each one separately.
 * Bug fixes, including #66, #62 and #64
 
+### 1.2.8
+
+* Fix Background colour when using custom colour with ListView (#67)
+* Fix bug where the ListView would also scroll to the bottom/top after refreshing (#67)
+* Ability to change mode via a method call (#10)
+* Ability to make filtering of touch events more lenient (`setFilterTouchEvents`)
+* Fixed Copyright Notices on Source
+
 ## Acknowledgments
 
 * [Stefano Dacchille](https://github.com/stefanodacchille)
