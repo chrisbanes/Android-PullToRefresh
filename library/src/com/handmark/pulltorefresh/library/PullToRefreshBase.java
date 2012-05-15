@@ -37,8 +37,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 
 	public static enum Mode {
 		/**
-		 * Only allow the user to Pull Down from the top to refresh, this is
-		 * the default.
+		 * Only allow the user to Pull Down from the top to refresh, this is the
+		 * default.
 		 */
 		PULL_DOWN_TO_REFRESH(0x1),
 
@@ -173,7 +173,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	static final int RELEASE_TO_REFRESH = 0x1;
 	static final int REFRESHING = 0x2;
 	static final int MANUAL_REFRESHING = 0x3;
-	
+
 	static final Mode DEFAULT_MODE = Mode.PULL_DOWN_TO_REFRESH;
 
 	static final String STATE_STATE = "ptr_state";
@@ -202,6 +202,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	private boolean mPullToRefreshEnabled = true;
 	private boolean mShowViewWhileRefreshing = true;
 	private boolean mDisableScrollingWhileRefreshing = true;
+	private boolean mFilterTouchEvents = true;
 
 	private LoadingLayout mHeaderLayout;
 	private LoadingLayout mFooterLayout;
@@ -362,6 +363,34 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	 */
 	public final void setOnRefreshListener(OnRefreshListener2 listener) {
 		mOnRefreshListener2 = listener;
+	}
+
+	/**
+	 * Returns whether the Touch Events are filtered or not. If true is
+	 * returned, then the View will only use touch events where the difference
+	 * in the Y-axis is greater than the difference in the X-axis. This means
+	 * that the View will not interfere when it is used in a horizontal
+	 * scrolling View (such as a ViewPager).
+	 * 
+	 * @return boolean - true if the View is filtering Touch Events
+	 */
+	public final boolean getFilterTouchEvents() {
+		return mFilterTouchEvents;
+	}
+
+	/**
+	 * Set the Touch Events to be filtered or not. If set to true, then the View
+	 * will only use touch events where the difference in the Y-axis is greater
+	 * than the difference in the X-axis. This means that the View will not
+	 * interfere when it is used in a horizontal scrolling View (such as a
+	 * ViewPager), but will restrict which types of finger scrolls will trigger
+	 * the View.
+	 * 
+	 * @param filterEvents
+	 *            - true if you want to filter Touch Events. Default is true.
+	 */
+	public final void setFilterTouchEvents(boolean filterEvents) {
+		mFilterTouchEvents = filterEvents;
 	}
 
 	/**
@@ -615,7 +644,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 					final float yDiff = Math.abs(dy);
 					final float xDiff = Math.abs(event.getX() - mLastMotionX);
 
-					if (yDiff > mTouchSlop && yDiff > xDiff) {
+					if (yDiff > mTouchSlop && (!mFilterTouchEvents || yDiff > xDiff)) {
 						if (mMode.canPullDown() && dy >= 1f && isReadyForPullDown()) {
 							mLastMotionY = y;
 							mIsBeingDragged = true;
