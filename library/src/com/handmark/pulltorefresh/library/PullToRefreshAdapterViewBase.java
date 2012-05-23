@@ -30,6 +30,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.handmark.pulltorefresh.library.internal.EmptyViewMethodAccessor;
+import com.handmark.pulltorefresh.library.internal.IndicatorImageView;
 
 public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extends PullToRefreshBase<T> implements
 		OnScrollListener {
@@ -41,8 +42,8 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 	private View mEmptyView;
 	private FrameLayout mRefreshableViewHolder;
 
-	private ImageView mIndicatorIvTop;
-	private ImageView mIndicatorIvBottom;
+	private IndicatorImageView mIndicatorIvTop;
+	private IndicatorImageView mIndicatorIvBottom;
 
 	private boolean mShowIndicator = true;
 
@@ -233,17 +234,25 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 	protected final void updateIndicatorView() {
 		if (null != mIndicatorIvTop) {
 			if (!isRefreshing() && isReadyForPullDown()) {
-				mIndicatorIvTop.setVisibility(View.VISIBLE);
+				if (!mIndicatorIvTop.isVisible()) {
+					mIndicatorIvTop.show();
+				}
 			} else {
-				mIndicatorIvTop.setVisibility(View.GONE);
+				if (mIndicatorIvTop.isVisible()) {
+					mIndicatorIvTop.hide();
+				}
 			}
 		}
 
 		if (null != mIndicatorIvBottom) {
-			if (!isRefreshing() && isReadyForPullUp()) {
-				mIndicatorIvBottom.setVisibility(View.VISIBLE);
+			if (!isRefreshing() && isReadyForPullDown()) {
+				if (!mIndicatorIvBottom.isVisible()) {
+					mIndicatorIvBottom.show();
+				}
 			} else {
-				mIndicatorIvBottom.setVisibility(View.GONE);
+				if (mIndicatorIvBottom.isVisible()) {
+					mIndicatorIvBottom.hide();
+				}
 			}
 		}
 	}
@@ -280,7 +289,7 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 
 		if (mode.canPullDown() && null == mIndicatorIvTop) {
 			// If the mode can pull down, and we don't have one set already
-			mIndicatorIvTop = new ImageView(getContext());
+			mIndicatorIvTop = new IndicatorImageView(getContext());
 			mIndicatorIvTop.setImageResource(R.drawable.indicator_up);
 			FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
 					ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -295,7 +304,7 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 
 		if (mode.canPullUp() && null == mIndicatorIvBottom) {
 			// If the mode can pull down, and we don't have one set already
-			mIndicatorIvBottom = new ImageView(getContext());
+			mIndicatorIvBottom = new IndicatorImageView(getContext());
 			mIndicatorIvBottom.setImageResource(R.drawable.indicator_down);
 			FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
 					ViewGroup.LayoutParams.WRAP_CONTENT);
