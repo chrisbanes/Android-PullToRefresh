@@ -19,12 +19,14 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.handmark.pulltorefresh.library.internal.EmptyViewMethodAccessor;
@@ -32,11 +34,17 @@ import com.handmark.pulltorefresh.library.internal.EmptyViewMethodAccessor;
 public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extends PullToRefreshBase<T> implements
 		OnScrollListener {
 
+	private int mSavedFirstVisibleIndex = -1;
 	private int mSavedLastVisibleIndex = -1;
 	private OnScrollListener mOnScrollListener;
 	private OnLastItemVisibleListener mOnLastItemVisibleListener;
 	private View mEmptyView;
 	private FrameLayout mRefreshableViewHolder;
+
+	private ImageView mIndicatorIvTop;
+	private ImageView mIndicatorIvBottom;
+
+	private boolean mShowIndicator = true;
 
 	public PullToRefreshAdapterViewBase(Context context) {
 		super(context);
@@ -58,25 +66,40 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 	public final void onScroll(final AbsListView view, final int firstVisibleItem, final int visibleItemCount,
 			final int totalItemCount) {
 
+		boolean lastItemChanged = false;
+		boolean firstItemChanged = false;
+
+		// Detect whether the first visible item has changed
+		if (firstVisibleItem != mSavedFirstVisibleIndex) {
+			mSavedFirstVisibleIndex = firstVisibleItem;
+			firstItemChanged = true;
+		}
+
+		// Detect whether the last visible item has changed
+		final int lastVisibleItemIndex = firstVisibleItem + visibleItemCount;
+		if (lastVisibleItemIndex != mSavedLastVisibleIndex) {
+			mSavedLastVisibleIndex = lastVisibleItemIndex;
+			lastItemChanged = true;
+		}
+
+		// If we have a OnItemVisibleListener, do check...
 		if (null != mOnLastItemVisibleListener) {
-			// detect if last item is visible
-			int lastVisibleItemIndex = firstVisibleItem + visibleItemCount;
-
 			/**
-			 * Check that we have any items, and that the last item is visible.
-			 * lastVisibleItemIndex is a zero-based index, so we add one to it
-			 * to check against totalItemCount.
+			 * Check that the last item has changed, we have any items, and that
+			 * the last item is visible. lastVisibleItemIndex is a zero-based
+			 * index, so we add one to it to check against totalItemCount.
 			 */
-			if (visibleItemCount > 0 && (lastVisibleItemIndex + 1) == totalItemCount) {
-
-				// only process first event
-				if (lastVisibleItemIndex != mSavedLastVisibleIndex) {
-					mSavedLastVisibleIndex = lastVisibleItemIndex;
-					mOnLastItemVisibleListener.onLastItemVisible();
-				}
+			if (lastItemChanged && visibleItemCount > 0 && (lastVisibleItemIndex + 1) == totalItemCount) {
+				mOnLastItemVisibleListener.onLastItemVisible();
 			}
 		}
 
+		// If the views have changed, and we're showing the Indicator...
+		if ((firstItemChanged || lastItemChanged) && mShowIndicator) {
+			updateIndicatorView();
+		}
+
+		// Finally call OnScrollListener if we have one
 		if (null != mOnScrollListener) {
 			mOnScrollListener.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
 		}
@@ -152,6 +175,23 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 		return isLastItemVisible();
 	}
 
+	protected void setRefreshingInternal(boolean doScroll) {
+		super.setRefreshingInternal(doScroll);
+
+		if (mShowIndicator) {
+			updateIndicatorView();
+		}
+	}
+
+	@Override
+	protected void resetHeader() {
+		super.resetHeader();
+
+		if (mShowIndicator) {
+			updateIndicatorView();
+		}
+	}
+
 	private boolean isFirstItemVisible() {
 		if (mRefreshableView.getCount() <= getNumberInternalViews()) {
 			return true;
@@ -190,6 +230,24 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 		return false;
 	}
 
+	protected final void updateIndicatorView() {
+		if (null != mIndicatorIvTop) {
+			if (!isRefreshing() && isReadyForPullDown()) {
+				mIndicatorIvTop.setVisibility(View.VISIBLE);
+			} else {
+				mIndicatorIvTop.setVisibility(View.GONE);
+			}
+		}
+
+		if (null != mIndicatorIvBottom) {
+			if (!isRefreshing() && isReadyForPullUp()) {
+				mIndicatorIvBottom.setVisibility(View.VISIBLE);
+			} else {
+				mIndicatorIvBottom.setVisibility(View.GONE);
+			}
+		}
+	}
+
 	protected int getNumberInternalViews() {
 		return getNumberInternalHeaderViews() + getNumberInternalFooterViews();
 	}
@@ -212,5 +270,50 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 	 */
 	protected int getNumberInternalFooterViews() {
 		return 0;
+	}
+
+	@Override
+	protected void updateUIForMode() {
+		super.updateUIForMode();
+
+		Mode mode = getMode();
+
+		if (mode.canPullDown() && null == mIndicatorIvTop) {
+			// If the mode can pull down, and we don't have one set already
+			mIndicatorIvTop = new ImageView(getContext());
+			mIndicatorIvTop.setImageResource(R.drawable.indicator_up);
+			FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+					ViewGroup.LayoutParams.WRAP_CONTENT);
+			params.gravity = Gravity.TOP | Gravity.RIGHT;
+			mRefreshableViewHolder.addView(mIndicatorIvTop, params);
+
+		} else if (!mode.canPullDown() && null != mIndicatorIvTop) {
+			// If we can't pull down, but have a View then remove it
+			mRefreshableViewHolder.removeView(mIndicatorIvTop);
+			mIndicatorIvTop = null;
+		}
+
+		if (mode.canPullUp() && null == mIndicatorIvBottom) {
+			// If the mode can pull down, and we don't have one set already
+			mIndicatorIvBottom = new ImageView(getContext());
+			mIndicatorIvBottom.setImageResource(R.drawable.indicator_down);
+			FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+					ViewGroup.LayoutParams.WRAP_CONTENT);
+			params.gravity = Gravity.BOTTOM | Gravity.RIGHT;
+			mRefreshableViewHolder.addView(mIndicatorIvBottom, params);
+
+		} else if (!mode.canPullUp() && null != mIndicatorIvBottom) {
+			// If we can't pull down, but have a View then remove it
+			mRefreshableViewHolder.removeView(mIndicatorIvBottom);
+			mIndicatorIvBottom = null;
+		}
+	}
+
+	public boolean isShowIndicator() {
+		return mShowIndicator;
+	}
+
+	public void setShowIndicator(boolean showIndicator) {
+		mShowIndicator = showIndicator;
 	}
 }
