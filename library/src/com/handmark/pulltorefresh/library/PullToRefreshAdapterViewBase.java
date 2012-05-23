@@ -26,7 +26,6 @@ import android.view.ViewParent;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.handmark.pulltorefresh.library.internal.EmptyViewMethodAccessor;
@@ -289,7 +288,7 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 
 		if (mode.canPullDown() && null == mIndicatorIvTop) {
 			// If the mode can pull down, and we don't have one set already
-			mIndicatorIvTop = new IndicatorImageView(getContext());
+			mIndicatorIvTop = new IndicatorImageView(getContext(), Mode.PULL_DOWN_TO_REFRESH);
 			mIndicatorIvTop.setImageResource(R.drawable.indicator_up);
 			FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
 					ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -304,7 +303,7 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 
 		if (mode.canPullUp() && null == mIndicatorIvBottom) {
 			// If the mode can pull down, and we don't have one set already
-			mIndicatorIvBottom = new IndicatorImageView(getContext());
+			mIndicatorIvBottom = new IndicatorImageView(getContext(), Mode.PULL_UP_TO_REFRESH);
 			mIndicatorIvBottom.setImageResource(R.drawable.indicator_down);
 			FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
 					ViewGroup.LayoutParams.WRAP_CONTENT);

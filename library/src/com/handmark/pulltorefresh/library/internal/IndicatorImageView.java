@@ -1,5 +1,8 @@
 package com.handmark.pulltorefresh.library.internal;
 
+import com.handmark.pulltorefresh.library.PullToRefreshBase;
+import com.handmark.pulltorefresh.library.R;
+
 import android.content.Context;
 import android.view.View;
 import android.view.animation.Animation;
@@ -9,28 +12,38 @@ import android.widget.ImageView;
 
 public class IndicatorImageView extends ImageView implements AnimationListener {
 
-	static final int ANIMATION_DURATION = 300;
+	private Animation mInAnim, mOutAnim;
 
-	private Animation mFadeInAnim, mFadeOutAnim;
-
-	public IndicatorImageView(Context context) {
+	public IndicatorImageView(Context context, PullToRefreshBase.Mode mode) {
 		super(context);
 
-		mFadeInAnim = AnimationUtils.loadAnimation(context, android.R.anim.fade_in);
-		mFadeInAnim.setAnimationListener(this);
-		mFadeInAnim.setDuration(ANIMATION_DURATION);
-
-		mFadeOutAnim = AnimationUtils.loadAnimation(context, android.R.anim.fade_out);
-		mFadeOutAnim.setAnimationListener(this);
-		mFadeOutAnim.setDuration(ANIMATION_DURATION);
+		int inAnimResId, outAnimResId;
+		
+		switch (mode) {
+			case PULL_UP_TO_REFRESH:
+				inAnimResId = R.anim.slide_in_from_bottom;
+				outAnimResId = R.anim.slide_out_to_bottom;
+				break;
+			default:
+			case PULL_DOWN_TO_REFRESH:
+				inAnimResId = R.anim.slide_in_from_top;
+				outAnimResId = R.anim.slide_out_to_top;
+				break;
+		}
+		
+		mInAnim = AnimationUtils.loadAnimation(context, inAnimResId);
+		mInAnim.setAnimationListener(this);
+		
+		mOutAnim = AnimationUtils.loadAnimation(context, outAnimResId);
+		mOutAnim.setAnimationListener(this);
 	}
 
 	public boolean isVisible() {
 		Animation currentAnim = getAnimation();
 		if (null != currentAnim) {
-			if (currentAnim == mFadeInAnim) {
+			if (currentAnim == mInAnim) {
 				return true;
-			} else if (currentAnim == mFadeOutAnim) {
+			} else if (currentAnim == mOutAnim) {
 				return false;
 			}
 		}
@@ -39,21 +52,21 @@ public class IndicatorImageView extends ImageView implements AnimationListener {
 	}
 
 	public void hide() {
-		startAnimation(mFadeOutAnim);
+		startAnimation(mOutAnim);
 	}
 
 	public void show() {
-		startAnimation(mFadeInAnim);
+		startAnimation(mInAnim);
 	}
 
 	@Override
 	public void onAnimationEnd(Animation animation) {
-		if (animation == mFadeOutAnim) {
+		if (animation == mOutAnim) {
 			setVisibility(View.GONE);
-		} else if (animation == mFadeInAnim) {
+		} else if (animation == mInAnim) {
 			setVisibility(View.VISIBLE);
 		}
-		
+
 		clearAnimation();
 	}
 
