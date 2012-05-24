@@ -23,13 +23,13 @@ public class IndicatorImageView extends ImageView implements AnimationListener {
 			case PULL_UP_TO_REFRESH:
 				inAnimResId = R.anim.slide_in_from_bottom;
 				outAnimResId = R.anim.slide_out_to_bottom;
-				setImageResource(R.drawable.indicator_down);
+				setImageResource(R.drawable.indicator_bottom);
 				break;
 			default:
 			case PULL_DOWN_TO_REFRESH:
 				inAnimResId = R.anim.slide_in_from_top;
 				outAnimResId = R.anim.slide_out_to_top;
-				setImageResource(R.drawable.indicator_up);
+				setImageResource(R.drawable.indicator_top);
 				break;
 		}
 
