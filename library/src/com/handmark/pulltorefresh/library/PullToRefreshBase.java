@@ -772,6 +772,47 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	// Methods
 	// ===========================================================
 
+	protected void init(Context context, AttributeSet attrs) {
+		setOrientation(LinearLayout.VERTICAL);
+
+		ViewConfiguration config = ViewConfiguration.get(context);
+		mTouchSlop = config.getScaledTouchSlop();
+
+		// Styleables from XML
+		TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.PullToRefresh);
+		if (a.hasValue(R.styleable.PullToRefresh_ptrMode)) {
+			mMode = Mode.mapIntToMode(a.getInteger(R.styleable.PullToRefresh_ptrMode, 0));
+		}
+
+		// Refreshable View
+		// By passing the attrs, we can add ListView/GridView params via XML
+		mRefreshableView = createRefreshableView(context, attrs);
+		addRefreshableView(context, mRefreshableView);
+
+		// We need to create now layouts now
+		mHeaderLayout = new LoadingLayout(context, Mode.PULL_DOWN_TO_REFRESH, a);
+		mFooterLayout = new LoadingLayout(context, Mode.PULL_UP_TO_REFRESH, a);
+
+		// Add Header/Footer Views
+		updateUIForMode();
+
+		// Styleables from XML
+		if (a.hasValue(R.styleable.PullToRefresh_ptrHeaderBackground)) {
+			Drawable background = a.getDrawable(R.styleable.PullToRefresh_ptrHeaderBackground);
+			if (null != background) {
+				setBackgroundDrawable(background);
+			}
+		}
+		if (a.hasValue(R.styleable.PullToRefresh_ptrAdapterViewBackground)) {
+			Drawable background = a.getDrawable(R.styleable.PullToRefresh_ptrAdapterViewBackground);
+			if (null != background) {
+				mRefreshableView.setBackgroundDrawable(background);
+			}
+		}
+		a.recycle();
+		a = null;
+	}
+
 	protected void resetHeader() {
 		mState = PULL_TO_REFRESH;
 		mIsBeingDragged = false;
@@ -864,48 +905,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		// If we're not using Mode.BOTH, set mCurrentMode to mMode, otherwise
 		// set it to pull down
 		mCurrentMode = (mMode != Mode.BOTH) ? mMode : Mode.PULL_DOWN_TO_REFRESH;
-	}
-
-	private void init(Context context, AttributeSet attrs) {
-
-		setOrientation(LinearLayout.VERTICAL);
-
-		ViewConfiguration config = ViewConfiguration.get(context);
-		mTouchSlop = config.getScaledTouchSlop();
-
-		// Styleables from XML
-		TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.PullToRefresh);
-		if (a.hasValue(R.styleable.PullToRefresh_ptrMode)) {
-			mMode = Mode.mapIntToMode(a.getInteger(R.styleable.PullToRefresh_ptrMode, 0));
-		}
-
-		// Refreshable View
-		// By passing the attrs, we can add ListView/GridView params via XML
-		mRefreshableView = createRefreshableView(context, attrs);
-		addRefreshableView(context, mRefreshableView);
-
-		// We need to create now layouts now
-		mHeaderLayout = new LoadingLayout(context, Mode.PULL_DOWN_TO_REFRESH, a);
-		mFooterLayout = new LoadingLayout(context, Mode.PULL_UP_TO_REFRESH, a);
-
-		// Add Header/Footer Views
-		updateUIForMode();
-
-		// Styleables from XML
-		if (a.hasValue(R.styleable.PullToRefresh_ptrHeaderBackground)) {
-			Drawable background = a.getDrawable(R.styleable.PullToRefresh_ptrHeaderBackground);
-			if (null != background) {
-				setBackgroundDrawable(background);
-			}
-		}
-		if (a.hasValue(R.styleable.PullToRefresh_ptrAdapterViewBackground)) {
-			Drawable background = a.getDrawable(R.styleable.PullToRefresh_ptrAdapterViewBackground);
-			if (null != background) {
-				mRefreshableView.setBackgroundDrawable(background);
-			}
-		}
-		a.recycle();
-		a = null;
 	}
 
 	private void measureView(View child) {

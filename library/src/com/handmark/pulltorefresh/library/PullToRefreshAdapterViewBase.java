@@ -34,7 +34,8 @@ import com.handmark.pulltorefresh.library.internal.IndicatorImageView;
 public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extends PullToRefreshBase<T> implements
 		OnScrollListener {
 
-	private int mSavedFirstVisibleIndex = -1;
+	static final boolean DEFAULT_SHOW_INDICATOR = true;
+
 	private int mSavedLastVisibleIndex = -1;
 	private OnScrollListener mOnScrollListener;
 	private OnLastItemVisibleListener mOnLastItemVisibleListener;
@@ -44,7 +45,7 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 	private IndicatorImageView mIndicatorIvTop;
 	private IndicatorImageView mIndicatorIvBottom;
 
-	private boolean mShowIndicator = true;
+	private boolean mShowIndicator;
 
 	public PullToRefreshAdapterViewBase(Context context) {
 		super(context);
@@ -71,37 +72,28 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 					+ ". Total Items: " + totalItemCount);
 		}
 
-		boolean lastItemChanged = false;
-		boolean firstItemChanged = false;
-
-		// Detect whether the first visible item has changed
-		if (firstVisibleItem != mSavedFirstVisibleIndex) {
-			mSavedFirstVisibleIndex = firstVisibleItem;
-			firstItemChanged = true;
-		}
-
-		// Detect whether the last visible item has changed
-		final int lastVisibleItemIndex = firstVisibleItem + visibleItemCount;
-		if (lastVisibleItemIndex != mSavedLastVisibleIndex) {
-			mSavedLastVisibleIndex = lastVisibleItemIndex;
-			lastItemChanged = true;
-		}
-
 		// If we have a OnItemVisibleListener, do check...
 		if (null != mOnLastItemVisibleListener) {
+
+			// Detect whether the last visible item has changed
+			final int lastVisibleItemIndex = firstVisibleItem + visibleItemCount;
+
 			/**
 			 * Check that the last item has changed, we have any items, and that
 			 * the last item is visible. lastVisibleItemIndex is a zero-based
 			 * index, so we add one to it to check against totalItemCount.
 			 */
-			if (lastItemChanged && visibleItemCount > 0 && (lastVisibleItemIndex + 1) == totalItemCount) {
-				mOnLastItemVisibleListener.onLastItemVisible();
+			if (visibleItemCount > 0 && (lastVisibleItemIndex + 1) == totalItemCount) {
+				if (lastVisibleItemIndex != mSavedLastVisibleIndex) {
+					mSavedLastVisibleIndex = lastVisibleItemIndex;
+					mOnLastItemVisibleListener.onLastItemVisible();
+				}
 			}
 		}
 
-		// If the views have changed, and we're showing the Indicator...
-		if ((firstItemChanged || lastItemChanged) && mShowIndicator) {
-			updateIndicatorView();
+		// If we're showing the indicator, check positions...
+		if (mShowIndicator) {
+			updateIndicatorViewsVisibility();
 		}
 
 		// Finally call OnScrollListener if we have one
@@ -176,15 +168,39 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 		return isFirstItemVisible();
 	}
 
+	@Override
+	protected void init(Context context, AttributeSet attrs) {
+		// Set Show Indicator to the default value
+		mShowIndicator = DEFAULT_SHOW_INDICATOR;
+
+		super.init(context, attrs);
+	}
+
 	protected boolean isReadyForPullUp() {
 		return isLastItemVisible();
+	}
+
+	public boolean getShowIndicator() {
+		return mShowIndicator;
+	}
+
+	public void setShowIndicator(boolean showIndicator) {
+		mShowIndicator = showIndicator;
+
+		if (showIndicator) {
+			// If we're set to Show Indicator, add/update them
+			addIndicatorViews();
+		} else {
+			// If not, then remove then
+			removeIndicatorViews();
+		}
 	}
 
 	protected void setRefreshingInternal(boolean doScroll) {
 		super.setRefreshingInternal(doScroll);
 
 		if (mShowIndicator) {
-			updateIndicatorView();
+			updateIndicatorViewsVisibility();
 		}
 	}
 
@@ -193,7 +209,41 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 		super.resetHeader();
 
 		if (mShowIndicator) {
-			updateIndicatorView();
+			updateIndicatorViewsVisibility();
+		}
+	}
+
+	protected int getNumberInternalViews() {
+		return getNumberInternalHeaderViews() + getNumberInternalFooterViews();
+	}
+
+	/**
+	 * Returns the number of Adapter View Header Views. This will always return
+	 * 0 for non-ListView views.
+	 * 
+	 * @return 0 for non-ListView views, possibly 1 for ListView
+	 */
+	protected int getNumberInternalHeaderViews() {
+		return 0;
+	}
+
+	/**
+	 * Returns the number of Adapter View Footer Views. This will always return
+	 * 0 for non-ListView views.
+	 * 
+	 * @return 0 for non-ListView views, possibly 1 for ListView
+	 */
+	protected int getNumberInternalFooterViews() {
+		return 0;
+	}
+
+	@Override
+	protected void updateUIForMode() {
+		super.updateUIForMode();
+
+		// Check Indicator Views consistent with new Mode
+		if (mShowIndicator) {
+			addIndicatorViews();
 		}
 	}
 
@@ -235,7 +285,51 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 		return false;
 	}
 
-	protected final void updateIndicatorView() {
+	private void addIndicatorViews() {
+		Mode mode = getMode();
+
+		if (mode.canPullDown() && null == mIndicatorIvTop) {
+			// If the mode can pull down, and we don't have one set already
+			mIndicatorIvTop = new IndicatorImageView(getContext(), Mode.PULL_DOWN_TO_REFRESH);
+			FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+					ViewGroup.LayoutParams.WRAP_CONTENT);
+			params.gravity = Gravity.TOP | Gravity.RIGHT;
+			mRefreshableViewHolder.addView(mIndicatorIvTop, params);
+
+		} else if (!mode.canPullDown() && null != mIndicatorIvTop) {
+			// If we can't pull down, but have a View then remove it
+			mRefreshableViewHolder.removeView(mIndicatorIvTop);
+			mIndicatorIvTop = null;
+		}
+
+		if (mode.canPullUp() && null == mIndicatorIvBottom) {
+			// If the mode can pull down, and we don't have one set already
+			mIndicatorIvBottom = new IndicatorImageView(getContext(), Mode.PULL_UP_TO_REFRESH);
+			FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+					ViewGroup.LayoutParams.WRAP_CONTENT);
+			params.gravity = Gravity.BOTTOM | Gravity.RIGHT;
+			mRefreshableViewHolder.addView(mIndicatorIvBottom, params);
+
+		} else if (!mode.canPullUp() && null != mIndicatorIvBottom) {
+			// If we can't pull down, but have a View then remove it
+			mRefreshableViewHolder.removeView(mIndicatorIvBottom);
+			mIndicatorIvBottom = null;
+		}
+	}
+
+	private void removeIndicatorViews() {
+		if (null != mIndicatorIvTop) {
+			mRefreshableViewHolder.removeView(mIndicatorIvTop);
+			mIndicatorIvTop = null;
+		}
+
+		if (null != mIndicatorIvBottom) {
+			mRefreshableViewHolder.removeView(mIndicatorIvBottom);
+			mIndicatorIvBottom = null;
+		}
+	}
+
+	private void updateIndicatorViewsVisibility() {
 		if (null != mIndicatorIvTop) {
 			if (!isRefreshing() && isReadyForPullDown()) {
 				if (!mIndicatorIvTop.isVisible()) {
@@ -259,74 +353,5 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 				}
 			}
 		}
-	}
-
-	protected int getNumberInternalViews() {
-		return getNumberInternalHeaderViews() + getNumberInternalFooterViews();
-	}
-
-	/**
-	 * Returns the number of Adapter View Header Views. This will always return
-	 * 0 for non-ListView views.
-	 * 
-	 * @return 0 for non-ListView views, possibly 1 for ListView
-	 */
-	protected int getNumberInternalHeaderViews() {
-		return 0;
-	}
-
-	/**
-	 * Returns the number of Adapter View Footer Views. This will always return
-	 * 0 for non-ListView views.
-	 * 
-	 * @return 0 for non-ListView views, possibly 1 for ListView
-	 */
-	protected int getNumberInternalFooterViews() {
-		return 0;
-	}
-
-	@Override
-	protected void updateUIForMode() {
-		super.updateUIForMode();
-
-		Mode mode = getMode();
-
-		if (mode.canPullDown() && null == mIndicatorIvTop) {
-			// If the mode can pull down, and we don't have one set already
-			mIndicatorIvTop = new IndicatorImageView(getContext(), Mode.PULL_DOWN_TO_REFRESH);
-			mIndicatorIvTop.setImageResource(R.drawable.indicator_up);
-			FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-					ViewGroup.LayoutParams.WRAP_CONTENT);
-			params.gravity = Gravity.TOP | Gravity.RIGHT;
-			mRefreshableViewHolder.addView(mIndicatorIvTop, params);
-
-		} else if (!mode.canPullDown() && null != mIndicatorIvTop) {
-			// If we can't pull down, but have a View then remove it
-			mRefreshableViewHolder.removeView(mIndicatorIvTop);
-			mIndicatorIvTop = null;
-		}
-
-		if (mode.canPullUp() && null == mIndicatorIvBottom) {
-			// If the mode can pull down, and we don't have one set already
-			mIndicatorIvBottom = new IndicatorImageView(getContext(), Mode.PULL_UP_TO_REFRESH);
-			mIndicatorIvBottom.setImageResource(R.drawable.indicator_down);
-			FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-					ViewGroup.LayoutParams.WRAP_CONTENT);
-			params.gravity = Gravity.BOTTOM | Gravity.RIGHT;
-			mRefreshableViewHolder.addView(mIndicatorIvBottom, params);
-
-		} else if (!mode.canPullUp() && null != mIndicatorIvBottom) {
-			// If we can't pull down, but have a View then remove it
-			mRefreshableViewHolder.removeView(mIndicatorIvBottom);
-			mIndicatorIvBottom = null;
-		}
-	}
-
-	public boolean isShowIndicator() {
-		return mShowIndicator;
-	}
-
-	public void setShowIndicator(boolean showIndicator) {
-		mShowIndicator = showIndicator;
 	}
 }
