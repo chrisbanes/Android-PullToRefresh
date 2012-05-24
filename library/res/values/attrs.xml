@@ -11,6 +11,7 @@
             <flag name="pullUpFromBottom" value="0x2" />
             <flag name="both" value="0x3" />
         </attr>
+        <attr name="ptrShowIndicator" format="reference|boolean" />
     </declare-styleable>
 
 </resources>

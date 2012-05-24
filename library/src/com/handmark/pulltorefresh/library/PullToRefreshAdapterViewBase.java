@@ -16,6 +16,7 @@
 package com.handmark.pulltorefresh.library;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -169,11 +170,9 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 	}
 
 	@Override
-	protected void init(Context context, AttributeSet attrs) {
-		// Set Show Indicator to the default value
-		mShowIndicator = DEFAULT_SHOW_INDICATOR;
-
-		super.init(context, attrs);
+	protected void handleStyledAttributes(TypedArray a) {
+		// Set Show Indicator to the XML value, or default value
+		mShowIndicator = a.getBoolean(R.styleable.PullToRefresh_ptrShowIndicator, DEFAULT_SHOW_INDICATOR);
 	}
 
 	protected boolean isReadyForPullUp() {
