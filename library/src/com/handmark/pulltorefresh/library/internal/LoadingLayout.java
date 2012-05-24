@@ -18,6 +18,7 @@ package com.handmark.pulltorefresh.library.internal;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
+import android.graphics.Matrix;
 import android.graphics.drawable.Drawable;
 import android.text.Html;
 import android.text.TextUtils;
@@ -30,7 +31,7 @@ import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
+import android.widget.ImageView.ScaleType;
 import android.widget.TextView;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
@@ -38,10 +39,11 @@ import com.handmark.pulltorefresh.library.R;
 
 public class LoadingLayout extends FrameLayout {
 
-	static final int DEFAULT_ROTATION_ANIMATION_DURATION = 150;
+	static final int DEFAULT_ROTATION_ANIMATION_DURATION = 600;
 
 	private final ImageView mHeaderImage;
-	private final ProgressBar mHeaderProgress;
+	private final Matrix mHeaderImageMatrix;
+
 	private final TextView mHeaderText;
 	private final TextView mSubHeaderText;
 
@@ -49,7 +51,9 @@ public class LoadingLayout extends FrameLayout {
 	private String mRefreshingLabel;
 	private String mReleaseLabel;
 
-	private final Animation mRotateAnimation, mResetRotateAnimation;
+	private final float mRotationPivotX, mRotationPivotY;
+
+	private final Animation mRotateAnimation;
 
 	public LoadingLayout(Context context, final Mode mode, TypedArray attrs) {
 		super(context);
@@ -57,33 +61,29 @@ public class LoadingLayout extends FrameLayout {
 		mHeaderText = (TextView) header.findViewById(R.id.pull_to_refresh_text);
 		mSubHeaderText = (TextView) header.findViewById(R.id.pull_to_refresh_sub_text);
 		mHeaderImage = (ImageView) header.findViewById(R.id.pull_to_refresh_image);
-		mHeaderProgress = (ProgressBar) header.findViewById(R.id.pull_to_refresh_progress);
+
+		mHeaderImage.setScaleType(ScaleType.MATRIX);
+		mHeaderImageMatrix = new Matrix();
+		mHeaderImage.setImageMatrix(mHeaderImageMatrix);
 
 		final Interpolator interpolator = new LinearInterpolator();
-		mRotateAnimation = new RotateAnimation(0, -180, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
+		mRotateAnimation = new RotateAnimation(0, 360, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
 				0.5f);
 		mRotateAnimation.setInterpolator(interpolator);
 		mRotateAnimation.setDuration(DEFAULT_ROTATION_ANIMATION_DURATION);
-		mRotateAnimation.setFillAfter(true);
-
-		mResetRotateAnimation = new RotateAnimation(-180, 0, Animation.RELATIVE_TO_SELF, 0.5f,
-				Animation.RELATIVE_TO_SELF, 0.5f);
-		mResetRotateAnimation.setInterpolator(interpolator);
-		mResetRotateAnimation.setDuration(DEFAULT_ROTATION_ANIMATION_DURATION);
-		mResetRotateAnimation.setFillAfter(true);
+		mRotateAnimation.setRepeatCount(Animation.INFINITE);
+		mRotateAnimation.setRepeatMode(Animation.RESTART);
 
 		switch (mode) {
 			case PULL_UP_TO_REFRESH:
 				// Load in labels
-				mHeaderImage.setImageResource(R.drawable.pulltorefresh_up_arrow);
 				mPullLabel = context.getString(R.string.pull_to_refresh_from_bottom_pull_label);
 				mRefreshingLabel = context.getString(R.string.pull_to_refresh_from_bottom_refreshing_label);
 				mReleaseLabel = context.getString(R.string.pull_to_refresh_from_bottom_release_label);
 				break;
-				
+
 			case PULL_DOWN_TO_REFRESH:
 			default:
-				mHeaderImage.setImageResource(R.drawable.pulltorefresh_down_arrow);
 				// Load in labels
 				mPullLabel = context.getString(R.string.pull_to_refresh_pull_label);
 				mRefreshingLabel = context.getString(R.string.pull_to_refresh_refreshing_label);
@@ -106,13 +106,32 @@ public class LoadingLayout extends FrameLayout {
 			}
 		}
 
+		// Try and get defined drawable from Attrs
+		Drawable imageDrawable = null;
+		if (attrs.hasValue(R.styleable.PullToRefresh_ptrDrawable)) {
+			imageDrawable = attrs.getDrawable(R.styleable.PullToRefresh_ptrDrawable);
+		}
+
+		// If we don't have a user defined drawable, load the default
+		if (null == imageDrawable) {
+			imageDrawable = context.getResources().getDrawable(R.drawable.default_ptr_drawable);
+		}
+
+		// Set Drawable, and save width/height
+		mHeaderImage.setImageDrawable(imageDrawable);
+		mRotationPivotX = imageDrawable.getIntrinsicWidth() / 2f;
+		mRotationPivotY = imageDrawable.getIntrinsicHeight() / 2f;
+
 		reset();
 	}
 
 	public void reset() {
 		mHeaderText.setText(Html.fromHtml(mPullLabel));
 		mHeaderImage.setVisibility(View.VISIBLE);
-		mHeaderProgress.setVisibility(View.GONE);
+		mHeaderImage.clearAnimation();
+
+		resetImageRotation();
+
 		if (TextUtils.isEmpty(mSubHeaderText.getText())) {
 			mSubHeaderText.setVisibility(View.GONE);
 		} else {
@@ -122,8 +141,6 @@ public class LoadingLayout extends FrameLayout {
 
 	public void releaseToRefresh() {
 		mHeaderText.setText(Html.fromHtml(mReleaseLabel));
-		mHeaderImage.clearAnimation();
-		mHeaderImage.startAnimation(mRotateAnimation);
 	}
 
 	public void setPullLabel(String pullLabel) {
@@ -132,9 +149,8 @@ public class LoadingLayout extends FrameLayout {
 
 	public void refreshing() {
 		mHeaderText.setText(Html.fromHtml(mRefreshingLabel));
-		mHeaderImage.clearAnimation();
-		mHeaderImage.setVisibility(View.INVISIBLE);
-		mHeaderProgress.setVisibility(View.VISIBLE);
+		mHeaderImage.startAnimation(mRotateAnimation);
+
 		mSubHeaderText.setVisibility(View.GONE);
 	}
 
@@ -148,8 +164,6 @@ public class LoadingLayout extends FrameLayout {
 
 	public void pullToRefresh() {
 		mHeaderText.setText(Html.fromHtml(mPullLabel));
-		mHeaderImage.clearAnimation();
-		mHeaderImage.startAnimation(mResetRotateAnimation);
 	}
 
 	public void setTextColor(ColorStateList color) {
@@ -176,5 +190,15 @@ public class LoadingLayout extends FrameLayout {
 			mSubHeaderText.setText(label);
 			mSubHeaderText.setVisibility(View.VISIBLE);
 		}
+	}
+
+	public void onPullY(float scaleOfHeight) {
+		mHeaderImageMatrix.setRotate(scaleOfHeight * 90, mRotationPivotX, mRotationPivotY);
+		mHeaderImage.setImageMatrix(mHeaderImageMatrix);
+	}
+
+	private void resetImageRotation() {
+		mHeaderImageMatrix.reset();
+		mHeaderImage.setImageMatrix(mHeaderImageMatrix);
 	}
 }

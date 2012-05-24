@@ -12,6 +12,7 @@
             <flag name="both" value="0x3" />
         </attr>
         <attr name="ptrShowIndicator" format="reference|boolean" />
+        <attr name="ptrDrawable" format="reference" />
     </declare-styleable>
 
 </resources>

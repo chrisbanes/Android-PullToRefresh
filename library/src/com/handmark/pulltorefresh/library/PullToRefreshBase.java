@@ -776,7 +776,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	 * Allows Derivative classes to handle the XML Attrs without creating a
 	 * TypedArray themsevles
 	 * 
-	 * @param a - TypedArray of PullToRefresh Attributes
+	 * @param a
+	 *            - TypedArray of PullToRefresh Attributes
 	 */
 	protected void handleStyledAttributes(TypedArray a) {
 	}
@@ -959,6 +960,17 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		setHeaderScroll(newHeight);
 
 		if (newHeight != 0) {
+			
+			float scale = Math.abs(newHeight) / (float) mHeaderHeight;
+			switch (mCurrentMode) {
+				case PULL_UP_TO_REFRESH:
+					mFooterLayout.onPullY(scale);
+					break;
+				case PULL_DOWN_TO_REFRESH:
+					mHeaderLayout.onPullY(scale);
+					break;
+			}
+
 			if (mState == PULL_TO_REFRESH && mHeaderHeight < Math.abs(newHeight)) {
 				mState = RELEASE_TO_REFRESH;
 
