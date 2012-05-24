@@ -12,6 +12,7 @@ This project aims to provide a reusable Pull to Refresh widget for Android. It i
  * Works with ExpandableListView (thanks to Stefano Dacchille)
  * Integrated End of List Listener ( setOnLastItemVisibleListener() )
  * Maven Support (thanks to Stefano Dacchille)
+ * Indicators to show the user when a Pull-to-Refresh is available
  * No longer shows the Tap to Refresh view when the AdapterView can not fill itself.
 
 Repository at <https://github.com/chrisbanes/Android-PullToRefresh>.

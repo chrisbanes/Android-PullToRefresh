@@ -179,10 +179,26 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 		return isLastItemVisible();
 	}
 
+	/**
+	 * Gets whether an indicator graphic should be displayed when the View is in
+	 * a state where a Pull-to-Refresh can happen. An example of this state is
+	 * when the Adapter View is scrolled to the top and the mode is set to
+	 * {@link Mode#PULL_DOWN_TO_REFRESH}. The default value is {@value #DEFAULT_SHOW_INDICATOR}.
+	 * @return true if the indicators will be shown
+	 */
 	public boolean getShowIndicator() {
 		return mShowIndicator;
 	}
 
+	/**
+	 * Sets whether an indicator graphic should be displayed when the View is in
+	 * a state where a Pull-to-Refresh can happen. An example of this state is
+	 * when the Adapter View is scrolled to the top and the mode is set to
+	 * {@link Mode#PULL_DOWN_TO_REFRESH}
+	 * 
+	 * @param showIndicator
+	 *            - true if the indicators should be shown.
+	 */
 	public void setShowIndicator(boolean showIndicator) {
 		mShowIndicator = showIndicator;
 
