@@ -38,6 +38,9 @@ public class IndicatorImageView extends ImageView implements AnimationListener {
 
 		mOutAnim = AnimationUtils.loadAnimation(context, outAnimResId);
 		mOutAnim.setAnimationListener(this);
+
+		setPadding(getPaddingLeft(), getPaddingTop(),
+				context.getResources().getDimensionPixelSize(R.dimen.indicator_right_padding), getPaddingBottom());
 	}
 
 	public final boolean isVisible() {
