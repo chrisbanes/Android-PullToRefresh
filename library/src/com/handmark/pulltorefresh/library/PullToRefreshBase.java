@@ -531,6 +531,9 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		if (null != mFooterLayout) {
 			mFooterLayout.setSubHeaderText(label);
 		}
+
+		// Refresh Height as it may have changed
+		refreshLoadingViewsHeight();
 	}
 
 	/**
@@ -768,6 +771,34 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		super.onRestoreInstanceState(state);
 	}
 
+	/**
+	 * Called when the UI needs to be updated to the 'Release to Refresh' state
+	 */
+	protected void onReleaseToRefresh() {
+		switch (mCurrentMode) {
+			case PULL_UP_TO_REFRESH:
+				mFooterLayout.releaseToRefresh();
+				break;
+			case PULL_DOWN_TO_REFRESH:
+				mHeaderLayout.releaseToRefresh();
+				break;
+		}
+	}
+
+	/**
+	 * Called when the UI needs to be updated to the 'Pull to Refresh' state
+	 */
+	protected void onPullToRefresh() {
+		switch (mCurrentMode) {
+			case PULL_UP_TO_REFRESH:
+				mFooterLayout.pullToRefresh();
+				break;
+			case PULL_DOWN_TO_REFRESH:
+				mHeaderLayout.pullToRefresh();
+				break;
+		}
+	}
+
 	// ===========================================================
 	// Methods
 	// ===========================================================
@@ -842,8 +873,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		if (mMode.canPullDown()) {
 			addView(mHeaderLayout, 0, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,
 					ViewGroup.LayoutParams.WRAP_CONTENT));
-			measureView(mHeaderLayout);
-			mHeaderHeight = mHeaderLayout.getMeasuredHeight();
 		}
 
 		// Remove Footer, and then add Footer Loading View again if needed
@@ -853,23 +882,11 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		if (mMode.canPullUp()) {
 			addView(mFooterLayout, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,
 					ViewGroup.LayoutParams.WRAP_CONTENT));
-			measureView(mFooterLayout);
-			mHeaderHeight = mFooterLayout.getMeasuredHeight();
+
 		}
 
 		// Hide Loading Views
-		switch (mMode) {
-			case BOTH:
-				setPadding(0, -mHeaderHeight, 0, -mHeaderHeight);
-				break;
-			case PULL_UP_TO_REFRESH:
-				setPadding(0, 0, 0, -mHeaderHeight);
-				break;
-			case PULL_DOWN_TO_REFRESH:
-			default:
-				setPadding(0, -mHeaderHeight, 0, 0);
-				break;
-		}
+		refreshLoadingViewsHeight();
 
 		// If we're not using Mode.BOTH, set mCurrentMode to mMode, otherwise
 		// set it to pull down
@@ -986,28 +1003,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		return oldHeight != newHeight;
 	}
 
-	protected void onReleaseToRefresh() {
-		switch (mCurrentMode) {
-			case PULL_UP_TO_REFRESH:
-				mFooterLayout.releaseToRefresh();
-				break;
-			case PULL_DOWN_TO_REFRESH:
-				mHeaderLayout.releaseToRefresh();
-				break;
-		}
-	}
-
-	protected void onPullToRefresh() {
-		switch (mCurrentMode) {
-			case PULL_UP_TO_REFRESH:
-				mFooterLayout.pullToRefresh();
-				break;
-			case PULL_DOWN_TO_REFRESH:
-				mHeaderLayout.pullToRefresh();
-				break;
-		}
-	}
-
 	private boolean isReadyForPull() {
 		switch (mMode) {
 			case PULL_DOWN_TO_REFRESH:
@@ -1018,6 +1013,34 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 				return isReadyForPullUp() || isReadyForPullDown();
 		}
 		return false;
+	}
+
+	/**
+	 * Re-measure the Loading Views height, and adjust internal padding as
+	 * necessary
+	 */
+	private void refreshLoadingViewsHeight() {
+		if (mMode.canPullDown()) {
+			measureView(mHeaderLayout);
+			mHeaderHeight = mHeaderLayout.getMeasuredHeight();
+		} else if (mMode.canPullUp()) {
+			measureView(mFooterLayout);
+			mHeaderHeight = mFooterLayout.getMeasuredHeight();
+		}
+
+		// Hide Loading Views
+		switch (mMode) {
+			case BOTH:
+				setPadding(0, -mHeaderHeight, 0, -mHeaderHeight);
+				break;
+			case PULL_UP_TO_REFRESH:
+				setPadding(0, 0, 0, -mHeaderHeight);
+				break;
+			case PULL_DOWN_TO_REFRESH:
+			default:
+				setPadding(0, -mHeaderHeight, 0, 0);
+				break;
+		}
 	}
 
 	// ===========================================================
