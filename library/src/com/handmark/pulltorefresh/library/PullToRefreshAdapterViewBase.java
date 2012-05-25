@@ -342,6 +342,7 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 			mIndicatorIvTop = new IndicatorLayout(getContext(), Mode.PULL_DOWN_TO_REFRESH);
 			FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
 					ViewGroup.LayoutParams.WRAP_CONTENT);
+			params.rightMargin = getResources().getDimensionPixelSize(R.dimen.indicator_right_padding);
 			params.gravity = Gravity.TOP | Gravity.RIGHT;
 			mRefreshableViewHolder.addView(mIndicatorIvTop, params);
 
@@ -356,6 +357,7 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 			mIndicatorIvBottom = new IndicatorLayout(getContext(), Mode.PULL_UP_TO_REFRESH);
 			FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
 					ViewGroup.LayoutParams.WRAP_CONTENT);
+			params.rightMargin = getResources().getDimensionPixelSize(R.dimen.indicator_right_padding);
 			params.gravity = Gravity.BOTTOM | Gravity.RIGHT;
 			mRefreshableViewHolder.addView(mIndicatorIvBottom, params);
 
