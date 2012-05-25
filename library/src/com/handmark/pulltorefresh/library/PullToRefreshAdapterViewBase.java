@@ -93,7 +93,7 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 		}
 
 		// If we're showing the indicator, check positions...
-		if (mShowIndicator) {
+		if (getShowIndicatorInternal()) {
 			updateIndicatorViewsVisibility();
 		}
 
@@ -204,7 +204,7 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 	public void setShowIndicator(boolean showIndicator) {
 		mShowIndicator = showIndicator;
 
-		if (showIndicator) {
+		if (getShowIndicatorInternal()) {
 			// If we're set to Show Indicator, add/update them
 			addIndicatorViews();
 		} else {
@@ -216,7 +216,7 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 	protected void setRefreshingInternal(boolean doScroll) {
 		super.setRefreshingInternal(doScroll);
 
-		if (mShowIndicator) {
+		if (getShowIndicatorInternal()) {
 			updateIndicatorViewsVisibility();
 		}
 	}
@@ -225,7 +225,7 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 	protected void onReleaseToRefresh() {
 		super.onReleaseToRefresh();
 
-		if (mShowIndicator) {
+		if (getShowIndicatorInternal()) {
 			switch (getCurrentMode()) {
 				case PULL_UP_TO_REFRESH:
 					mIndicatorIvBottom.releaseToRefresh();
@@ -241,7 +241,7 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 	protected void onPullToRefresh() {
 		super.onPullToRefresh();
 
-		if (mShowIndicator) {
+		if (getShowIndicatorInternal()) {
 			switch (getCurrentMode()) {
 				case PULL_UP_TO_REFRESH:
 					mIndicatorIvBottom.pullToRefresh();
@@ -257,7 +257,7 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 	protected void resetHeader() {
 		super.resetHeader();
 
-		if (mShowIndicator) {
+		if (getShowIndicatorInternal()) {
 			updateIndicatorViewsVisibility();
 		}
 	}
@@ -291,9 +291,13 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 		super.updateUIForMode();
 
 		// Check Indicator Views consistent with new Mode
-		if (mShowIndicator) {
+		if (getShowIndicatorInternal()) {
 			addIndicatorViews();
 		}
+	}
+
+	private boolean getShowIndicatorInternal() {
+		return mShowIndicator && isPullToRefreshEnabled();
 	}
 
 	private boolean isFirstItemVisible() {
