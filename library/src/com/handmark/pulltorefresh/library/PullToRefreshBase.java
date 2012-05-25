@@ -960,7 +960,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		setHeaderScroll(newHeight);
 
 		if (newHeight != 0) {
-			
+
 			float scale = Math.abs(newHeight) / (float) mHeaderHeight;
 			switch (mCurrentMode) {
 				case PULL_UP_TO_REFRESH:
@@ -973,35 +973,39 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 
 			if (mState == PULL_TO_REFRESH && mHeaderHeight < Math.abs(newHeight)) {
 				mState = RELEASE_TO_REFRESH;
-
-				switch (mCurrentMode) {
-					case PULL_UP_TO_REFRESH:
-						mFooterLayout.releaseToRefresh();
-						break;
-					case PULL_DOWN_TO_REFRESH:
-						mHeaderLayout.releaseToRefresh();
-						break;
-				}
-
+				onReleaseToRefresh();
 				return true;
 
 			} else if (mState == RELEASE_TO_REFRESH && mHeaderHeight >= Math.abs(newHeight)) {
 				mState = PULL_TO_REFRESH;
-
-				switch (mCurrentMode) {
-					case PULL_UP_TO_REFRESH:
-						mFooterLayout.pullToRefresh();
-						break;
-					case PULL_DOWN_TO_REFRESH:
-						mHeaderLayout.pullToRefresh();
-						break;
-				}
-
+				onPullToRefresh();
 				return true;
 			}
 		}
 
 		return oldHeight != newHeight;
+	}
+
+	protected void onReleaseToRefresh() {
+		switch (mCurrentMode) {
+			case PULL_UP_TO_REFRESH:
+				mFooterLayout.releaseToRefresh();
+				break;
+			case PULL_DOWN_TO_REFRESH:
+				mHeaderLayout.releaseToRefresh();
+				break;
+		}
+	}
+
+	protected void onPullToRefresh() {
+		switch (mCurrentMode) {
+			case PULL_UP_TO_REFRESH:
+				mFooterLayout.pullToRefresh();
+				break;
+			case PULL_DOWN_TO_REFRESH:
+				mHeaderLayout.pullToRefresh();
+				break;
+		}
 	}
 
 	private boolean isReadyForPull() {

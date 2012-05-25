@@ -21,6 +21,9 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
+import android.view.animation.Interpolator;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.RotateAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
@@ -29,8 +32,12 @@ import com.handmark.pulltorefresh.library.R;
 
 public class IndicatorLayout extends FrameLayout implements AnimationListener {
 
+	static final int DEFAULT_ROTATION_ANIMATION_DURATION = 150;
+
 	private Animation mInAnim, mOutAnim;
 	private ImageView mArrowImageView;
+
+	private final Animation mRotateAnimation, mResetRotateAnimation;
 
 	public IndicatorLayout(Context context, PullToRefreshBase.Mode mode) {
 		super(context);
@@ -62,6 +69,20 @@ public class IndicatorLayout extends FrameLayout implements AnimationListener {
 
 		mOutAnim = AnimationUtils.loadAnimation(context, outAnimResId);
 		mOutAnim.setAnimationListener(this);
+
+		final Interpolator interpolator = new LinearInterpolator();
+		mRotateAnimation = new RotateAnimation(0, -180, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
+				0.5f);
+		mRotateAnimation.setInterpolator(interpolator);
+		mRotateAnimation.setDuration(DEFAULT_ROTATION_ANIMATION_DURATION);
+		mRotateAnimation.setFillAfter(true);
+
+		mResetRotateAnimation = new RotateAnimation(-180, 0, Animation.RELATIVE_TO_SELF, 0.5f,
+				Animation.RELATIVE_TO_SELF, 0.5f);
+		mResetRotateAnimation.setInterpolator(interpolator);
+		mResetRotateAnimation.setDuration(DEFAULT_ROTATION_ANIMATION_DURATION);
+		mResetRotateAnimation.setFillAfter(true);
+
 	}
 
 	public final boolean isVisible() {
@@ -84,6 +105,7 @@ public class IndicatorLayout extends FrameLayout implements AnimationListener {
 	@Override
 	public void onAnimationEnd(Animation animation) {
 		if (animation == mOutAnim) {
+			mArrowImageView.clearAnimation();
 			setVisibility(View.GONE);
 		} else if (animation == mInAnim) {
 			setVisibility(View.VISIBLE);
@@ -100,6 +122,14 @@ public class IndicatorLayout extends FrameLayout implements AnimationListener {
 	@Override
 	public void onAnimationStart(Animation animation) {
 		setVisibility(View.VISIBLE);
+	}
+
+	public void releaseToRefresh() {
+		mArrowImageView.startAnimation(mRotateAnimation);
+	}
+
+	public void pullToRefresh() {
+		mArrowImageView.startAnimation(mResetRotateAnimation);
 	}
 
 }

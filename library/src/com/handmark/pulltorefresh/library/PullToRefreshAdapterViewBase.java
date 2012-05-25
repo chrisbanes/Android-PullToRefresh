@@ -183,7 +183,9 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 	 * Gets whether an indicator graphic should be displayed when the View is in
 	 * a state where a Pull-to-Refresh can happen. An example of this state is
 	 * when the Adapter View is scrolled to the top and the mode is set to
-	 * {@link Mode#PULL_DOWN_TO_REFRESH}. The default value is {@value #DEFAULT_SHOW_INDICATOR}.
+	 * {@link Mode#PULL_DOWN_TO_REFRESH}. The default value is
+	 * {@value #DEFAULT_SHOW_INDICATOR}.
+	 * 
 	 * @return true if the indicators will be shown
 	 */
 	public boolean getShowIndicator() {
@@ -216,6 +218,38 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 
 		if (mShowIndicator) {
 			updateIndicatorViewsVisibility();
+		}
+	}
+
+	@Override
+	protected void onReleaseToRefresh() {
+		super.onReleaseToRefresh();
+
+		if (mShowIndicator) {
+			switch (getCurrentMode()) {
+				case PULL_UP_TO_REFRESH:
+					mIndicatorIvBottom.releaseToRefresh();
+					break;
+				case PULL_DOWN_TO_REFRESH:
+					mIndicatorIvTop.releaseToRefresh();
+					break;
+			}
+		}
+	}
+
+	@Override
+	protected void onPullToRefresh() {
+		super.onPullToRefresh();
+
+		if (mShowIndicator) {
+			switch (getCurrentMode()) {
+				case PULL_UP_TO_REFRESH:
+					mIndicatorIvBottom.pullToRefresh();
+					break;
+				case PULL_DOWN_TO_REFRESH:
+					mIndicatorIvTop.pullToRefresh();
+					break;
+			}
 		}
 	}
 
