@@ -30,7 +30,7 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 import com.handmark.pulltorefresh.library.internal.EmptyViewMethodAccessor;
-import com.handmark.pulltorefresh.library.internal.IndicatorImageView;
+import com.handmark.pulltorefresh.library.internal.IndicatorLayout;
 
 public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extends PullToRefreshBase<T> implements
 		OnScrollListener {
@@ -43,8 +43,8 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 	private View mEmptyView;
 	private FrameLayout mRefreshableViewHolder;
 
-	private IndicatorImageView mIndicatorIvTop;
-	private IndicatorImageView mIndicatorIvBottom;
+	private IndicatorLayout mIndicatorIvTop;
+	private IndicatorLayout mIndicatorIvBottom;
 
 	private boolean mShowIndicator;
 
@@ -305,7 +305,7 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 
 		if (mode.canPullDown() && null == mIndicatorIvTop) {
 			// If the mode can pull down, and we don't have one set already
-			mIndicatorIvTop = new IndicatorImageView(getContext(), Mode.PULL_DOWN_TO_REFRESH);
+			mIndicatorIvTop = new IndicatorLayout(getContext(), Mode.PULL_DOWN_TO_REFRESH);
 			FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
 					ViewGroup.LayoutParams.WRAP_CONTENT);
 			params.gravity = Gravity.TOP | Gravity.RIGHT;
@@ -319,7 +319,7 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 
 		if (mode.canPullUp() && null == mIndicatorIvBottom) {
 			// If the mode can pull down, and we don't have one set already
-			mIndicatorIvBottom = new IndicatorImageView(getContext(), Mode.PULL_UP_TO_REFRESH);
+			mIndicatorIvBottom = new IndicatorLayout(getContext(), Mode.PULL_UP_TO_REFRESH);
 			FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
 					ViewGroup.LayoutParams.WRAP_CONTENT);
 			params.gravity = Gravity.BOTTOM | Gravity.RIGHT;

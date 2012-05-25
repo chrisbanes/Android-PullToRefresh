@@ -15,36 +15,45 @@
  *******************************************************************************/
 package com.handmark.pulltorefresh.library.internal;
 
-import com.handmark.pulltorefresh.library.PullToRefreshBase;
-import com.handmark.pulltorefresh.library.R;
-
 import android.content.Context;
+import android.view.Gravity;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-public class IndicatorImageView extends ImageView implements AnimationListener {
+import com.handmark.pulltorefresh.library.PullToRefreshBase;
+import com.handmark.pulltorefresh.library.R;
+
+public class IndicatorLayout extends FrameLayout implements AnimationListener {
 
 	private Animation mInAnim, mOutAnim;
+	private ImageView mArrowImageView;
 
-	public IndicatorImageView(Context context, PullToRefreshBase.Mode mode) {
+	public IndicatorLayout(Context context, PullToRefreshBase.Mode mode) {
 		super(context);
 
-		int inAnimResId, outAnimResId;
+		mArrowImageView = new ImageView(context);
+		FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT,
+				FrameLayout.LayoutParams.WRAP_CONTENT, Gravity.CENTER);
+		addView(mArrowImageView, lp);
 
+		int inAnimResId, outAnimResId;
 		switch (mode) {
 			case PULL_UP_TO_REFRESH:
 				inAnimResId = R.anim.slide_in_from_bottom;
 				outAnimResId = R.anim.slide_out_to_bottom;
-				setImageResource(R.drawable.indicator_bottom);
+				setBackgroundResource(R.drawable.indicator_bg_bottom);
+				mArrowImageView.setImageResource(R.drawable.arrow_up);
 				break;
 			default:
 			case PULL_DOWN_TO_REFRESH:
 				inAnimResId = R.anim.slide_in_from_top;
 				outAnimResId = R.anim.slide_out_to_top;
-				setImageResource(R.drawable.indicator_top);
+				setBackgroundResource(R.drawable.indicator_bg_top);
+				mArrowImageView.setImageResource(R.drawable.arrow_down);
 				break;
 		}
 
@@ -53,9 +62,6 @@ public class IndicatorImageView extends ImageView implements AnimationListener {
 
 		mOutAnim = AnimationUtils.loadAnimation(context, outAnimResId);
 		mOutAnim.setAnimationListener(this);
-
-		setPadding(getPaddingLeft(), getPaddingTop(),
-				context.getResources().getDimensionPixelSize(R.dimen.indicator_right_padding), getPaddingBottom());
 	}
 
 	public final boolean isVisible() {
