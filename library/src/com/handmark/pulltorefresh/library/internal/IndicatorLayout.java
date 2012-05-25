@@ -45,6 +45,8 @@ public class IndicatorLayout extends FrameLayout implements AnimationListener {
 		mArrowImageView = new ImageView(context);
 		FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT,
 				FrameLayout.LayoutParams.WRAP_CONTENT, Gravity.CENTER);
+		lp.topMargin = lp.bottomMargin = lp.leftMargin = lp.rightMargin = getResources().getDimensionPixelSize(
+				R.dimen.indicator_internal_padding);
 		addView(mArrowImageView, lp);
 
 		int inAnimResId, outAnimResId;
