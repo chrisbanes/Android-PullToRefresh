@@ -275,11 +275,11 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 	}
 
 	protected int getNumberInternalHeaderViews() {
-		return null != mHeaderLoadingView ? 1 : 0;
+		return null != mRefreshableView ? mRefreshableView.getHeaderViewsCount() : 0;
 	}
 
 	protected int getNumberInternalFooterViews() {
-		return null != mFooterLoadingView ? 1 : 0;
+		return null != mRefreshableView ? mRefreshableView.getFooterViewsCount() : 0;
 	}
 
 }
