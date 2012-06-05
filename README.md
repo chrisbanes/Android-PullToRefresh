@@ -13,20 +13,20 @@ This project aims to provide a reusable Pull to Refresh widget for Android. It i
  * Works with WebView!
  * Integrated End of List Listener (`setOnLastItemVisibleListener()`)
  * Maven Support (thanks to Stefano Dacchille)
- * No longer shows the Tap to Refresh view when the AdapterView can not fill itself.
+ * Does not show the 'Tap to Refresh' view when the AdapterView can not fill itself.
  * Indicators to show the user when a Pull-to-Refresh is available
  * Lots of [Customisation](https://github.com/chrisbanes/Android-PullToRefresh/wiki/Customisation) options!
 
 Repository at <https://github.com/chrisbanes/Android-PullToRefresh>.
 
 ## Usage
-To being using the libary, please see the [Quick Start Guide](https://github.com/chrisbanes/Android-PullToRefresh/wiki/Quick-Start-Guide) page.
+To begin using the libary, please see the [Quick Start Guide](https://github.com/chrisbanes/Android-PullToRefresh/wiki/Quick-Start-Guide) page.
 
 ### Customisation
 Please see the [Customisation](https://github.com/chrisbanes/Android-PullToRefresh/wiki/Customisation) page for more information on how to change the behaviour and look of the View.
 
 ### Pull Up to Refresh
-By default this library is set to Pull Down to Refresh, but if you instead to Pull Up to Refresh you can do so via XML. You can even set the View to enable both Pulling Up and Pulling Down using the 'both' setting. See the [Customisation](https://github.com/chrisbanes/Android-PullToRefresh/wiki/Customisation) page for more information on how to set this.
+By default this library is set to Pull Down to Refresh, but if you want to allow Pulling Up to Refresh then you can do so. You can even set the View to enable both Pulling Up and Pulling Down using the 'both' setting. See the [Customisation](https://github.com/chrisbanes/Android-PullToRefresh/wiki/Customisation) page for more information on how to set this.
 
 ## Pull Requests
 
