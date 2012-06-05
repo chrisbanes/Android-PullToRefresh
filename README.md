@@ -32,7 +32,7 @@ Repository at <https://github.com/chrisbanes/Android-PullToRefresh>.
     android:layout_width="fill_parent" />
 ```
 
-There are also a number of Customisation options for the View. Please see the [Customisation](wiki/Customisation) page for more information.
+There are also a number of Customisation options for the View. Please see the [Customisation](https://github.com/chrisbanes/Android-PullToRefresh/wiki/Customisation) page for more information.
 
 ### Activity
 
@@ -61,14 +61,14 @@ private class GetDataTask extends AsyncTask<Void, Void, String[]> {
 
 ### Pull Up to Refresh
 
-By default this library is set to Pull Down to Refresh, but if you instead to Pull Up to Refresh you can do so via XML. You can even set the View to enable both Pulling Up and Pulling Down using the 'both' setting. Please see the [Customisation](wiki/Customisation) page for more information.
+By default this library is set to Pull Down to Refresh, but if you instead to Pull Up to Refresh you can do so via XML. You can even set the View to enable both Pulling Up and Pulling Down using the 'both' setting. Please see the [Customisation](https://github.com/chrisbanes/Android-PullToRefresh/wiki/Customisation) page for more information.
 
 ## Pull Requests
 
 I will gladly accept pull requests for fixes and feature enhancements but please do them in the dev branch. The master branch is for the latest stable code,  dev is where I try things out before releasing them as stable. Any pull requests that are against master from now on will be closed asking for you to do another pull against dev.
 
 ## Changelog
-Please see the new [Changelog](wiki/Changelog) page to see what's recently changed.
+Please see the new [Changelog](https://github.com/chrisbanes/Android-PullToRefresh/wiki/Changelog) page to see what's recently changed.
 
 ## Acknowledgments
 
