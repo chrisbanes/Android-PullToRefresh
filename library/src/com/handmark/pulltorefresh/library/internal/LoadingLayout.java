@@ -51,7 +51,7 @@ public class LoadingLayout extends FrameLayout {
 	private String mRefreshingLabel;
 	private String mReleaseLabel;
 
-	private final float mRotationPivotX, mRotationPivotY;
+	private float mRotationPivotX, mRotationPivotY;
 
 	private final Animation mRotateAnimation;
 
@@ -118,9 +118,7 @@ public class LoadingLayout extends FrameLayout {
 		}
 
 		// Set Drawable, and save width/height
-		mHeaderImage.setImageDrawable(imageDrawable);
-		mRotationPivotX = imageDrawable.getIntrinsicWidth() / 2f;
-		mRotationPivotY = imageDrawable.getIntrinsicHeight() / 2f;
+		setLoadingDrawable(imageDrawable);
 
 		reset();
 	}
@@ -177,6 +175,13 @@ public class LoadingLayout extends FrameLayout {
 
 	public void setTextColor(int color) {
 		setTextColor(ColorStateList.valueOf(color));
+	}
+
+	public void setLoadingDrawable(Drawable imageDrawable) {
+		// Set Drawable, and save width/height
+		mHeaderImage.setImageDrawable(imageDrawable);
+		mRotationPivotX = imageDrawable.getIntrinsicWidth() / 2f;
+		mRotationPivotY = imageDrawable.getIntrinsicHeight() / 2f;
 	}
 
 	public void setSubTextColor(int color) {

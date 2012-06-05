@@ -414,6 +414,37 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	}
 
 	/**
+	 * Set the drawable used in the loading layout. This is the same as calling
+	 * <code>setLoadingDrawable(drawable, Mode.BOTH)</code>
+	 * 
+	 * @param drawable
+	 *            - Drawable to display
+	 */
+	public void setLoadingDrawable(Drawable drawable) {
+		setLoadingDrawable(drawable, Mode.BOTH);
+	}
+
+	/**
+	 * Set the drawable used in the loading layout.
+	 * 
+	 * @param drawable
+	 *            - Drawable to display
+	 * @param mode
+	 *            - Mode to use depending on which View you want to change
+	 */
+	public void setLoadingDrawable(Drawable drawable, Mode mode) {
+		if (null != mHeaderLayout && mode.canPullDown()) {
+			mHeaderLayout.setLoadingDrawable(drawable);
+		}
+		if (null != mFooterLayout && mode.canPullUp()) {
+			mFooterLayout.setLoadingDrawable(drawable);
+		}
+
+		// The Loading Height may have changed, so refresh
+		refreshLoadingViewsHeight();
+	}
+
+	/**
 	 * Set Text to show when the Widget is being pulled, and will refresh when
 	 * released. This is the same as calling
 	 * <code>setReleaseLabel(releaseLabel, Mode.BOTH)</code>
