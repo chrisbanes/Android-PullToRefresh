@@ -32,18 +32,7 @@ Repository at <https://github.com/chrisbanes/Android-PullToRefresh>.
     android:layout_width="fill_parent" />
 ```
 
-It can also be styled using XML, such as in the sample ExpandableListView Sample:
-
-``` xml
-<com.handmark.pulltorefresh.library.PullToRefreshExpandableListView
-    xmlns:ptr="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/pull_refresh_expandable_list"
-    android:layout_height="fill_parent"
-    android:layout_width="fill_parent"
-    ptr:ptrAdapterViewBackground="@android:color/white"
-    ptr:ptrHeaderBackground="@android:color/darker_gray"
-    ptr:ptrHeaderTextColor="@android:color/white" />
-```
+There are also a number of Customisation options for the View. Please see the [Customisation](wiki/Customisation) page for more information.
 
 ### Activity
 
@@ -72,91 +61,14 @@ private class GetDataTask extends AsyncTask<Void, Void, String[]> {
 
 ### Pull Up to Refresh
 
-By default this library is set to Pull Down to Refresh, but if you instead to Pull Up to Refresh you can do so via XML:
-
-``` xml
-<com.handmark.pulltorefresh.library.PullToRefreshListView
-    xmlns:ptr="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/pull_refresh_list"
-    android:layout_height="fill_parent"
-    android:layout_width="fill_parent"
-    ptr:ptrMode="pullUpFromBottom" />
-```
-
-You can even set the View to enable both Pulling Up and Pulling Down using the new 'both' setting. For example:
-
-``` xml
-<com.handmark.pulltorefresh.library.PullToRefreshListView
-    xmlns:ptr="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/pull_refresh_list"
-    android:layout_height="fill_parent"
-    android:layout_width="fill_parent"
-    ptr:ptrMode="both" />
-```
+By default this library is set to Pull Down to Refresh, but if you instead to Pull Up to Refresh you can do so via XML. You can even set the View to enable both Pulling Up and Pulling Down using the 'both' setting. Please see the [Customisation](wiki/Customisation) page for more information.
 
 ## Pull Requests
 
 I will gladly accept pull requests for fixes and feature enhancements but please do them in the dev branch. The master branch is for the latest stable code,  dev is where I try things out before releasing them as stable. Any pull requests that are against master from now on will be closed asking for you to do another pull against dev.
 
 ## Changelog
-
-### v1.2
-
-* New (better) way of handling Touch Events
-* Add new way for PullToRefreshListView to work. Allows the user to scroll while it's refreshing.
-* Fix Pull from Bottom happening when the view wasn't completely at the bottom
-* Allow outside code to update the Widget to be refreshing (see `setRefreshing()`)
-* Fix Padding being doubled when added via XML
-* New Translations
-
-### v1.2.1
-
-* Fix bug where disabling scrolling has no effect when manual refreshing (thanks Maxim Galkin)
-
-### v1.2.2
-
-* String Updates (thanks to Steve Lhomme)
-* Add Missing Constructor (thanks to mcxiaoke)
-
-### v1.2.3
-
-* Fix Header View's being selectable (can cause FCs)
-* Force ListView Footer to be the last visible item (#41)
-* Fix not being able to Pull when the Empty View is show (#40)
-* Add Japanese Translations (thanks to nagoya0)
-
-#### 1.2.3.1
-
-* Properly fix not being able to Pull when the Empty View is show (#40)
-
-### 1.2.4
-
-* Fix bug where Pulling Up stopped working with ListView (#43)
-* Fix bug where the Header/Footer's wouldn't be styled correctly on ListView (#42)
-* Add new Listener, OnRefreshListener2 which allows you to listen for Pull Up/Downs separately.
-
-### 1.2.5
-
-* Changed the custom attributes to be prefixed with 'ptr'. Should fixed compatibility with [ActionBarSherlock](http://actionbarsherlock.com) v4.
-
-### 1.2.6
-
-* Fixes for #44, #48, #49
-
-### 1.2.7
-
-* Fixed PullToRefreshWebView so that pulling from the bottom works (thanks nagoya0)
-* Can now display last update label using then new `setLastUpdatedLabel()` method (thanks 	Peter Elliott)
-* Strings are now separate for Pulling Up and Pulling Up views, necessary for certain languages. There also new label setter methods so you change each one separately.
-* Bug fixes, including #66, #62 and #64
-
-### 1.2.8
-
-* Fix Background colour when using custom colour with ListView (#67)
-* Fix bug where the ListView would also scroll to the bottom/top after refreshing (#67)
-* Ability to change mode via a method call (#10)
-* Ability to make filtering of touch events more lenient (`setFilterTouchEvents`)
-* Fixed Copyright Notices on Source
+Please see the new [Changelog](wiki/Changelog) page to see what's recently changed.
 
 ## Acknowledgments
 
