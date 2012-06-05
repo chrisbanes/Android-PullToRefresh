@@ -8,60 +8,25 @@ This project aims to provide a reusable Pull to Refresh widget for Android. It i
 
  * Supports both Pulling Down from the top, and Pulling Up from the bottom
  * Animated Scrolling for all devices (Tested on 1.6+)
- * Works for all AbsListView. I've implemented both ListView and GridView.
+ * Works for all AbsListView derived classes. I've implemented both ListView and GridView.
  * Works with ExpandableListView (thanks to Stefano Dacchille)
- * Integrated End of List Listener ( setOnLastItemVisibleListener() )
+ * Works with WebView!
+ * Integrated End of List Listener (`setOnLastItemVisibleListener()`)
  * Maven Support (thanks to Stefano Dacchille)
- * Indicators to show the user when a Pull-to-Refresh is available
  * No longer shows the Tap to Refresh view when the AdapterView can not fill itself.
+ * Indicators to show the user when a Pull-to-Refresh is available
+ * Lots of [Customisation](https://github.com/chrisbanes/Android-PullToRefresh/wiki/Customisation) options!
 
 Repository at <https://github.com/chrisbanes/Android-PullToRefresh>.
 
 ## Usage
+To being using the libary, please see the [Quick Start Guide](https://github.com/chrisbanes/Android-PullToRefresh/wiki/Quick-Start-Guide) page.
 
-### Layout
-
-``` xml
-<!--
-  The PullToRefreshListView replaces a standard ListView widget.
-  The ID CAN NOT be @+id/android:list
--->
-<com.handmark.pulltorefresh.library.PullToRefreshListView
-    android:id="@+id/pull_to_refresh_listview"
-    android:layout_height="fill_parent"
-    android:layout_width="fill_parent" />
-```
-
-There are also a number of Customisation options for the View. Please see the [Customisation](https://github.com/chrisbanes/Android-PullToRefresh/wiki/Customisation) page for more information.
-
-### Activity
-
-``` java
-// Set a listener to be invoked when the list should be refreshed.
-PullToRefreshListView pullToRefreshView = (PullToRefreshListView) findViewById(R.id.pull_to_refresh_listview);
-pullToRefreshView.setOnRefreshListener(new OnRefreshListener() {
-    @Override
-    public void onRefresh() {
-        // Do work to refresh the list here.
-        new GetDataTask().execute();
-    }
-});
-
-private class GetDataTask extends AsyncTask<Void, Void, String[]> {
-    ...
-    @Override
-    protected void onPostExecute(String[] result) {
-        // Call onRefreshComplete when the list has been refreshed.
-        pullToRefreshView.onRefreshComplete();
-        super.onPostExecute(result);
-    }
-}
-```
-
+### Customisation
+Please see the [Customisation](https://github.com/chrisbanes/Android-PullToRefresh/wiki/Customisation) page for more information on how to change the behaviour and look of the View.
 
 ### Pull Up to Refresh
-
-By default this library is set to Pull Down to Refresh, but if you instead to Pull Up to Refresh you can do so via XML. You can even set the View to enable both Pulling Up and Pulling Down using the 'both' setting. Please see the [Customisation](https://github.com/chrisbanes/Android-PullToRefresh/wiki/Customisation) page for more information.
+By default this library is set to Pull Down to Refresh, but if you instead to Pull Up to Refresh you can do so via XML. You can even set the View to enable both Pulling Up and Pulling Down using the 'both' setting. See the [Customisation](https://github.com/chrisbanes/Android-PullToRefresh/wiki/Customisation) page for more information on how to set this.
 
 ## Pull Requests
 
