@@ -44,31 +44,30 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	static final String LOG_TAG = "PullToRefresh";
 
 	static final float FRICTION = 2.0f;
+
 	static final int PULL_TO_REFRESH = 0x0;
-
 	static final int RELEASE_TO_REFRESH = 0x1;
-
 	static final int REFRESHING = 0x2;
 	static final int MANUAL_REFRESHING = 0x3;
+
 	static final Mode DEFAULT_MODE = Mode.PULL_DOWN_TO_REFRESH;
+	
 	static final String STATE_STATE = "ptr_state";
-
 	static final String STATE_MODE = "ptr_mode";
-
 	static final String STATE_CURRENT_MODE = "ptr_current_mode";
 	static final String STATE_DISABLE_SCROLLING_REFRESHING = "ptr_disable_scrolling";
 	static final String STATE_SHOW_REFRESHING_VIEW = "ptr_show_refreshing_view";
 	static final String STATE_SUPER = "ptr_super";
-	private int mTouchSlop;
-	private float mInitialMotionY;
 
 	// ===========================================================
 	// Fields
 	// ===========================================================
 
+	private int mTouchSlop;
 	private float mLastMotionX;
-
 	private float mLastMotionY;
+	private float mInitialMotionY;
+
 	private boolean mIsBeingDragged = false;
 	private int mState = PULL_TO_REFRESH;
 	private Mode mMode = DEFAULT_MODE;
@@ -85,8 +84,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 
 	private int mHeaderHeight;
 	private final Handler mHandler = new Handler();
+	
 	private OnRefreshListener mOnRefreshListener;
-
 	private OnRefreshListener2 mOnRefreshListener2;
 
 	private SmoothScrollRunnable mCurrentSmoothScrollRunnable;
