@@ -25,37 +25,21 @@ import com.handmark.pulltorefresh.library.internal.EmptyViewMethodAccessor;
 
 public class PullToRefreshExpandableListView extends PullToRefreshAdapterViewBase<ExpandableListView> {
 
-	class InternalExpandableListView extends ExpandableListView implements EmptyViewMethodAccessor {
-
-		public InternalExpandableListView(Context context, AttributeSet attrs) {
-			super(context, attrs);
-		}
-
-		@Override
-		public void setEmptyView(View emptyView) {
-			PullToRefreshExpandableListView.this.setEmptyView(emptyView);
-		}
-
-		@Override
-		public void setEmptyViewInternal(View emptyView) {
-			super.setEmptyView(emptyView);
-		}
-
-		public ContextMenuInfo getContextMenuInfo() {
-			return super.getContextMenuInfo();
-		}
-	}
-
 	public PullToRefreshExpandableListView(Context context) {
 		super(context);
+	}
+
+	public PullToRefreshExpandableListView(Context context, AttributeSet attrs) {
+		super(context, attrs);
 	}
 
 	public PullToRefreshExpandableListView(Context context, Mode mode) {
 		super(context, mode);
 	}
 
-	public PullToRefreshExpandableListView(Context context, AttributeSet attrs) {
-		super(context, attrs);
+	@Override
+	public ContextMenuInfo getContextMenuInfo() {
+		return ((InternalExpandableListView) getRefreshableView()).getContextMenuInfo();
 	}
 
 	@Override
@@ -67,8 +51,24 @@ public class PullToRefreshExpandableListView extends PullToRefreshAdapterViewBas
 		return lv;
 	}
 
-	@Override
-	public ContextMenuInfo getContextMenuInfo() {
-		return ((InternalExpandableListView) getRefreshableView()).getContextMenuInfo();
+	class InternalExpandableListView extends ExpandableListView implements EmptyViewMethodAccessor {
+
+		public InternalExpandableListView(Context context, AttributeSet attrs) {
+			super(context, attrs);
+		}
+
+		public ContextMenuInfo getContextMenuInfo() {
+			return super.getContextMenuInfo();
+		}
+
+		@Override
+		public void setEmptyView(View emptyView) {
+			PullToRefreshExpandableListView.this.setEmptyView(emptyView);
+		}
+
+		@Override
+		public void setEmptyViewInternal(View emptyView) {
+			super.setEmptyView(emptyView);
+		}
 	}
 }

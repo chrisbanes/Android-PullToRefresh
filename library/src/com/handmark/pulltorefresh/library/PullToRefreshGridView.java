@@ -25,38 +25,21 @@ import com.handmark.pulltorefresh.library.internal.EmptyViewMethodAccessor;
 
 public class PullToRefreshGridView extends PullToRefreshAdapterViewBase<GridView> {
 
-	class InternalGridView extends GridView implements EmptyViewMethodAccessor {
-
-		public InternalGridView(Context context, AttributeSet attrs) {
-			super(context, attrs);
-		}
-
-		@Override
-		public void setEmptyView(View emptyView) {
-			PullToRefreshGridView.this.setEmptyView(emptyView);
-		}
-
-		@Override
-		public void setEmptyViewInternal(View emptyView) {
-			super.setEmptyView(emptyView);
-		}
-
-		@Override
-		public ContextMenuInfo getContextMenuInfo() {
-			return super.getContextMenuInfo();
-		}
-	}
-
 	public PullToRefreshGridView(Context context) {
 		super(context);
+	}
+
+	public PullToRefreshGridView(Context context, AttributeSet attrs) {
+		super(context, attrs);
 	}
 
 	public PullToRefreshGridView(Context context, Mode mode) {
 		super(context, mode);
 	}
 
-	public PullToRefreshGridView(Context context, AttributeSet attrs) {
-		super(context, attrs);
+	@Override
+	public ContextMenuInfo getContextMenuInfo() {
+		return ((InternalGridView) getRefreshableView()).getContextMenuInfo();
 	}
 
 	@Override
@@ -68,8 +51,25 @@ public class PullToRefreshGridView extends PullToRefreshAdapterViewBase<GridView
 		return gv;
 	}
 
-	@Override
-	public ContextMenuInfo getContextMenuInfo() {
-		return ((InternalGridView) getRefreshableView()).getContextMenuInfo();
+	class InternalGridView extends GridView implements EmptyViewMethodAccessor {
+
+		public InternalGridView(Context context, AttributeSet attrs) {
+			super(context, attrs);
+		}
+
+		@Override
+		public ContextMenuInfo getContextMenuInfo() {
+			return super.getContextMenuInfo();
+		}
+
+		@Override
+		public void setEmptyView(View emptyView) {
+			PullToRefreshGridView.this.setEmptyView(emptyView);
+		}
+
+		@Override
+		public void setEmptyViewInternal(View emptyView) {
+			super.setEmptyView(emptyView);
+		}
 	}
 }
