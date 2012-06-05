@@ -1,19 +1,17 @@
-# Pull To Refresh AdapterViews for Android
+# Pull To Refresh Views for Android
 
 ![Screenshot](https://github.com/chrisbanes/Android-PullToRefresh/raw/master/header_graphic.png)
 
-This project aims to provide a reusable Pull to Refresh widget for Android. It is originally (loosely) based on Johan Nilsson's [Library](https://github.com/johannilsson/android-pulltorefresh) (mainly for graphics, strings and animations), and has been vastly improved since then.
+This project aims to provide a reusable Pull to Refresh widget for Android. It was originally based on Johan Nilsson's [library](https://github.com/johannilsson/android-pulltorefresh) (mainly for graphics, strings and animations), but these have been replaced since.
 
 ## Features
 
- * Supports both Pulling Down from the top, and Pulling Up from the bottom
+ * Supports both Pulling Down from the top, and Pulling Up from the bottom (or even both).
  * Animated Scrolling for all devices (Tested on 1.6+)
- * Works for all AbsListView derived classes. I've implemented both ListView and GridView.
- * Works with ExpandableListView (thanks to Stefano Dacchille)
- * Works with WebView!
- * Integrated End of List Listener (`setOnLastItemVisibleListener()`)
+ * Works for all AbsListView derived classes. ListView, ExpandableListView & GridView have been implemented.
+ * Also Works with WebView!
+ * Integrated End of List Listener for use of detecting when the user has scrolled to the bottom.
  * Maven Support (thanks to Stefano Dacchille)
- * Does not show the 'Tap to Refresh' view when the AdapterView can not fill itself.
  * Indicators to show the user when a Pull-to-Refresh is available
  * Lots of [Customisation](https://github.com/chrisbanes/Android-PullToRefresh/wiki/Customisation) options!
 
@@ -44,4 +42,16 @@ Please see the new [Changelog](https://github.com/chrisbanes/Android-PullToRefre
 
 ## License
 
-Licensed under the [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.html)
+    Copyright 2011, 2012 Chris Banes
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
