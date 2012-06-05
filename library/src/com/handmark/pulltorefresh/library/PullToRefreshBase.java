@@ -51,7 +51,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	static final int MANUAL_REFRESHING = 0x3;
 
 	static final Mode DEFAULT_MODE = Mode.PULL_DOWN_TO_REFRESH;
-	
+
 	static final String STATE_STATE = "ptr_state";
 	static final String STATE_MODE = "ptr_mode";
 	static final String STATE_CURRENT_MODE = "ptr_current_mode";
@@ -84,7 +84,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 
 	private int mHeaderHeight;
 	private final Handler mHandler = new Handler();
-	
+
 	private OnRefreshListener mOnRefreshListener;
 	private OnRefreshListener2 mOnRefreshListener2;
 
@@ -402,7 +402,9 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	 * @param drawable
 	 *            - Drawable to display
 	 * @param mode
-	 *            - Mode to use depending on which View you want to change
+	 *            - Controls which Header/Footer Views will be updated.
+	 *            <code>Mode.BOTH</code> will update all available, other values
+	 *            will update the relevant View.
 	 */
 	public void setLoadingDrawable(Drawable drawable, Mode mode) {
 		if (null != mHeaderLayout && mode.canPullDown()) {
@@ -474,7 +476,9 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	 * @param pullLabel
 	 *            - String to display
 	 * @param mode
-	 *            - Mode to use depending on which label you want to change
+	 *            - Controls which Header/Footer Views will be updated.
+	 *            <code>Mode.BOTH</code> will update all available, other values
+	 *            will update the relevant View.
 	 */
 	public void setPullLabel(String pullLabel, Mode mode) {
 		if (null != mHeaderLayout && mode.canPullDown()) {
@@ -530,7 +534,9 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	 * @param refreshingLabel
 	 *            - String to display
 	 * @param mode
-	 *            - Mode to use depending on which label you want to change
+	 *            - Controls which Header/Footer Views will be updated.
+	 *            <code>Mode.BOTH</code> will update all available, other values
+	 *            will update the relevant View.
 	 */
 	public void setRefreshingLabel(String refreshingLabel, Mode mode) {
 		if (null != mHeaderLayout && mode.canPullDown()) {
@@ -560,7 +566,9 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	 * @param releaseLabel
 	 *            - String to display
 	 * @param mode
-	 *            - Mode to use depending on which label you want to change
+	 *            - Controls which Header/Footer Views will be updated.
+	 *            <code>Mode.BOTH</code> will update all available, other values
+	 *            will update the relevant View.
 	 */
 	public void setReleaseLabel(String releaseLabel, Mode mode) {
 		if (null != mHeaderLayout && mode.canPullDown()) {
