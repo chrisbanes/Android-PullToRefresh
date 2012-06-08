@@ -27,6 +27,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
+import android.view.animation.OvershootInterpolator;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.LinearLayout;
@@ -44,6 +45,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	static final String LOG_TAG = "PullToRefresh";
 
 	static final float FRICTION = 2.0f;
+    static final float OVERSHOOT_TENSION = 1.4f;
 
 	static final int PULL_TO_REFRESH = 0x0;
 	static final int RELEASE_TO_REFRESH = 0x1;
@@ -767,7 +769,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		}
 
 		if (getScrollY() != y) {
-			mCurrentSmoothScrollRunnable = new SmoothScrollRunnable(mHandler, getScrollY(), y);
+			mCurrentSmoothScrollRunnable = new SmoothScrollRunnable(mHandler, getScrollY(), y, OVERSHOOT_TENSION);
 			mHandler.post(mCurrentSmoothScrollRunnable);
 		}
 	}
@@ -1100,6 +1102,13 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 			mScrollToY = toY;
 			mInterpolator = new AccelerateDecelerateInterpolator();
 		}
+
+        public SmoothScrollRunnable(Handler handler, int fromY, int toY, float tension) {
+            mHandler = handler;
+            mScrollFromY = fromY;
+            mScrollToY = toY;
+            mInterpolator = new OvershootInterpolator(tension);
+        }
 
 		@Override
 		public void run() {
