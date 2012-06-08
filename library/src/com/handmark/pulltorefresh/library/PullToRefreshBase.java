@@ -27,8 +27,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Interpolator;
+import android.view.animation.OvershootInterpolator;
 import android.widget.LinearLayout;
 
 import com.handmark.pulltorefresh.library.internal.LoadingLayout;
@@ -1082,8 +1082,9 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 
 	final class SmoothScrollRunnable implements Runnable {
 
-		static final int ANIMATION_DURATION_MS = 190;
+		static final int ANIMATION_DURATION_MS = 300;
 		static final int ANIMATION_FPS = 1000 / 60;
+		static final float ANIMATION_OVERSHOOT_TENSION = 2.0f;
 
 		private final Interpolator mInterpolator;
 		private final int mScrollToY;
@@ -1098,7 +1099,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 			mHandler = handler;
 			mScrollFromY = fromY;
 			mScrollToY = toY;
-			mInterpolator = new AccelerateDecelerateInterpolator();
+			mInterpolator = new OvershootInterpolator(ANIMATION_OVERSHOOT_TENSION);
 		}
 
 		@Override
