@@ -33,7 +33,7 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener2;
 import com.handmark.pulltorefresh.library.PullToRefreshGridView;
 
-public class PullToRefreshGridActivity extends Activity {
+public final class PullToRefreshGridActivity extends Activity {
 
 	static final int MENU_SET_MODE = 0;
 

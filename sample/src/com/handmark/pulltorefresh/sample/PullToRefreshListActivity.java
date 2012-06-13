@@ -31,7 +31,7 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 
-public class PullToRefreshListActivity extends ListActivity {
+public final class PullToRefreshListActivity extends ListActivity {
 
 	static final int MENU_MANUAL_REFRESH = 0;
 	static final int MENU_DISABLE_SCROLL = 1;

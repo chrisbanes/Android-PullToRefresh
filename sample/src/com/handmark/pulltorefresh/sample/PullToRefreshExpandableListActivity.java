@@ -30,7 +30,7 @@ import android.widget.SimpleExpandableListAdapter;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshExpandableListView;
 
-public class PullToRefreshExpandableListActivity extends ExpandableListActivity {
+public final class PullToRefreshExpandableListActivity extends ExpandableListActivity {
 	private static final String KEY = "key";
 	private LinkedList<String> mListItems, mGroupItems;
 	private PullToRefreshExpandableListView mPullRefreshListView;
