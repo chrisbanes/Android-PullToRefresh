@@ -124,7 +124,7 @@ public class LoadingLayout extends FrameLayout {
 	}
 
 	public void reset() {
-		mHeaderText.setText(Html.fromHtml(mPullLabel));
+		mHeaderText.setText(wrapHtmlLabel(mPullLabel));
 		mHeaderImage.setVisibility(View.VISIBLE);
 		mHeaderImage.clearAnimation();
 
@@ -138,7 +138,7 @@ public class LoadingLayout extends FrameLayout {
 	}
 
 	public void releaseToRefresh() {
-		mHeaderText.setText(Html.fromHtml(mReleaseLabel));
+		mHeaderText.setText(wrapHtmlLabel(mReleaseLabel));
 	}
 
 	public void setPullLabel(String pullLabel) {
@@ -146,7 +146,7 @@ public class LoadingLayout extends FrameLayout {
 	}
 
 	public void refreshing() {
-		mHeaderText.setText(Html.fromHtml(mRefreshingLabel));
+		mHeaderText.setText(wrapHtmlLabel(mRefreshingLabel));
 		mHeaderImage.startAnimation(mRotateAnimation);
 
 		mSubHeaderText.setVisibility(View.GONE);
@@ -161,7 +161,7 @@ public class LoadingLayout extends FrameLayout {
 	}
 
 	public void pullToRefresh() {
-		mHeaderText.setText(Html.fromHtml(mPullLabel));
+		mHeaderText.setText(wrapHtmlLabel(mPullLabel));
 	}
 
 	public void setTextColor(ColorStateList color) {
@@ -205,5 +205,13 @@ public class LoadingLayout extends FrameLayout {
 	private void resetImageRotation() {
 		mHeaderImageMatrix.reset();
 		mHeaderImage.setImageMatrix(mHeaderImageMatrix);
+	}
+	
+	private CharSequence wrapHtmlLabel(String label) {
+		if (!isInEditMode()) {
+			return Html.fromHtml(label);
+		} else {
+			return label;
+		}
 	}
 }
