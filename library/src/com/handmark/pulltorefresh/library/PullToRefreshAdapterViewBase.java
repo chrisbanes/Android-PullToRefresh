@@ -47,6 +47,7 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 	private IndicatorLayout mIndicatorIvBottom;
 
 	private boolean mShowIndicator;
+	private boolean mScrollEmptyView = true;
 
 	public PullToRefreshAdapterViewBase(Context context) {
 		super(context);
@@ -121,6 +122,15 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 			mOnScrollListener.onScrollStateChanged(view, scrollState);
 		}
 	}
+	
+	
+	@Override
+	protected void onScrollChanged(int l, int t, int oldl, int oldt) {
+		super.onScrollChanged(l, t, oldl, oldt);
+		if (null != mEmptyView && !mScrollEmptyView) {
+			mEmptyView.scrollTo(-l, -t);
+		}
+	}
 
 	/**
 	 * Sets the Empty View to be used by the Adapter View.
@@ -160,7 +170,12 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 			} else {
 				mRefreshableView.setEmptyView(newEmptyView);
 			}
+			mEmptyView = newEmptyView;
 		}
+	}
+	
+	public final void setScrollEmptyView(boolean doScroll) {
+		mScrollEmptyView = doScroll;
 	}
 
 	public final void setOnLastItemVisibleListener(OnLastItemVisibleListener listener) {
