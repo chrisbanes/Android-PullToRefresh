@@ -18,6 +18,7 @@ package com.handmark.pulltorefresh.library;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.FloatMath;
+import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 
@@ -26,7 +27,7 @@ public class PullToRefreshWebView extends PullToRefreshBase<WebView> {
 	private final OnRefreshListener defaultOnRefreshListener = new OnRefreshListener() {
 
 		@Override
-		public void onRefresh() {
+		public void onRefresh(final PullToRefreshBase<? extends View> refreshView) {
 			mRefreshableView.reload();
 		}
 
