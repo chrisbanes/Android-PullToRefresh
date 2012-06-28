@@ -314,15 +314,15 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 
 						if (null != mOnRefreshListener) {
 							setRefreshingInternal(true);
-							mOnRefreshListener.onRefresh();
+							mOnRefreshListener.onRefresh(this);
 							return true;
 
 						} else if (null != mOnRefreshListener2) {
 							setRefreshingInternal(true);
 							if (mCurrentMode == Mode.PULL_DOWN_TO_REFRESH) {
-								mOnRefreshListener2.onPullDownToRefresh();
+								mOnRefreshListener2.onPullDownToRefresh(this);
 							} else if (mCurrentMode == Mode.PULL_UP_TO_REFRESH) {
-								mOnRefreshListener2.onPullUpToRefresh();
+								mOnRefreshListener2.onPullUpToRefresh(this);
 							}
 							return true;
 						}
@@ -1053,7 +1053,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		 * onRefresh will be called for both Pull Down from top, and Pull Up
 		 * from Bottom
 		 */
-		public void onRefresh();
+		public void onRefresh(final PullToRefreshBase<? extends View> refreshView);
 
 	}
 
@@ -1070,13 +1070,13 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		 * onPullDownToRefresh will be called only when the user has Pulled Down
 		 * from the top, and released.
 		 */
-		public void onPullDownToRefresh();
+		public void onPullDownToRefresh(final PullToRefreshBase<? extends View> refreshView);
 
 		/**
 		 * onPullUpToRefresh will be called only when the user has Pulled Up
 		 * from the bottom, and released.
 		 */
-		public void onPullUpToRefresh();
+		public void onPullUpToRefresh(final PullToRefreshBase<? extends View> refreshView);
 
 	}
 
