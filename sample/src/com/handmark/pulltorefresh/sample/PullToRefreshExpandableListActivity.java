@@ -25,8 +25,10 @@ import java.util.Map;
 import android.app.ExpandableListActivity;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.widget.ExpandableListView;
 import android.widget.SimpleExpandableListAdapter;
 
+import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshExpandableListView;
 
@@ -45,9 +47,9 @@ public final class PullToRefreshExpandableListActivity extends ExpandableListAct
 		mPullRefreshListView = (PullToRefreshExpandableListView) findViewById(R.id.pull_refresh_expandable_list);
 
 		// Set a listener to be invoked when the list should be refreshed.
-		mPullRefreshListView.setOnRefreshListener(new OnRefreshListener() {
+		mPullRefreshListView.setOnRefreshListener(new OnRefreshListener<ExpandableListView>() {
 			@Override
-			public void onRefresh() {
+			public void onRefresh(PullToRefreshBase<ExpandableListView> refreshView) {
 				// Do work to refresh the list here.
 				new GetDataTask().execute();
 			}

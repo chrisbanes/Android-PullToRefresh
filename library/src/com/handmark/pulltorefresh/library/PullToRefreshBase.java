@@ -85,8 +85,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	private int mHeaderHeight;
 	private final Handler mHandler = new Handler();
 
-	private OnRefreshListener mOnRefreshListener;
-	private OnRefreshListener2 mOnRefreshListener2;
+	private OnRefreshListener<T> mOnRefreshListener;
+	private OnRefreshListener2<T> mOnRefreshListener2;
 
 	private SmoothScrollRunnable mCurrentSmoothScrollRunnable;
 
@@ -445,7 +445,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	 * @param listener
 	 *            - Listener to be used when the Widget is set to Refresh
 	 */
-	public final void setOnRefreshListener(OnRefreshListener listener) {
+	public final void setOnRefreshListener(OnRefreshListener<T> listener) {
 		mOnRefreshListener = listener;
 	}
 
@@ -455,7 +455,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	 * @param listener
 	 *            - Listener to be used when the Widget is set to Refresh
 	 */
-	public final void setOnRefreshListener(OnRefreshListener2 listener) {
+	public final void setOnRefreshListener(OnRefreshListener2<T> listener) {
 		mOnRefreshListener2 = listener;
 	}
 
@@ -1047,13 +1047,13 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	 * 
 	 * @author Chris Banes
 	 */
-	public static interface OnRefreshListener {
+	public static interface OnRefreshListener<V extends View> {
 
 		/**
 		 * onRefresh will be called for both Pull Down from top, and Pull Up
 		 * from Bottom
 		 */
-		public void onRefresh(final PullToRefreshBase<? extends View> refreshView);
+		public void onRefresh(final PullToRefreshBase<V> refreshView);
 
 	}
 
@@ -1064,19 +1064,19 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	 * 
 	 * @author Chris Banes
 	 */
-	public static interface OnRefreshListener2 {
+	public static interface OnRefreshListener2<V extends View> {
 
 		/**
 		 * onPullDownToRefresh will be called only when the user has Pulled Down
 		 * from the top, and released.
 		 */
-		public void onPullDownToRefresh(final PullToRefreshBase<? extends View> refreshView);
+		public void onPullDownToRefresh(final PullToRefreshBase<V> refreshView);
 
 		/**
 		 * onPullUpToRefresh will be called only when the user has Pulled Up
 		 * from the bottom, and released.
 		 */
-		public void onPullUpToRefresh(final PullToRefreshBase<? extends View> refreshView);
+		public void onPullUpToRefresh(final PullToRefreshBase<V> refreshView);
 
 	}
 
