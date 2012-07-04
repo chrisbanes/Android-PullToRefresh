@@ -17,6 +17,13 @@ This project aims to provide a reusable Pull to Refresh widget for Android. It w
 
 Repository at <https://github.com/chrisbanes/Android-PullToRefresh>.
 
+## Sample Application
+The sample application (the source is in the repository) has been published onto Google Play for easy access:
+<a href="http://play.google.com/store/apps/details?id=com.handmark.pulltorefresh.samples">
+  <img alt="Get it on Google Play"
+       src="http://www.android.com/images/brand/get_it_on_play_logo_small.png" />
+</a>
+
 ## Usage
 To begin using the libary, please see the [Quick Start Guide](https://github.com/chrisbanes/Android-PullToRefresh/wiki/Quick-Start-Guide) page.
 
