@@ -13,70 +13,64 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *******************************************************************************/
-package com.handmark.pulltorefresh.sample;
+package com.handmark.pulltorefresh.samples;
 
 import java.util.Arrays;
 import java.util.LinkedList;
 
-import android.app.Activity;
+import android.app.ListActivity;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.Gravity;
+import android.text.format.DateUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
-import android.widget.GridView;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.ListView;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
-import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener2;
-import com.handmark.pulltorefresh.library.PullToRefreshGridView;
+import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
+import com.handmark.pulltorefresh.library.PullToRefreshListView;
 
-public class PullToRefreshGridActivity extends Activity {
+public class PullToRefreshListActivity extends ListActivity {
 
-	static final int MENU_SET_MODE = 0;
+	static final int MENU_MANUAL_REFRESH = 0;
+	static final int MENU_DISABLE_SCROLL = 1;
+	static final int MENU_SET_MODE = 2;
 
 	private LinkedList<String> mListItems;
-	private PullToRefreshGridView mPullRefreshGridView;
-	private GridView mGridView;
+	private PullToRefreshListView mPullRefreshListView;
 	private ArrayAdapter<String> mAdapter;
 
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.pull_to_refresh_grid);
+		setContentView(R.layout.pull_to_refresh_list);
 
-		mPullRefreshGridView = (PullToRefreshGridView) findViewById(R.id.pull_refresh_grid);
-		mGridView = mPullRefreshGridView.getRefreshableView();
+		mPullRefreshListView = (PullToRefreshListView) findViewById(R.id.pull_refresh_list);
 
 		// Set a listener to be invoked when the list should be refreshed.
-		mPullRefreshGridView.setOnRefreshListener(new OnRefreshListener2() {
-
+		mPullRefreshListView.setOnRefreshListener(new OnRefreshListener() {
 			@Override
-			public void onPullDownToRefresh() {
-				Toast.makeText(PullToRefreshGridActivity.this, "Pull Down!", Toast.LENGTH_SHORT).show();
+			public void onRefresh() {
+				mPullRefreshListView.setLastUpdatedLabel(DateUtils.formatDateTime(getApplicationContext(),
+						System.currentTimeMillis(), DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_DATE
+								| DateUtils.FORMAT_ABBREV_ALL));
+
+				// Do work to refresh the list here.
 				new GetDataTask().execute();
 			}
-
-			@Override
-			public void onPullUpToRefresh() {
-				Toast.makeText(PullToRefreshGridActivity.this, "Pull Up!", Toast.LENGTH_SHORT).show();
-				new GetDataTask().execute();
-			}
-
 		});
 
-		mListItems = new LinkedList<String>();
+		ListView actualListView = mPullRefreshListView.getRefreshableView();
 
-		TextView tv = new TextView(this);
-		tv.setGravity(Gravity.CENTER);
-		tv.setText("Empty View, Pull Down/Up to Add Items");
-		mPullRefreshGridView.setEmptyView(tv);
+		mListItems = new LinkedList<String>();
+		mListItems.addAll(Arrays.asList(mStrings));
 
 		mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, mListItems);
-		mGridView.setAdapter(mAdapter);
+
+		// You can also just use setListAdapter(mAdapter)
+		actualListView.setAdapter(mAdapter);
 	}
 
 	private class GetDataTask extends AsyncTask<Void, Void, String[]> {
@@ -85,7 +79,7 @@ public class PullToRefreshGridActivity extends Activity {
 		protected String[] doInBackground(Void... params) {
 			// Simulates a background job.
 			try {
-				Thread.sleep(2000);
+				Thread.sleep(4000);
 			} catch (InterruptedException e) {
 			}
 			return mStrings;
@@ -94,11 +88,10 @@ public class PullToRefreshGridActivity extends Activity {
 		@Override
 		protected void onPostExecute(String[] result) {
 			mListItems.addFirst("Added after refresh...");
-			mListItems.addAll(Arrays.asList(result));
 			mAdapter.notifyDataSetChanged();
 
 			// Call onRefreshComplete when the list has been refreshed.
-			mPullRefreshGridView.onRefreshComplete();
+			mPullRefreshListView.onRefreshComplete();
 
 			super.onPostExecute(result);
 		}
@@ -106,16 +99,25 @@ public class PullToRefreshGridActivity extends Activity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
+		menu.add(0, MENU_MANUAL_REFRESH, 0, "Manual Refresh");
+		menu.add(0, MENU_DISABLE_SCROLL, 1,
+				mPullRefreshListView.isDisableScrollingWhileRefreshing() ? "Enable Scrolling while Refreshing"
+						: "Disable Scrolling while Refreshing");
 		menu.add(0, MENU_SET_MODE, 0,
-				mPullRefreshGridView.getMode() == Mode.BOTH ? "Change to MODE_PULL_DOWN"
+				mPullRefreshListView.getMode() == Mode.BOTH ? "Change to MODE_PULL_DOWN"
 						: "Change to MODE_PULL_BOTH");
 		return super.onCreateOptionsMenu(menu);
 	}
 
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
+		MenuItem disableItem = menu.findItem(MENU_DISABLE_SCROLL);
+		disableItem
+				.setTitle(mPullRefreshListView.isDisableScrollingWhileRefreshing() ? "Enable Scrolling while Refreshing"
+						: "Disable Scrolling while Refreshing");
+
 		MenuItem setModeItem = menu.findItem(MENU_SET_MODE);
-		setModeItem.setTitle(mPullRefreshGridView.getMode() == Mode.BOTH ? "Change to MODE_PULL_DOWN"
+		setModeItem.setTitle(mPullRefreshListView.getMode() == Mode.BOTH ? "Change to MODE_PULL_DOWN"
 				: "Change to MODE_PULL_BOTH");
 
 		return super.onPrepareOptionsMenu(menu);
@@ -123,10 +125,19 @@ public class PullToRefreshGridActivity extends Activity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+
 		switch (item.getItemId()) {
+			case MENU_MANUAL_REFRESH:
+				new GetDataTask().execute();
+				mPullRefreshListView.setRefreshing(false);
+				break;
+			case MENU_DISABLE_SCROLL:
+				mPullRefreshListView.setDisableScrollingWhileRefreshing(!mPullRefreshListView
+						.isDisableScrollingWhileRefreshing());
+				break;
 			case MENU_SET_MODE:
-				mPullRefreshGridView
-						.setMode(mPullRefreshGridView.getMode() == Mode.BOTH ? Mode.PULL_DOWN_TO_REFRESH
+				mPullRefreshListView
+						.setMode(mPullRefreshListView.getMode() == Mode.BOTH ? Mode.PULL_DOWN_TO_REFRESH
 								: Mode.BOTH);
 				break;
 		}
@@ -135,6 +146,8 @@ public class PullToRefreshGridActivity extends Activity {
 	}
 
 	private String[] mStrings = { "Abbaye de Belloc", "Abbaye du Mont des Cats", "Abertam", "Abondance", "Ackawi",
+			"Acorn", "Adelost", "Affidelice au Chablis", "Afuega'l Pitu", "Airag", "Airedale", "Aisy Cendre",
+			"Allgauer Emmentaler", "Abbaye de Belloc", "Abbaye du Mont des Cats", "Abertam", "Abondance", "Ackawi",
 			"Acorn", "Adelost", "Affidelice au Chablis", "Afuega'l Pitu", "Airag", "Airedale", "Aisy Cendre",
 			"Allgauer Emmentaler" };
 }

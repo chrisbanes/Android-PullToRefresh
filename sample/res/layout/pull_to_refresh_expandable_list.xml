@@ -7,7 +7,7 @@
 <!--     The PullToRefreshExpandableListView replaces a standard ExpandableListView widget. -->
 
     <com.handmark.pulltorefresh.library.PullToRefreshExpandableListView
-        xmlns:ptr="http://schemas.android.com/apk/res/com.handmark.pulltorefresh.sample"
+        xmlns:ptr="http://schemas.android.com/apk/res-auto"
         android:id="@+id/pull_refresh_expandable_list"
         android:layout_height="fill_parent"
         android:layout_width="fill_parent"
