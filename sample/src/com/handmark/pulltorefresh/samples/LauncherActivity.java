@@ -1,4 +1,4 @@
-package com.handmark.pulltorefresh.sample;
+package com.handmark.pulltorefresh.samples;
 
 import android.app.ListActivity;
 import android.content.Intent;
