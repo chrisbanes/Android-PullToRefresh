@@ -1,0 +1,118 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Android-PullToRefresh by chrisbanes</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/respond.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!--[if lt IE 8]>
+    <link rel="stylesheet" href="stylesheets/ie.css">
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+      <div id="header">
+        <nav>
+          <li class="fork"><a href="https://github.com/chrisbanes/Android-PullToRefresh">View On GitHub</a></li>
+          <li class="downloads"><a href="https://github.com/chrisbanes/Android-PullToRefresh/zipball/master">ZIP</a></li>
+          <li class="downloads"><a href="https://github.com/chrisbanes/Android-PullToRefresh/tarball/master">TAR</a></li>
+          <li class="title">DOWNLOADS</li>
+        </nav>
+      </div><!-- end header -->
+
+    <div class="wrapper">
+
+      <section>
+        <div id="title">
+          <h1>Android-PullToRefresh</h1>
+          <p>Implementation of the Pull-to-Refresh UI Pattern for Android</p>
+          <hr>
+          <span class="credits left">Project maintained by <a href="https://github.com/chrisbanes">chrisbanes</a></span>
+          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="http://twitter.com/#!/michigangraham">mattgraham</a></span>
+        </div>
+
+        <h1>Pull To Refresh Views for Android</h1>
+
+<p><img src="https://github.com/chrisbanes/Android-PullToRefresh/raw/master/header_graphic.png" alt="Screenshot"></p>
+
+<p>This project aims to provide a reusable Pull to Refresh widget for Android. It was originally based on Johan Nilsson's <a href="https://github.com/johannilsson/android-pulltorefresh">library</a> (mainly for graphics, strings and animations), but these have been replaced since.</p>
+
+<h2>Features</h2>
+
+<ul>
+<li>Supports both Pulling Down from the top, and Pulling Up from the bottom (or even both).</li>
+<li>Animated Scrolling for all devices (Tested on 1.6+)</li>
+<li>Works for all AbsListView derived classes. ListView, ExpandableListView &amp; GridView have been implemented.</li>
+<li>Also Works with WebView!</li>
+<li>Integrated End of List Listener for use of detecting when the user has scrolled to the bottom.</li>
+<li>Maven Support (thanks to Stefano Dacchille)</li>
+<li>Indicators to show the user when a Pull-to-Refresh is available</li>
+<li>Lots of <a href="https://github.com/chrisbanes/Android-PullToRefresh/wiki/Customisation">Customisation</a> options!</li>
+</ul><p>Repository at <a href="https://github.com/chrisbanes/Android-PullToRefresh">https://github.com/chrisbanes/Android-PullToRefresh</a>.</p>
+
+<h2>Sample Application</h2>
+
+<p>The sample application (the source is in the repository) has been published onto Google Play for easy access:</p>
+
+<p><a href="http://play.google.com/store/apps/details?id=com.handmark.pulltorefresh.samples"><img src="http://www.android.com/images/brand/get_it_on_play_logo_small.png" alt="Get it on Google Play"></a></p>
+
+<h2>Usage</h2>
+
+<p>To begin using the libary, please see the <a href="https://github.com/chrisbanes/Android-PullToRefresh/wiki/Quick-Start-Guide">Quick Start Guide</a> page.</p>
+
+<h3>Customisation</h3>
+
+<p>Please see the <a href="https://github.com/chrisbanes/Android-PullToRefresh/wiki/Customisation">Customisation</a> page for more information on how to change the behaviour and look of the View.</p>
+
+<h3>Pull Up to Refresh</h3>
+
+<p>By default this library is set to Pull Down to Refresh, but if you want to allow Pulling Up to Refresh then you can do so. You can even set the View to enable both Pulling Up and Pulling Down using the 'both' setting. See the <a href="https://github.com/chrisbanes/Android-PullToRefresh/wiki/Customisation">Customisation</a> page for more information on how to set this.</p>
+
+<h2>Apps</h2>
+
+<p>Want to see which Apps are already using Android-PullToRefresh? Have a look <a href="https://github.com/chrisbanes/Android-PullToRefresh/wiki/Apps">here</a>. If you have an App which is not on the list, <a href="http://www.senab.co.uk/contact/">let me know</a>.</p>
+
+<h2>Changelog</h2>
+
+<p>Please see the new <a href="https://github.com/chrisbanes/Android-PullToRefresh/wiki/Changelog">Changelog</a> page to see what's recently changed.</p>
+
+<h2>Pull Requests</h2>
+
+<p>I will gladly accept pull requests for fixes and feature enhancements but please do them in the dev branch. The master branch is for the latest stable code,  dev is where I try things out before releasing them as stable. Any pull requests that are against master from now on will be closed asking for you to do another pull against dev.</p>
+
+<h2>Acknowledgments</h2>
+
+<ul>
+<li><a href="https://github.com/stefanodacchille">Stefano Dacchille</a></li>
+<li><a href="https://github.com/robUx4">Steve Lhomme</a></li>
+<li><a href="https://github.com/mgalkin">Maxim Galkin</a></li>
+</ul><h2>License</h2>
+
+<pre><code>Copyright 2011, 2012 Chris Banes
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+</code></pre>
+      </section>
+
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><!--<![endif]-->
+    
+  </body>
+</html>
