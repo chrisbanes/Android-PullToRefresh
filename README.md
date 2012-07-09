@@ -34,6 +34,11 @@ By default this library is set to Pull Down to Refresh, but if you want to allow
 ## Apps
 Want to see which Apps are already using Android-PullToRefresh? Have a look [here](https://github.com/chrisbanes/Android-PullToRefresh/wiki/Apps). If you have an App which is not on the list, [let me know](http://www.senab.co.uk/contact/).
 
+<div class='appbrain_sdkwidget' id='sdkwidget' data-format='small'>
+<a href='http://www.appbrain.com/stats/libraries/details/handmark-pulltorefresh/android-pull-to-refresh' target='_blank'>Top apps using Android Pull to refresh</a>
+</div>
+<script type='text/javascript' language='javascript' src='http://www.appbrain.com/api/api.nocache.js'></script>
+
 ## Changelog
 Please see the new [Changelog](https://github.com/chrisbanes/Android-PullToRefresh/wiki/Changelog) page to see what's recently changed.
 
