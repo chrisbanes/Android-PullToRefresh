@@ -26,6 +26,7 @@ import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
+import android.widget.Adapter;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
@@ -214,30 +215,6 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 		addView(mRefreshableViewHolder, new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, 0, 1.0f));
 	}
 
-	/**
-	 * Returns the number of Adapter View Footer Views. This will always return
-	 * 0 for non-ListView views.
-	 * 
-	 * @return 0 for non-ListView views, possibly 1 for ListView
-	 */
-	protected int getNumberInternalFooterViews() {
-		return 0;
-	}
-
-	/**
-	 * Returns the number of Adapter View Header Views. This will always return
-	 * 0 for non-ListView views.
-	 * 
-	 * @return 0 for non-ListView views, possibly 1 for ListView
-	 */
-	protected int getNumberInternalHeaderViews() {
-		return 0;
-	}
-
-	protected int getNumberInternalViews() {
-		return getNumberInternalHeaderViews() + getNumberInternalFooterViews();
-	}
-
 	@Override
 	protected void handleStyledAttributes(TypedArray a) {
 		// Set Show Indicator to the XML value, or default value
@@ -350,12 +327,16 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 	}
 
 	private boolean isFirstItemVisible() {
-		if (mRefreshableView.getCount() <= getNumberInternalViews()) {
+		final Adapter adapter = mRefreshableView.getAdapter();
+
+		if (null == adapter || adapter.isEmpty()) {
+			if (DEBUG) {
+				Log.d(LOG_TAG, "isFirstItemVisible. Empty View.");
+			}
 			return true;
+			
 		} else if (mRefreshableView.getFirstVisiblePosition() == 0) {
-
 			final View firstVisibleChild = mRefreshableView.getChildAt(0);
-
 			if (firstVisibleChild != null) {
 				return firstVisibleChild.getTop() >= mRefreshableView.getTop();
 			}
@@ -365,22 +346,27 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 	}
 
 	private boolean isLastItemVisible() {
-		final int count = mRefreshableView.getCount();
-		final int lastVisiblePosition = mRefreshableView.getLastVisiblePosition();
+		final Adapter adapter = mRefreshableView.getAdapter();
 
-		if (DEBUG) {
-			Log.d(LOG_TAG, "isLastItemVisible. Count: " + count + " Last Visible Pos: " + lastVisiblePosition);
-		}
-
-		if (count <= getNumberInternalViews()) {
+		if (null == adapter || adapter.isEmpty()) {
+			if (DEBUG) {
+				Log.d(LOG_TAG, "isLastItemVisible. Empty View.");
+			}
 			return true;
-		} else if (lastVisiblePosition == count - 1) {
+		} else {
+			final int count = mRefreshableView.getCount();
+			final int lastVisiblePosition = mRefreshableView.getLastVisiblePosition();
 
-			final int childIndex = lastVisiblePosition - mRefreshableView.getFirstVisiblePosition();
-			final View lastVisibleChild = mRefreshableView.getChildAt(childIndex);
+			if (DEBUG) {
+				Log.d(LOG_TAG, "isLastItemVisible. Count: " + count + " Last Visible Pos: " + lastVisiblePosition);
+			}
 
-			if (lastVisibleChild != null) {
-				return lastVisibleChild.getBottom() <= mRefreshableView.getBottom();
+			if (lastVisiblePosition == count - 1) {
+				final int childIndex = lastVisiblePosition - mRefreshableView.getFirstVisiblePosition();
+				final View lastVisibleChild = mRefreshableView.getChildAt(childIndex);
+				if (lastVisibleChild != null) {
+					return lastVisibleChild.getBottom() <= mRefreshableView.getBottom();
+				}
 			}
 		}
 
