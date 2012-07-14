@@ -163,8 +163,8 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 				((ViewGroup) newEmptyViewParent).removeView(newEmptyView);
 			}
 
-			mRefreshableViewHolder.addView(newEmptyView, ViewGroup.LayoutParams.FILL_PARENT,
-					ViewGroup.LayoutParams.FILL_PARENT);
+			mRefreshableViewHolder.addView(newEmptyView, ViewGroup.LayoutParams.MATCH_PARENT,
+					ViewGroup.LayoutParams.MATCH_PARENT);
 
 			if (mRefreshableView instanceof EmptyViewMethodAccessor) {
 				((EmptyViewMethodAccessor) mRefreshableView).setEmptyViewInternal(newEmptyView);
@@ -210,9 +210,9 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 
 	protected void addRefreshableView(Context context, T refreshableView) {
 		mRefreshableViewHolder = new FrameLayout(context);
-		mRefreshableViewHolder.addView(refreshableView, ViewGroup.LayoutParams.FILL_PARENT,
-				ViewGroup.LayoutParams.FILL_PARENT);
-		addView(mRefreshableViewHolder, new LinearLayout.LayoutParams(LayoutParams.FILL_PARENT, 0, 1.0f));
+		mRefreshableViewHolder.addView(refreshableView, ViewGroup.LayoutParams.MATCH_PARENT,
+				ViewGroup.LayoutParams.MATCH_PARENT);
+		addView(mRefreshableViewHolder, new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, 0, 1.0f));
 	}
 
 	@Override
