@@ -7,6 +7,7 @@
         <attr name="ptrHeaderTextColor" format="reference|color" />
         <attr name="ptrHeaderSubTextColor" format="reference|color" />
         <attr name="ptrMode">
+            <flag name="disabled" value="0x0" />
             <flag name="pullDownFromTop" value="0x1" />
             <flag name="pullUpFromBottom" value="0x2" />
             <flag name="both" value="0x3" />

@@ -76,7 +76,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 
 	private Mode mCurrentMode;
 	T mRefreshableView;
-	private boolean mPullToRefreshEnabled = true;
 
 	private boolean mShowViewWhileRefreshing = true;
 	private boolean mDisableScrollingWhileRefreshing = true;
@@ -189,7 +188,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	 * @return enabled
 	 */
 	public final boolean isPullToRefreshEnabled() {
-		return mPullToRefreshEnabled;
+		return mMode != Mode.DISABLED;
 	}
 
 	/**
@@ -204,7 +203,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	@Override
 	public final boolean onInterceptTouchEvent(MotionEvent event) {
 
-		if (!mPullToRefreshEnabled) {
+		if (!isPullToRefreshEnabled()) {
 			return false;
 		}
 
@@ -275,7 +274,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 
 	@Override
 	public final boolean onTouchEvent(MotionEvent event) {
-		if (!mPullToRefreshEnabled) {
+		if (!isPullToRefreshEnabled()) {
 			return false;
 		}
 
@@ -491,13 +490,14 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	}
 
 	/**
-	 * A mutator to enable/disable Pull-to-Refresh for the current View
+	 * @deprecated This simple calls setMode with an appropriate mode based on
+	 *             the passed value.
 	 * 
 	 * @param enable
 	 *            Whether Pull-To-Refresh should be used
 	 */
 	public final void setPullToRefreshEnabled(boolean enable) {
-		mPullToRefreshEnabled = enable;
+		setMode(enable ? DEFAULT_MODE : Mode.DISABLED);
 	}
 
 	public final void setRefreshing() {
@@ -957,6 +957,11 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 
 	public static enum Mode {
 		/**
+		 * Disable all Pull-to-Refresh gesture handling
+		 */
+		DISABLED(0x0),
+
+		/**
 		 * Only allow the user to Pull Down from the top to refresh, this is the
 		 * default.
 		 */
@@ -985,6 +990,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		 */
 		public static Mode mapIntToMode(int modeInt) {
 			switch (modeInt) {
+				case 0x0:
+					return DISABLED;
 				case 0x1:
 				default:
 					return PULL_DOWN_TO_REFRESH;
