@@ -18,8 +18,6 @@ package com.handmark.pulltorefresh.library;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
-import android.os.Build.VERSION;
-import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.AttributeSet;
@@ -33,7 +31,6 @@ import android.view.animation.OvershootInterpolator;
 import android.widget.LinearLayout;
 
 import com.handmark.pulltorefresh.library.internal.LoadingLayout;
-import com.handmark.pulltorefresh.library.internal.SDK16;
 
 public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 
@@ -1135,11 +1132,11 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 
 			// If we're not at the target Y, keep going...
 			if (mContinueRunning && mScrollToY != mCurrentY) {
-				if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
-					SDK16.postOnAnimation(PullToRefreshBase.this, this);
-				} else {
+				//if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
+				//	SDK16.postOnAnimation(PullToRefreshBase.this, this);
+				//} else {
 					postDelayed(this, ANIMATION_DELAY);
-				}
+				//}
 			}
 		}
 
