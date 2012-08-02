@@ -37,6 +37,10 @@
             android:name=".PullToRefreshWebViewActivity"
             android:label="PtR WebView" >
         </activity>
+        <activity
+            android:name=".PullToRefreshScrollViewActivity"
+            android:label="PtR ScrollView" >
+        </activity>
     </application>
 
     <!-- For WebView Sample -->
