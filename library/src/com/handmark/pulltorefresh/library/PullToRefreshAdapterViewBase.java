@@ -285,6 +285,8 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 		// Check Indicator Views consistent with new Mode
 		if (getShowIndicatorInternal()) {
 			addIndicatorViews();
+		} else {
+			removeIndicatorViews();
 		}
 	}
 

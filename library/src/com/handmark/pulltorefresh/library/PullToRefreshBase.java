@@ -791,7 +791,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		if (mMode.canPullUp()) {
 			addView(mFooterLayout, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
 					ViewGroup.LayoutParams.WRAP_CONTENT));
-
 		}
 
 		// Hide Loading Views
@@ -935,10 +934,14 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		} else if (mMode.canPullUp()) {
 			measureView(mFooterLayout);
 			mHeaderHeight = mFooterLayout.getMeasuredHeight();
+		} else {
+			mHeaderHeight = 0;
 		}
 
 		// Hide Loading Views
 		switch (mMode) {
+			case DISABLED:
+				setPadding(0, 0, 0, 0);
 			case BOTH:
 				setPadding(0, -mHeaderHeight, 0, -mHeaderHeight);
 				break;
