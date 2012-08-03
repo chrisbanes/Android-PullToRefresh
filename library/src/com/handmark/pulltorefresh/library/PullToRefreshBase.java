@@ -309,7 +309,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 					mIsBeingDragged = false;
 
 					if (mState == RELEASE_TO_REFRESH) {
-
 						if (null != mOnRefreshListener) {
 							setRefreshingInternal(true);
 							mOnRefreshListener.onRefresh(this);
@@ -323,9 +322,11 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 								mOnRefreshListener2.onPullUpToRefresh(this);
 							}
 							return true;
+						} else {
+							// If we don't have a listener, just reset
+							resetHeader();
+							return true;
 						}
-
-						return true;
 					}
 
 					smoothScrollTo(0);
