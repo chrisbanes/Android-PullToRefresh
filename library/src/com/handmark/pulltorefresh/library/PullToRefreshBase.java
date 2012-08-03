@@ -204,10 +204,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 			return false;
 		}
 
-		if (isRefreshing() && mDisableScrollingWhileRefreshing) {
-			return true;
-		}
-
 		final int action = event.getAction();
 
 		if (action == MotionEvent.ACTION_CANCEL || action == MotionEvent.ACTION_UP) {
@@ -221,8 +217,12 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 
 		switch (action) {
 			case MotionEvent.ACTION_MOVE: {
-				if (isReadyForPull()) {
+				// If we're refreshing, and the flag is set. Eat all MOVE events
+				if (mDisableScrollingWhileRefreshing && isRefreshing()) {
+					return true;
+				}
 
+				if (isReadyForPull()) {
 					final float y = event.getY();
 					final float dy = y - mLastMotionY;
 					final float yDiff = Math.abs(dy);
@@ -271,11 +271,13 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 
 	@Override
 	public final boolean onTouchEvent(MotionEvent event) {
+
 		if (!isPullToRefreshEnabled()) {
 			return false;
 		}
 
-		if (isRefreshing() && mDisableScrollingWhileRefreshing) {
+		// If we're refreshing, and the flag is set. Eat the event
+		if (mDisableScrollingWhileRefreshing && isRefreshing()) {
 			return true;
 		}
 
@@ -284,7 +286,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		}
 
 		switch (event.getAction()) {
-
 			case MotionEvent.ACTION_MOVE: {
 				if (mIsBeingDragged) {
 					mLastMotionY = event.getY();
@@ -1135,11 +1136,11 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 
 			// If we're not at the target Y, keep going...
 			if (mContinueRunning && mScrollToY != mCurrentY) {
-				//if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
-				//	SDK16.postOnAnimation(PullToRefreshBase.this, this);
-				//} else {
-					postDelayed(this, ANIMATION_DELAY);
-				//}
+				// if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
+				// SDK16.postOnAnimation(PullToRefreshBase.this, this);
+				// } else {
+				postDelayed(this, ANIMATION_DELAY);
+				// }
 			}
 		}
 
