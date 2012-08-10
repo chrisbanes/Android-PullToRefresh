@@ -300,10 +300,8 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 				final int newY = (deltaY + scrollY);
 
 				if (newY != 0) {
-					// Check the mode supports the overscroll direction, and then move scroll
-					if ((mode.canPullDown() && newY < 0) || (mode.canPullUp() && newY > 0)) {
-						setHeaderScroll(PullToRefreshListView.this.getScrollY() + newY);
-					}
+					// We're overscrolling so set scroll Y
+					setHeaderScroll(PullToRefreshListView.this.getScrollY() + newY);
 				} else {
 					// Means we've stopped overscrolling, so scroll back to 0
 					smoothScrollTo(0, SMOOTH_SCROLL_LONG_DURATION_MS);
