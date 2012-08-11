@@ -11,6 +11,15 @@
         android:id="@+id/pull_refresh_scrollview"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        ptr:ptrMode="both" />
+        ptr:ptrMode="both" >
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:padding="8dp"
+            android:text="@string/filler_text"
+            android:textSize="16sp" />
+        
+    </com.handmark.pulltorefresh.library.PullToRefreshScrollView>
 
 </LinearLayout>

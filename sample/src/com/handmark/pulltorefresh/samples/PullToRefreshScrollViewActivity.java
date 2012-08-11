@@ -18,7 +18,6 @@ package com.handmark.pulltorefresh.samples;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.widget.ScrollView;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
@@ -44,11 +43,8 @@ public final class PullToRefreshScrollViewActivity extends Activity {
 				new GetDataTask().execute();
 			}
 		});
-		
-		mScrollView = mPullRefreshScrollView.getRefreshableView();
 
-		// Inflate and add something to the ScrollView
-		LayoutInflater.from(this).inflate(R.layout.layout_scrollview_contents, mScrollView, true);
+		mScrollView = mPullRefreshScrollView.getRefreshableView();
 	}
 
 	private class GetDataTask extends AsyncTask<Void, Void, String[]> {

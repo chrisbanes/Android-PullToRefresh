@@ -107,6 +107,21 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		init(context, null);
 	}
 
+	@Override
+	public void addView(View child, int index, ViewGroup.LayoutParams params) {
+		if (DEBUG) {
+			Log.d(LOG_TAG, "addView: " + child.getClass().getSimpleName());
+		}
+
+		final T refreshableView = getRefreshableView();
+
+		if (refreshableView instanceof ViewGroup) {
+			((ViewGroup) refreshableView).addView(child, index, params);
+		} else {
+			throw new UnsupportedOperationException("Refreshable View is not a ViewGroup so can't addView");
+		}
+	}
+
 	/**
 	 * Get the mode that this view is currently in. This is only really useful
 	 * when using <code>Mode.BOTH</code>.
@@ -590,7 +605,23 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	}
 
 	protected void addRefreshableView(Context context, T refreshableView) {
-		addView(refreshableView, new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, 0, 1.0f));
+		addViewInternal(refreshableView, new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, 0, 1.0f));
+	}
+	
+	/**
+	 * Used internally for adding view. Need because we override addView to
+	 * pass-through to the Refreshable View
+	 */
+	protected final void addViewInternal(View child, int index, ViewGroup.LayoutParams params) {
+		super.addView(child, index, params);
+	}
+
+	/**
+	 * Used internally for adding view. Need because we override addView to
+	 * pass-through to the Refreshable View
+	 */
+	protected final void addViewInternal(View child, ViewGroup.LayoutParams params) {
+		super.addView(child, -1, params);
 	}
 
 	/**
@@ -782,7 +813,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 			removeView(mHeaderLayout);
 		}
 		if (mMode.canPullDown()) {
-			addView(mHeaderLayout, 0, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+			addViewInternal(mHeaderLayout, 0, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
 					ViewGroup.LayoutParams.WRAP_CONTENT));
 		}
 
@@ -791,7 +822,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 			removeView(mFooterLayout);
 		}
 		if (mMode.canPullUp()) {
-			addView(mFooterLayout, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+			addViewInternal(mFooterLayout, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
 					ViewGroup.LayoutParams.WRAP_CONTENT));
 		}
 
@@ -803,6 +834,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		mCurrentMode = (mMode != Mode.BOTH) ? mMode : Mode.PULL_DOWN_TO_REFRESH;
 	}
 
+	@SuppressWarnings("deprecation")
 	private void init(Context context, AttributeSet attrs) {
 		setOrientation(LinearLayout.VERTICAL);
 
