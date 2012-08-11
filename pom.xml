@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	
 	<groupId>com.github.chrisbanes.pulltorefresh</groupId>
 	<artifactId>parent</artifactId>
 	<packaging>pom</packaging>
@@ -9,13 +8,11 @@
 	<name>Android-PullToRefresh Project</name>
 	<description>Implementation of the Pull-to-Refresh UI Pattern for Android.</description>
 	<url>https://github.com/chrisbanes/Android-PullToRefresh</url>
-	
 	<parent>
 		<groupId>org.sonatype.oss</groupId>
 		<artifactId>oss-parent</artifactId>
 		<version>7</version>
 	</parent>
-	
 	<licenses>
 		<license>
 			<name>Apache License Version 2.0</name>
@@ -23,13 +20,11 @@
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
-	
 	<scm>
 		<url>https://github.com/chrisbanes/Android-PullToRefresh</url>
 		<connection>scm:git:git://github.com/chrisbanes/Android-PullToRefresh.git</connection>
 		<developerConnection>scm:git:git@github.com:chrisbanes/Android-PullToRefresh.git</developerConnection>
 	</scm>
-	
 	<developers>
 		<developer>
 			<name>Chris Banes</name>
@@ -37,12 +32,10 @@
 			<id>chrisbanes</id>
 		</developer>
 	</developers>
-	
 	<modules>
 		<module>library</module>
 		<module>sample</module>
 	</modules>
-	
 	<properties>
 		<!-- build settings -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -52,7 +45,6 @@
 		<android.platform>8</android.platform>
 		<android-maven.version>3.2.0</android-maven.version>
 	</properties>
-	
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -63,7 +55,6 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-	
 	<build>
 		<pluginManagement>
 			<plugins>
@@ -72,6 +63,10 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
 					<version>2.3.2</version>
+					<configuration>
+						<tagNameFormat>v@{project.version}</tagNameFormat>
+						<updateWorkingCopyVersions>false</updateWorkingCopyVersions>
+					</configuration>
 				</plugin>
 				<plugin>
 					<groupId>com.jayway.maven.plugins.android.generation2</groupId>
