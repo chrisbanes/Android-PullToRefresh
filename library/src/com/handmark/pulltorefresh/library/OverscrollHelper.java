@@ -5,7 +5,7 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 final class OverscrollHelper {
 
 	static void overScrollBy(PullToRefreshBase<?> view, int deltaY, int scrollY, boolean isTouchEvent) {
-		final Mode mode = view.getCurrentMode();
+		final Mode mode = view.getMode();
 
 		if (mode != Mode.DISABLED && !isTouchEvent) {
 			final int newY = (deltaY + scrollY);
