@@ -15,6 +15,7 @@
  *******************************************************************************/
 package com.handmark.pulltorefresh.library;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -282,6 +283,7 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 
 	}
 
+	@TargetApi(9)
 	final class InternalListViewSDK9 extends InternalListView {
 
 		public InternalListViewSDK9(Context context, AttributeSet attrs) {
@@ -295,21 +297,8 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 			final boolean returnValue = super.overScrollBy(deltaX, deltaY, scrollX, scrollY, scrollRangeX,
 					scrollRangeY, maxOverScrollX, maxOverScrollY, isTouchEvent);
 
-			final Mode mode = getCurrentMode();
-			if (mode != Mode.DISABLED && !isTouchEvent) {
-				final int newY = (deltaY + scrollY);
-
-				if (newY != 0) {
-					// Check the mode supports the overscroll direction, and
-					// then move scroll
-					if ((mode.canPullDown() && newY < 0) || (mode.canPullUp() && newY > 0)) {
-						setHeaderScroll(PullToRefreshListView.this.getScrollY() + newY);
-					}
-				} else {
-					// Means we've stopped overscrolling, so scroll back to 0
-					smoothScrollTo(0, SMOOTH_SCROLL_LONG_DURATION_MS);
-				}
-			}
+			// Does all of the hard work...
+			OverscrollHelper.overScrollBy(PullToRefreshListView.this, deltaY, scrollY, isTouchEvent);
 
 			return returnValue;
 		}
