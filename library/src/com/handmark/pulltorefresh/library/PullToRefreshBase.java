@@ -18,6 +18,8 @@ package com.handmark.pulltorefresh.library;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.AttributeSet;
@@ -26,11 +28,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
-import android.view.animation.OvershootInterpolator;
 import android.widget.LinearLayout;
 
 import com.handmark.pulltorefresh.library.internal.LoadingLayout;
+import com.handmark.pulltorefresh.library.internal.SDK16;
 
 public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 
@@ -43,6 +46,9 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	static final String LOG_TAG = "PullToRefresh";
 
 	static final float FRICTION = 2.0f;
+
+	public static final int SMOOTH_SCROLL_DURATION_MS = 200;
+	public static final int SMOOTH_SCROLL_LONG_DURATION_MS = 325;
 
 	static final int PULL_TO_REFRESH = 0x0;
 	static final int RELEASE_TO_REFRESH = 0x1;
@@ -793,12 +799,16 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	}
 
 	protected final void smoothScrollTo(int y) {
+		smoothScrollTo(y, SMOOTH_SCROLL_DURATION_MS);
+	}
+
+	protected final void smoothScrollTo(int y, long duration) {
 		if (null != mCurrentSmoothScrollRunnable) {
 			mCurrentSmoothScrollRunnable.stop();
 		}
 
 		if (getScrollY() != y) {
-			mCurrentSmoothScrollRunnable = new SmoothScrollRunnable(getScrollY(), y);
+			mCurrentSmoothScrollRunnable = new SmoothScrollRunnable(getScrollY(), y, duration);
 			post(mCurrentSmoothScrollRunnable);
 		}
 	}
@@ -1124,22 +1134,22 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 
 	final class SmoothScrollRunnable implements Runnable {
 
-		static final int ANIMATION_DURATION_MS = 300;
 		static final int ANIMATION_DELAY = 10;
-		static final float ANIMATION_OVERSHOOT_TENSION = 2.0f;
 
 		private final Interpolator mInterpolator;
 		private final int mScrollToY;
 		private final int mScrollFromY;
+		private final long mDuration;
 
 		private boolean mContinueRunning = true;
 		private long mStartTime = -1;
 		private int mCurrentY = -1;
 
-		public SmoothScrollRunnable(int fromY, int toY) {
+		public SmoothScrollRunnable(int fromY, int toY, long duration) {
 			mScrollFromY = fromY;
 			mScrollToY = toY;
-			mInterpolator = new OvershootInterpolator(ANIMATION_OVERSHOOT_TENSION);
+			mInterpolator = new DecelerateInterpolator();
+			mDuration = duration;
 		}
 
 		@Override
@@ -1158,7 +1168,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 				 * calculations. We use 1000 as it gives us good accuracy and
 				 * small rounding errors
 				 */
-				long normalizedTime = (1000 * (System.currentTimeMillis() - mStartTime)) / ANIMATION_DURATION_MS;
+				long normalizedTime = (1000 * (System.currentTimeMillis() - mStartTime)) / mDuration;
 				normalizedTime = Math.max(Math.min(normalizedTime, 1000), 0);
 
 				final int deltaY = Math.round((mScrollFromY - mScrollToY)
@@ -1169,11 +1179,11 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 
 			// If we're not at the target Y, keep going...
 			if (mContinueRunning && mScrollToY != mCurrentY) {
-				// if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
-				// SDK16.postOnAnimation(PullToRefreshBase.this, this);
-				// } else {
-				postDelayed(this, ANIMATION_DELAY);
-				// }
+				if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
+					SDK16.postOnAnimation(PullToRefreshBase.this, this);
+				} else {
+					postDelayed(this, ANIMATION_DELAY);
+				}
 			}
 		}
 

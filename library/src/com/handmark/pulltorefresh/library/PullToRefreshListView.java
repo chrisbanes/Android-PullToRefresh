@@ -18,6 +18,8 @@ package com.handmark.pulltorefresh.library;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.util.AttributeSet;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View;
@@ -90,7 +92,12 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 
 	@Override
 	protected final ListView createRefreshableView(Context context, AttributeSet attrs) {
-		ListView lv = new InternalListView(context, attrs);
+		final ListView lv;
+		if (VERSION.SDK_INT >= VERSION_CODES.GINGERBREAD) {
+			lv = new InternalListViewSDK9(context, attrs);
+		} else {
+			lv = new InternalListView(context, attrs);
+		}
 
 		// Get Styles from attrs
 		TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.PullToRefresh);
@@ -271,6 +278,37 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		@Override
 		public void setEmptyViewInternal(View emptyView) {
 			super.setEmptyView(emptyView);
+		}
+
+	}
+
+	class InternalListViewSDK9 extends InternalListView {
+
+		public InternalListViewSDK9(Context context, AttributeSet attrs) {
+			super(context, attrs);
+		}
+
+		@Override
+		protected boolean overScrollBy(int deltaX, int deltaY, int scrollX, int scrollY, int scrollRangeX,
+				int scrollRangeY, int maxOverScrollX, int maxOverScrollY, boolean isTouchEvent) {
+
+			final boolean returnValue = super.overScrollBy(deltaX, deltaY, scrollX, scrollY, scrollRangeX,
+					scrollRangeY, maxOverScrollX, maxOverScrollY, isTouchEvent);
+
+			final Mode mode = getCurrentMode();
+			if (mode != Mode.DISABLED && !isTouchEvent) {
+				final int newY = (deltaY + scrollY);
+
+				if (newY != 0) {
+					// We're overscrolling so set scroll Y
+					setHeaderScroll(PullToRefreshListView.this.getScrollY() + newY);
+				} else {
+					// Means we've stopped overscrolling, so scroll back to 0
+					smoothScrollTo(0, SMOOTH_SCROLL_LONG_DURATION_MS);
+				}
+			}
+
+			return returnValue;
 		}
 	}
 
