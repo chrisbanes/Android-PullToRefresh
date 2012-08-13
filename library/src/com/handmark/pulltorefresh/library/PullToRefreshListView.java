@@ -282,7 +282,7 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 
 	}
 
-	class InternalListViewSDK9 extends InternalListView {
+	final class InternalListViewSDK9 extends InternalListView {
 
 		public InternalListViewSDK9(Context context, AttributeSet attrs) {
 			super(context, attrs);
@@ -300,8 +300,11 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 				final int newY = (deltaY + scrollY);
 
 				if (newY != 0) {
-					// We're overscrolling so set scroll Y
-					setHeaderScroll(PullToRefreshListView.this.getScrollY() + newY);
+					// Check the mode supports the overscroll direction, and
+					// then move scroll
+					if ((mode.canPullDown() && newY < 0) || (mode.canPullUp() && newY > 0)) {
+						setHeaderScroll(PullToRefreshListView.this.getScrollY() + newY);
+					}
 				} else {
 					// Means we've stopped overscrolling, so scroll back to 0
 					smoothScrollTo(0, SMOOTH_SCROLL_LONG_DURATION_MS);
