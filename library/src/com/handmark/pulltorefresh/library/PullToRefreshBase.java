@@ -35,7 +35,7 @@ import android.widget.LinearLayout;
 import com.handmark.pulltorefresh.library.internal.LoadingLayout;
 import com.handmark.pulltorefresh.library.internal.SDK16;
 
-public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
+public abstract class PullToRefreshBase<T extends View> extends LinearLayout implements IPullToRefresh<T> {
 
 	// ===========================================================
 	// Constants
@@ -130,85 +130,42 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		}
 	}
 
-	/**
-	 * Get the mode that this view is currently in. This is only really useful
-	 * when using <code>Mode.BOTH</code>.
-	 * 
-	 * @return Mode that the view is currently in
-	 */
+	@Override
 	public final Mode getCurrentMode() {
 		return mCurrentMode;
 	}
 
-	/**
-	 * Returns whether the Touch Events are filtered or not. If true is
-	 * returned, then the View will only use touch events where the difference
-	 * in the Y-axis is greater than the difference in the X-axis. This means
-	 * that the View will not interfere when it is used in a horizontal
-	 * scrolling View (such as a ViewPager).
-	 * 
-	 * @return boolean - true if the View is filtering Touch Events
-	 */
+	@Override
 	public final boolean getFilterTouchEvents() {
 		return mFilterTouchEvents;
 	}
 
-	/**
-	 * Get the mode that this view has been set to. If this returns
-	 * <code>Mode.BOTH</code>, you can use <code>getCurrentMode()</code> to
-	 * check which mode the view is currently in
-	 * 
-	 * @return Mode that the view has been set to
-	 */
+	@Override
 	public final Mode getMode() {
 		return mMode;
 	}
 
-	/**
-	 * Get the Wrapped Refreshable View. Anything returned here has already been
-	 * added to the content view.
-	 * 
-	 * @return The View which is currently wrapped
-	 */
+	@Override
 	public final T getRefreshableView() {
 		return mRefreshableView;
 	}
 
-	/**
-	 * Get whether the 'Refreshing' View should be automatically shown when
-	 * refreshing. Returns true by default.
-	 * 
-	 * @return - true if the Refreshing View will be show
-	 */
+	@Override
 	public final boolean getShowViewWhileRefreshing() {
 		return mShowViewWhileRefreshing;
 	}
 
-	/**
-	 * @deprecated Use the value from <code>getCurrentMode()</code> instead
-	 * @return true if the current mode is Mode.PULL_DOWN_TO_REFRESH
-	 */
+	@Override
 	public final boolean hasPullFromTop() {
 		return mCurrentMode == Mode.PULL_DOWN_TO_REFRESH;
 	}
 
-	/**
-	 * Returns whether the widget has disabled scrolling on the Refreshable View
-	 * while refreshing.
-	 * 
-	 * @return true if the widget has disabled scrolling while refreshing
-	 */
+	@Override
 	public final boolean isDisableScrollingWhileRefreshing() {
 		return mDisableScrollingWhileRefreshing;
 	}
 
-	/**
-	 * Gets whether Overscroll support is enabled. This is different to
-	 * Android's standard Overscroll support (the edge-glow) which is available from GINGERBREAD onwards
-	 * 
-	 * @return true - if both PullToRefresh-OverScroll and Android's inbuilt
-	 *         OverScroll are enabled
-	 */
+	@Override
 	public final boolean isPullToRefreshOverScrollEnabled() {
 		if (VERSION.SDK_INT >= VERSION_CODES.GINGERBREAD) {
 			return mOverScrollEnabled && OverscrollHelper.isAndroidOverScrollEnabled(mRefreshableView);
@@ -216,20 +173,12 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		return false;
 	}
 
-	/**
-	 * Whether Pull-to-Refresh is enabled
-	 * 
-	 * @return enabled
-	 */
+	@Override
 	public final boolean isPullToRefreshEnabled() {
 		return mMode != Mode.DISABLED;
 	}
 
-	/**
-	 * Returns whether the Widget is currently in the Refreshing mState
-	 * 
-	 * @return true if the Widget is currently refreshing
-	 */
+	@Override
 	public final boolean isRefreshing() {
 		return mState == REFRESHING || mState == MANUAL_REFRESHING;
 	}
@@ -296,10 +245,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		return mIsBeingDragged;
 	}
 
-	/**
-	 * Mark the current Refresh as complete. Will Reset the UI and hide the
-	 * Refreshing View
-	 */
+	@Override
 	public final void onRefreshComplete() {
 		if (mState != PULL_TO_REFRESH) {
 			resetHeader();
@@ -376,39 +322,17 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		return false;
 	}
 
-	/**
-	 * By default the Widget disabled scrolling on the Refreshable View while
-	 * refreshing. This method can change this behaviour.
-	 * 
-	 * @param disableScrollingWhileRefreshing
-	 *            - true if you want to disable scrolling while refreshing
-	 */
+	@Override
 	public final void setDisableScrollingWhileRefreshing(boolean disableScrollingWhileRefreshing) {
 		mDisableScrollingWhileRefreshing = disableScrollingWhileRefreshing;
 	}
 
-	/**
-	 * Set the Touch Events to be filtered or not. If set to true, then the View
-	 * will only use touch events where the difference in the Y-axis is greater
-	 * than the difference in the X-axis. This means that the View will not
-	 * interfere when it is used in a horizontal scrolling View (such as a
-	 * ViewPager), but will restrict which types of finger scrolls will trigger
-	 * the View.
-	 * 
-	 * @param filterEvents
-	 *            - true if you want to filter Touch Events. Default is true.
-	 */
+	@Override
 	public final void setFilterTouchEvents(boolean filterEvents) {
 		mFilterTouchEvents = filterEvents;
 	}
 
-	/**
-	 * Set the Last Updated Text. This displayed under the main label when
-	 * Pulling
-	 * 
-	 * @param label
-	 *            - Label to set
-	 */
+	@Override
 	public void setLastUpdatedLabel(CharSequence label) {
 		if (null != mHeaderLayout) {
 			mHeaderLayout.setSubHeaderText(label);
@@ -421,27 +345,12 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		refreshLoadingViewsHeight();
 	}
 
-	/**
-	 * Set the drawable used in the loading layout. This is the same as calling
-	 * <code>setLoadingDrawable(drawable, Mode.BOTH)</code>
-	 * 
-	 * @param drawable
-	 *            - Drawable to display
-	 */
+	@Override
 	public void setLoadingDrawable(Drawable drawable) {
 		setLoadingDrawable(drawable, Mode.BOTH);
 	}
 
-	/**
-	 * Set the drawable used in the loading layout.
-	 * 
-	 * @param drawable
-	 *            - Drawable to display
-	 * @param mode
-	 *            - Controls which Header/Footer Views will be updated.
-	 *            <code>Mode.BOTH</code> will update all available, other values
-	 *            will update the relevant View.
-	 */
+	@Override
 	public void setLoadingDrawable(Drawable drawable, Mode mode) {
 		if (null != mHeaderLayout && mode.canPullDown()) {
 			mHeaderLayout.setLoadingDrawable(drawable);
@@ -459,12 +368,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		getRefreshableView().setLongClickable(longClickable);
 	}
 
-	/**
-	 * Set the mode of Pull-to-Refresh that this view will use.
-	 * 
-	 * @param mode
-	 *            - Mode to set the View to
-	 */
+	@Override
 	public final void setMode(Mode mode) {
 		if (mode != mMode) {
 			if (DEBUG) {
@@ -475,59 +379,27 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		}
 	}
 
-	/**
-	 * Set OnRefreshListener for the Widget
-	 * 
-	 * @param listener
-	 *            - Listener to be used when the Widget is set to Refresh
-	 */
+	@Override
 	public final void setOnRefreshListener(OnRefreshListener<T> listener) {
 		mOnRefreshListener = listener;
 	}
 
-	/**
-	 * Set OnRefreshListener for the Widget
-	 * 
-	 * @param listener
-	 *            - Listener to be used when the Widget is set to Refresh
-	 */
+	@Override
 	public final void setOnRefreshListener(OnRefreshListener2<T> listener) {
 		mOnRefreshListener2 = listener;
 	}
 
-	/**
-	 * Sets whether Overscroll support is enabled. This is different to
-	 * Android's standard Overscroll support (the edge-glow). This setting only
-	 * takes effect when running on device with Android v2.3 or greater.
-	 * 
-	 * @param enabled
-	 *            - true if you want Overscroll enabled
-	 */
+	@Override
 	public final void setPullToRefreshOverScrollEnabled(boolean enabled) {
 		mOverScrollEnabled = enabled;
 	}
 
-	/**
-	 * Set Text to show when the Widget is being Pulled
-	 * <code>setPullLabel(releaseLabel, Mode.BOTH)</code>
-	 * 
-	 * @param releaseLabel
-	 *            - String to display
-	 */
+	@Override
 	public void setPullLabel(String pullLabel) {
 		setPullLabel(pullLabel, Mode.BOTH);
 	}
 
-	/**
-	 * Set Text to show when the Widget is being Pulled
-	 * 
-	 * @param pullLabel
-	 *            - String to display
-	 * @param mode
-	 *            - Controls which Header/Footer Views will be updated.
-	 *            <code>Mode.BOTH</code> will update all available, other values
-	 *            will update the relevant View.
-	 */
+	@Override
 	public void setPullLabel(String pullLabel, Mode mode) {
 		if (null != mHeaderLayout && mode.canPullDown()) {
 			mHeaderLayout.setPullLabel(pullLabel);
@@ -537,28 +409,17 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		}
 	}
 
-	/**
-	 * @deprecated This simple calls setMode with an appropriate mode based on
-	 *             the passed value.
-	 * 
-	 * @param enable
-	 *            Whether Pull-To-Refresh should be used
-	 */
+	@Override
 	public final void setPullToRefreshEnabled(boolean enable) {
 		setMode(enable ? DEFAULT_MODE : Mode.DISABLED);
 	}
 
+	@Override
 	public final void setRefreshing() {
 		setRefreshing(true);
 	}
 
-	/**
-	 * Sets the Widget to be in the refresh mState. The UI will be updated to
-	 * show the 'Refreshing' view.
-	 * 
-	 * @param doScroll
-	 *            - true if you want to force a scroll to the Refreshing view.
-	 */
+	@Override
 	public final void setRefreshing(boolean doScroll) {
 		if (!isRefreshing()) {
 			setRefreshingInternal(doScroll);
@@ -566,27 +427,12 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		}
 	}
 
-	/**
-	 * Set Text to show when the Widget is refreshing
-	 * <code>setRefreshingLabel(releaseLabel, Mode.BOTH)</code>
-	 * 
-	 * @param releaseLabel
-	 *            - String to display
-	 */
+	@Override
 	public void setRefreshingLabel(String refreshingLabel) {
 		setRefreshingLabel(refreshingLabel, Mode.BOTH);
 	}
 
-	/**
-	 * Set Text to show when the Widget is refreshing
-	 * 
-	 * @param refreshingLabel
-	 *            - String to display
-	 * @param mode
-	 *            - Controls which Header/Footer Views will be updated.
-	 *            <code>Mode.BOTH</code> will update all available, other values
-	 *            will update the relevant View.
-	 */
+	@Override
 	public void setRefreshingLabel(String refreshingLabel, Mode mode) {
 		if (null != mHeaderLayout && mode.canPullDown()) {
 			mHeaderLayout.setRefreshingLabel(refreshingLabel);
@@ -596,29 +442,12 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		}
 	}
 
-	/**
-	 * Set Text to show when the Widget is being pulled, and will refresh when
-	 * released. This is the same as calling
-	 * <code>setReleaseLabel(releaseLabel, Mode.BOTH)</code>
-	 * 
-	 * @param releaseLabel
-	 *            - String to display
-	 */
+	@Override
 	public void setReleaseLabel(String releaseLabel) {
 		setReleaseLabel(releaseLabel, Mode.BOTH);
 	}
 
-	/**
-	 * Set Text to show when the Widget is being pulled, and will refresh when
-	 * released
-	 * 
-	 * @param releaseLabel
-	 *            - String to display
-	 * @param mode
-	 *            - Controls which Header/Footer Views will be updated.
-	 *            <code>Mode.BOTH</code> will update all available, other values
-	 *            will update the relevant View.
-	 */
+	@Override
 	public void setReleaseLabel(String releaseLabel, Mode mode) {
 		if (null != mHeaderLayout && mode.canPullDown()) {
 			mHeaderLayout.setReleaseLabel(releaseLabel);
@@ -628,12 +457,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		}
 	}
 
-	/**
-	 * A mutator to enable/disable whether the 'Refreshing' View should be
-	 * automatically shown when refreshing.
-	 * 
-	 * @param showView
-	 */
+	@Override
 	public final void setShowViewWhileRefreshing(boolean showView) {
 		mShowViewWhileRefreshing = showView;
 	}
