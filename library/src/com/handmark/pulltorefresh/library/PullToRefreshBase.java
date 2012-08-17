@@ -83,6 +83,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	private boolean mShowViewWhileRefreshing = true;
 	private boolean mDisableScrollingWhileRefreshing = true;
 	private boolean mFilterTouchEvents = true;
+	private boolean mOverScrollEnabled = true;
+
 	private LoadingLayout mHeaderLayout;
 	private LoadingLayout mFooterLayout;
 
@@ -198,6 +200,20 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	 */
 	public final boolean isDisableScrollingWhileRefreshing() {
 		return mDisableScrollingWhileRefreshing;
+	}
+
+	/**
+	 * Gets whether Overscroll support is enabled. This is different to
+	 * Android's standard Overscroll support (the edge-glow) which is available from GINGERBREAD onwards
+	 * 
+	 * @return true - if both PullToRefresh-OverScroll and Android's inbuilt
+	 *         OverScroll are enabled
+	 */
+	public final boolean isPullToRefreshOverScrollEnabled() {
+		if (VERSION.SDK_INT >= VERSION_CODES.GINGERBREAD) {
+			return mOverScrollEnabled && OverscrollHelper.isAndroidOverScrollEnabled(mRefreshableView);
+		}
+		return false;
 	}
 
 	/**
@@ -480,6 +496,18 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	}
 
 	/**
+	 * Sets whether Overscroll support is enabled. This is different to
+	 * Android's standard Overscroll support (the edge-glow). This setting only
+	 * takes effect when running on device with Android v2.3 or greater.
+	 * 
+	 * @param enabled
+	 *            - true if you want Overscroll enabled
+	 */
+	public final void setPullToRefreshOverScrollEnabled(boolean enabled) {
+		mOverScrollEnabled = enabled;
+	}
+
+	/**
 	 * Set Text to show when the Widget is being Pulled
 	 * <code>setPullLabel(releaseLabel, Mode.BOTH)</code>
 	 * 
@@ -613,7 +641,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 	protected void addRefreshableView(Context context, T refreshableView) {
 		addViewInternal(refreshableView, new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, 0, 1.0f));
 	}
-	
+
 	/**
 	 * Used internally for adding view. Need because we override addView to
 	 * pass-through to the Refreshable View
@@ -884,6 +912,10 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 				mRefreshableView.setBackgroundDrawable(background);
 			}
 		}
+		if (a.hasValue(R.styleable.PullToRefresh_ptrOverScroll)) {
+			mOverScrollEnabled = a.getBoolean(R.styleable.PullToRefresh_ptrOverScroll, true);
+		}
+
 		a.recycle();
 		a = null;
 	}
