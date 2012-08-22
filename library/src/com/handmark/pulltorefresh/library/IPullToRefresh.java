@@ -15,7 +15,7 @@ public interface IPullToRefresh<T extends View> {
 	 * 
 	 * @return Mode that the view is currently in
 	 */
-	public abstract Mode getCurrentMode();
+	public Mode getCurrentMode();
 
 	/**
 	 * Returns whether the Touch Events are filtered or not. If true is
@@ -26,7 +26,7 @@ public interface IPullToRefresh<T extends View> {
 	 * 
 	 * @return boolean - true if the View is filtering Touch Events
 	 */
-	public abstract boolean getFilterTouchEvents();
+	public boolean getFilterTouchEvents();
 
 	/**
 	 * Get the mode that this view has been set to. If this returns
@@ -35,7 +35,7 @@ public interface IPullToRefresh<T extends View> {
 	 * 
 	 * @return Mode that the view has been set to
 	 */
-	public abstract Mode getMode();
+	public Mode getMode();
 
 	/**
 	 * Get the Wrapped Refreshable View. Anything returned here has already been
@@ -43,7 +43,7 @@ public interface IPullToRefresh<T extends View> {
 	 * 
 	 * @return The View which is currently wrapped
 	 */
-	public abstract T getRefreshableView();
+	public T getRefreshableView();
 
 	/**
 	 * Get whether the 'Refreshing' View should be automatically shown when
@@ -51,13 +51,13 @@ public interface IPullToRefresh<T extends View> {
 	 * 
 	 * @return - true if the Refreshing View will be show
 	 */
-	public abstract boolean getShowViewWhileRefreshing();
+	public boolean getShowViewWhileRefreshing();
 
 	/**
 	 * @deprecated Use the value from <code>getCurrentMode()</code> instead
 	 * @return true if the current mode is Mode.PULL_DOWN_TO_REFRESH
 	 */
-	public abstract boolean hasPullFromTop();
+	public boolean hasPullFromTop();
 
 	/**
 	 * Returns whether the widget has disabled scrolling on the Refreshable View
@@ -65,7 +65,7 @@ public interface IPullToRefresh<T extends View> {
 	 * 
 	 * @return true if the widget has disabled scrolling while refreshing
 	 */
-	public abstract boolean isDisableScrollingWhileRefreshing();
+	public boolean isDisableScrollingWhileRefreshing();
 
 	/**
 	 * Gets whether Overscroll support is enabled. This is different to
@@ -75,27 +75,27 @@ public interface IPullToRefresh<T extends View> {
 	 * @return true - if both PullToRefresh-OverScroll and Android's inbuilt
 	 *         OverScroll are enabled
 	 */
-	public abstract boolean isPullToRefreshOverScrollEnabled();
+	public boolean isPullToRefreshOverScrollEnabled();
 
 	/**
 	 * Whether Pull-to-Refresh is enabled
 	 * 
 	 * @return enabled
 	 */
-	public abstract boolean isPullToRefreshEnabled();
+	public boolean isPullToRefreshEnabled();
 
 	/**
 	 * Returns whether the Widget is currently in the Refreshing mState
 	 * 
 	 * @return true if the Widget is currently refreshing
 	 */
-	public abstract boolean isRefreshing();
+	public boolean isRefreshing();
 
 	/**
 	 * Mark the current Refresh as complete. Will Reset the UI and hide the
 	 * Refreshing View
 	 */
-	public abstract void onRefreshComplete();
+	public void onRefreshComplete();
 
 	/**
 	 * By default the Widget disabled scrolling on the Refreshable View while
@@ -104,7 +104,7 @@ public interface IPullToRefresh<T extends View> {
 	 * @param disableScrollingWhileRefreshing
 	 *            - true if you want to disable scrolling while refreshing
 	 */
-	public abstract void setDisableScrollingWhileRefreshing(boolean disableScrollingWhileRefreshing);
+	public void setDisableScrollingWhileRefreshing(boolean disableScrollingWhileRefreshing);
 
 	/**
 	 * Set the Touch Events to be filtered or not. If set to true, then the View
@@ -117,7 +117,7 @@ public interface IPullToRefresh<T extends View> {
 	 * @param filterEvents
 	 *            - true if you want to filter Touch Events. Default is true.
 	 */
-	public abstract void setFilterTouchEvents(boolean filterEvents);
+	public void setFilterTouchEvents(boolean filterEvents);
 
 	/**
 	 * Set the Last Updated Text. This displayed under the main label when
@@ -126,7 +126,7 @@ public interface IPullToRefresh<T extends View> {
 	 * @param label
 	 *            - Label to set
 	 */
-	public abstract void setLastUpdatedLabel(CharSequence label);
+	public void setLastUpdatedLabel(CharSequence label);
 
 	/**
 	 * Set the drawable used in the loading layout. This is the same as calling
@@ -135,7 +135,7 @@ public interface IPullToRefresh<T extends View> {
 	 * @param drawable
 	 *            - Drawable to display
 	 */
-	public abstract void setLoadingDrawable(Drawable drawable);
+	public void setLoadingDrawable(Drawable drawable);
 
 	/**
 	 * Set the drawable used in the loading layout.
@@ -147,7 +147,7 @@ public interface IPullToRefresh<T extends View> {
 	 *            <code>Mode.BOTH</code> will update all available, other values
 	 *            will update the relevant View.
 	 */
-	public abstract void setLoadingDrawable(Drawable drawable, Mode mode);
+	public void setLoadingDrawable(Drawable drawable, Mode mode);
 
 	/**
 	 * Set the mode of Pull-to-Refresh that this view will use.
@@ -155,7 +155,7 @@ public interface IPullToRefresh<T extends View> {
 	 * @param mode
 	 *            - Mode to set the View to
 	 */
-	public abstract void setMode(Mode mode);
+	public void setMode(Mode mode);
 
 	/**
 	 * Set OnRefreshListener for the Widget
@@ -163,7 +163,7 @@ public interface IPullToRefresh<T extends View> {
 	 * @param listener
 	 *            - Listener to be used when the Widget is set to Refresh
 	 */
-	public abstract void setOnRefreshListener(OnRefreshListener<T> listener);
+	public void setOnRefreshListener(OnRefreshListener<T> listener);
 
 	/**
 	 * Set OnRefreshListener for the Widget
@@ -171,7 +171,7 @@ public interface IPullToRefresh<T extends View> {
 	 * @param listener
 	 *            - Listener to be used when the Widget is set to Refresh
 	 */
-	public abstract void setOnRefreshListener(OnRefreshListener2<T> listener);
+	public void setOnRefreshListener(OnRefreshListener2<T> listener);
 
 	/**
 	 * Sets whether Overscroll support is enabled. This is different to
@@ -181,7 +181,7 @@ public interface IPullToRefresh<T extends View> {
 	 * @param enabled
 	 *            - true if you want Overscroll enabled
 	 */
-	public abstract void setPullToRefreshOverScrollEnabled(boolean enabled);
+	public void setPullToRefreshOverScrollEnabled(boolean enabled);
 
 	/**
 	 * Set Text to show when the Widget is being Pulled
@@ -190,7 +190,7 @@ public interface IPullToRefresh<T extends View> {
 	 * @param releaseLabel
 	 *            - String to display
 	 */
-	public abstract void setPullLabel(String pullLabel);
+	public void setPullLabel(String pullLabel);
 
 	/**
 	 * Set Text to show when the Widget is being Pulled
@@ -202,7 +202,7 @@ public interface IPullToRefresh<T extends View> {
 	 *            <code>Mode.BOTH</code> will update all available, other values
 	 *            will update the relevant View.
 	 */
-	public abstract void setPullLabel(String pullLabel, Mode mode);
+	public void setPullLabel(String pullLabel, Mode mode);
 
 	/**
 	 * @deprecated This simple calls setMode with an appropriate mode based on
@@ -211,9 +211,9 @@ public interface IPullToRefresh<T extends View> {
 	 * @param enable
 	 *            Whether Pull-To-Refresh should be used
 	 */
-	public abstract void setPullToRefreshEnabled(boolean enable);
+	public void setPullToRefreshEnabled(boolean enable);
 
-	public abstract void setRefreshing();
+	public void setRefreshing();
 
 	/**
 	 * Sets the Widget to be in the refresh state. The UI will be updated to
@@ -222,7 +222,7 @@ public interface IPullToRefresh<T extends View> {
 	 * @param doScroll
 	 *            - true if you want to force a scroll to the Refreshing view.
 	 */
-	public abstract void setRefreshing(boolean doScroll);
+	public void setRefreshing(boolean doScroll);
 
 	/**
 	 * Set Text to show when the Widget is refreshing
@@ -231,7 +231,7 @@ public interface IPullToRefresh<T extends View> {
 	 * @param releaseLabel
 	 *            - String to display
 	 */
-	public abstract void setRefreshingLabel(String refreshingLabel);
+	public void setRefreshingLabel(String refreshingLabel);
 
 	/**
 	 * Set Text to show when the Widget is refreshing
@@ -243,7 +243,7 @@ public interface IPullToRefresh<T extends View> {
 	 *            <code>Mode.BOTH</code> will update all available, other values
 	 *            will update the relevant View.
 	 */
-	public abstract void setRefreshingLabel(String refreshingLabel, Mode mode);
+	public void setRefreshingLabel(String refreshingLabel, Mode mode);
 
 	/**
 	 * Set Text to show when the Widget is being pulled, and will refresh when
@@ -253,7 +253,7 @@ public interface IPullToRefresh<T extends View> {
 	 * @param releaseLabel
 	 *            - String to display
 	 */
-	public abstract void setReleaseLabel(String releaseLabel);
+	public void setReleaseLabel(String releaseLabel);
 
 	/**
 	 * Set Text to show when the Widget is being pulled, and will refresh when
@@ -266,7 +266,7 @@ public interface IPullToRefresh<T extends View> {
 	 *            <code>Mode.BOTH</code> will update all available, other values
 	 *            will update the relevant View.
 	 */
-	public abstract void setReleaseLabel(String releaseLabel, Mode mode);
+	public void setReleaseLabel(String releaseLabel, Mode mode);
 
 	/**
 	 * A mutator to enable/disable whether the 'Refreshing' View should be
@@ -274,6 +274,6 @@ public interface IPullToRefresh<T extends View> {
 	 * 
 	 * @param showView
 	 */
-	public abstract void setShowViewWhileRefreshing(boolean showView);
+	public void setShowViewWhileRefreshing(boolean showView);
 
 }
