@@ -88,9 +88,16 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		}
 	}
 
+        /*
+         * Override this method to be able to pass through a subclass of InternalListView
+         */
+        protected InternalListView createInternalListView(Context context, AttributeSet attrs) {
+                return new InternalListView(context, attrs);
+        }
+
 	@Override
 	protected final ListView createRefreshableView(Context context, AttributeSet attrs) {
-		ListView lv = new InternalListView(context, attrs);
+		ListView lv = createInternalListView(context, attrs);
 
 		// Get Styles from attrs
 		TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.PullToRefresh);
@@ -226,7 +233,7 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		}
 	}
 
-	class InternalListView extends ListView implements EmptyViewMethodAccessor {
+	protected class InternalListView extends ListView implements EmptyViewMethodAccessor {
 
 		private boolean mAddedLvFooter = false;
 
