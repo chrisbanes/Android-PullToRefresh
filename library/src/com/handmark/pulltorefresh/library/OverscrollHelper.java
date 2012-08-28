@@ -1,12 +1,15 @@
 package com.handmark.pulltorefresh.library;
 
 import android.annotation.TargetApi;
+import android.util.Log;
 import android.view.View;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 
 @TargetApi(9)
 final class OverscrollHelper {
+	
+	static final String LOG_TAG = "OverscrollHelper";
 
 	static void overScrollBy(PullToRefreshBase<?> view, int deltaY, int scrollY, boolean isTouchEvent) {
 
@@ -17,6 +20,10 @@ final class OverscrollHelper {
 			// Check that we're not disabled, and the event isn't from touch
 			if (mode != Mode.DISABLED && !isTouchEvent) {
 				final int newY = (deltaY + scrollY);
+				
+				if (PullToRefreshBase.DEBUG) {
+					Log.d(LOG_TAG, "OverScroll. DeltaY: " + deltaY + " ScrollY: " + scrollY);
+				}
 
 				if (newY != 0) {
 					// Check the mode supports the overscroll direction, and
