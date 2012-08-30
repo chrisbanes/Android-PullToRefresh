@@ -85,6 +85,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	private boolean mFilterTouchEvents = true;
 	private boolean mOverScrollEnabled = true;
 
+	private Interpolator mScrollAnimationInterpolator;
+
 	private LoadingLayout mHeaderLayout;
 	private LoadingLayout mFooterLayout;
 
@@ -166,16 +168,16 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	}
 
 	@Override
+	public final boolean isPullToRefreshEnabled() {
+		return mMode != Mode.DISABLED;
+	}
+
+	@Override
 	public final boolean isPullToRefreshOverScrollEnabled() {
 		if (VERSION.SDK_INT >= VERSION_CODES.GINGERBREAD) {
 			return mOverScrollEnabled && OverscrollHelper.isAndroidOverScrollEnabled(mRefreshableView);
 		}
 		return false;
-	}
-
-	@Override
-	public final boolean isPullToRefreshEnabled() {
-		return mMode != Mode.DISABLED;
 	}
 
 	@Override
@@ -390,11 +392,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	}
 
 	@Override
-	public final void setPullToRefreshOverScrollEnabled(boolean enabled) {
-		mOverScrollEnabled = enabled;
-	}
-
-	@Override
 	public void setPullLabel(String pullLabel) {
 		setPullLabel(pullLabel, Mode.BOTH);
 	}
@@ -412,6 +409,11 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	@Override
 	public final void setPullToRefreshEnabled(boolean enable) {
 		setMode(enable ? DEFAULT_MODE : Mode.DISABLED);
+	}
+
+	@Override
+	public final void setPullToRefreshOverScrollEnabled(boolean enabled) {
+		mOverScrollEnabled = enabled;
 	}
 
 	@Override
@@ -457,6 +459,10 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		}
 	}
 
+	public void setScrollAnimationInterpolator(Interpolator interpolator) {
+		mScrollAnimationInterpolator = interpolator;
+	}
+
 	@Override
 	public final void setShowViewWhileRefreshing(boolean showView) {
 		mShowViewWhileRefreshing = showView;
@@ -480,6 +486,10 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	 */
 	protected final void addViewInternal(View child, ViewGroup.LayoutParams params) {
 		super.addView(child, -1, params);
+	}
+
+	protected LoadingLayout createLoadingLayout(Context context, Mode mode, TypedArray attrs) {
+		return new LoadingLayout(context, mode, attrs);
 	}
 
 	/**
@@ -609,10 +619,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		return bundle;
 	}
 
-	// ===========================================================
-	// Methods
-	// ===========================================================
-
 	protected void resetHeader() {
 		mState = PULL_TO_REFRESH;
 		mIsBeingDragged = false;
@@ -650,16 +656,29 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		}
 	}
 
+	/**
+	 * Smooth Scroll to Y position using the default duration of {@value #SMOOTH_SCROLL_DURATION_MS} ms.
+	 * @param y - Y position to scroll to
+	 */
 	protected final void smoothScrollTo(int y) {
 		smoothScrollTo(y, SMOOTH_SCROLL_DURATION_MS);
 	}
 
+	/**
+	 * Smooth Scroll to Y position using the specific duration
+	 * @param y - Y position to scroll to
+	 * @param duration - Duration of animation in milliseconds
+	 */
 	protected final void smoothScrollTo(int y, long duration) {
 		if (null != mCurrentSmoothScrollRunnable) {
 			mCurrentSmoothScrollRunnable.stop();
 		}
 
 		if (getScrollY() != y) {
+			if (null == mScrollAnimationInterpolator) {
+				// Default interpolator is a Decelerate Interpolator
+				mScrollAnimationInterpolator = new DecelerateInterpolator();
+			}
 			mCurrentSmoothScrollRunnable = new SmoothScrollRunnable(getScrollY(), y, duration);
 			post(mCurrentSmoothScrollRunnable);
 		}
@@ -694,10 +713,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		// If we're not using Mode.BOTH, set mCurrentMode to mMode, otherwise
 		// set it to pull down
 		mCurrentMode = (mMode != Mode.BOTH) ? mMode : Mode.PULL_DOWN_TO_REFRESH;
-	}
-
-	protected LoadingLayout createLoadingLayout(Context context, Mode mode, TypedArray attrs) {
-		return new LoadingLayout(context, mode, attrs);
 	}
 
 	@SuppressWarnings("deprecation")
@@ -859,10 +874,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		}
 	}
 
-	protected Interpolator getInterpolator() {
-		return new DecelerateInterpolator();
-	}
-
 	public static enum Mode {
 		/**
 		 * Disable all Pull-to-Refresh gesture handling
@@ -1012,7 +1023,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		public SmoothScrollRunnable(int fromY, int toY, long duration) {
 			mScrollFromY = fromY;
 			mScrollToY = toY;
-			mInterpolator = getInterpolator();
+			mInterpolator = mScrollAnimationInterpolator;
 			mDuration = duration;
 		}
 

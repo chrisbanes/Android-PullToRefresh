@@ -2,6 +2,7 @@ package com.handmark.pulltorefresh.library;
 
 import android.graphics.drawable.Drawable;
 import android.view.View;
+import android.view.animation.Interpolator;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
@@ -267,6 +268,14 @@ public interface IPullToRefresh<T extends View> {
 	 *            will update the relevant View.
 	 */
 	public void setReleaseLabel(String releaseLabel, Mode mode);
+
+	/**
+	 * Sets the Animation Interpolator that is used for animated scrolling.
+	 * Defaults to a DecelerateInterpolator
+	 * 
+	 * @param interpolator - Interpolator to use
+	 */
+	public void setScrollAnimationInterpolator(Interpolator interpolator);
 
 	/**
 	 * A mutator to enable/disable whether the 'Refreshing' View should be
