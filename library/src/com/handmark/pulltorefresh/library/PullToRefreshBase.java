@@ -696,6 +696,10 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		mCurrentMode = (mMode != Mode.BOTH) ? mMode : Mode.PULL_DOWN_TO_REFRESH;
 	}
 
+	protected LoadingLayout createLoadingLayout(Context context, Mode mode, TypedArray attrs) {
+		return new LoadingLayout(context, mode, attrs);
+	}
+
 	@SuppressWarnings("deprecation")
 	private void init(Context context, AttributeSet attrs) {
 		setOrientation(LinearLayout.VERTICAL);
@@ -717,8 +721,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		addRefreshableView(context, mRefreshableView);
 
 		// We need to create now layouts now
-		mHeaderLayout = new LoadingLayout(context, Mode.PULL_DOWN_TO_REFRESH, a);
-		mFooterLayout = new LoadingLayout(context, Mode.PULL_UP_TO_REFRESH, a);
+		mHeaderLayout = createLoadingLayout(context, Mode.PULL_DOWN_TO_REFRESH, a);
+		mFooterLayout = createLoadingLayout(context, Mode.PULL_UP_TO_REFRESH, a);
 
 		// Add Header/Footer Views
 		updateUIForMode();
@@ -853,6 +857,10 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 				setPadding(0, -mHeaderHeight, 0, 0);
 				break;
 		}
+	}
+
+	protected Interpolator getInterpolator() {
+		return new DecelerateInterpolator();
 	}
 
 	public static enum Mode {
@@ -1004,7 +1012,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		public SmoothScrollRunnable(int fromY, int toY, long duration) {
 			mScrollFromY = fromY;
 			mScrollToY = toY;
-			mInterpolator = new DecelerateInterpolator();
+			mInterpolator = getInterpolator();
 			mDuration = duration;
 		}
 

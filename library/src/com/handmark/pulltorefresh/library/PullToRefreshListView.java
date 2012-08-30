@@ -91,27 +91,32 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		}
 	}
 
-	@Override
-	protected final ListView createRefreshableView(Context context, AttributeSet attrs) {
-		final ListView lv;
+    protected ListView createListView(Context context, AttributeSet attrs) {
+    	final ListView lv;
 		if (VERSION.SDK_INT >= VERSION_CODES.GINGERBREAD) {
 			lv = new InternalListViewSDK9(context, attrs);
 		} else {
 			lv = new InternalListView(context, attrs);
 		}
+		return lv;
+    }
+
+	@Override
+	protected final ListView createRefreshableView(Context context, AttributeSet attrs) {
+		ListView lv = createListView(context, attrs);
 
 		// Get Styles from attrs
 		TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.PullToRefresh);
 
 		// Create Loading Views ready for use later
 		FrameLayout frame = new FrameLayout(context);
-		mHeaderLoadingView = new LoadingLayout(context, Mode.PULL_DOWN_TO_REFRESH, a);
+		mHeaderLoadingView = createLoadingLayout(context, Mode.PULL_DOWN_TO_REFRESH, a);
 		frame.addView(mHeaderLoadingView, FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT);
 		mHeaderLoadingView.setVisibility(View.GONE);
 		lv.addHeaderView(frame, null, false);
 
 		mLvFooterLoadingFrame = new FrameLayout(context);
-		mFooterLoadingView = new LoadingLayout(context, Mode.PULL_UP_TO_REFRESH, a);
+		mFooterLoadingView = createLoadingLayout(context, Mode.PULL_UP_TO_REFRESH, a);
 		mLvFooterLoadingFrame.addView(mFooterLoadingView, FrameLayout.LayoutParams.MATCH_PARENT,
 				FrameLayout.LayoutParams.WRAP_CONTENT);
 		mFooterLoadingView.setVisibility(View.GONE);
@@ -234,7 +239,7 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		}
 	}
 
-	class InternalListView extends ListView implements EmptyViewMethodAccessor {
+	protected class InternalListView extends ListView implements EmptyViewMethodAccessor {
 
 		private boolean mAddedLvFooter = false;
 
