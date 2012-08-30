@@ -798,7 +798,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		}
 
 		if (getScrollY() != y) {
-			mCurrentSmoothScrollRunnable = new SmoothScrollRunnable(getScrollY(), y);
+			mCurrentSmoothScrollRunnable = new SmoothScrollRunnable(getScrollY(), y, getAnimationDuration());
 			post(mCurrentSmoothScrollRunnable);
 		}
 	}
@@ -834,6 +834,10 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		mCurrentMode = (mMode != Mode.BOTH) ? mMode : Mode.PULL_DOWN_TO_REFRESH;
 	}
 
+	protected LoadingLayout createLoadingLayout(Context context, Mode mode, TypedArray attrs) {
+        return new LoadingLayout(context, mode, attrs);
+    }
+	
 	@SuppressWarnings("deprecation")
 	private void init(Context context, AttributeSet attrs) {
 		setOrientation(LinearLayout.VERTICAL);
@@ -855,8 +859,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		addRefreshableView(context, mRefreshableView);
 
 		// We need to create now layouts now
-		mHeaderLayout = new LoadingLayout(context, Mode.PULL_DOWN_TO_REFRESH, a);
-		mFooterLayout = new LoadingLayout(context, Mode.PULL_UP_TO_REFRESH, a);
+		mHeaderLayout = createLoadingLayout(context, Mode.PULL_DOWN_TO_REFRESH, a);
+		mFooterLayout = createLoadingLayout(context, Mode.PULL_UP_TO_REFRESH, a);
 
 		// Add Header/Footer Views
 		updateUIForMode();
@@ -987,6 +991,14 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 				setPadding(0, -mHeaderHeight, 0, 0);
 				break;
 		}
+	}
+	
+	protected Interpolator getInterpolator() {
+	    return new OvershootInterpolator(SmoothScrollRunnable.ANIMATION_OVERSHOOT_TENSION);
+	}
+	
+	protected int getAnimationDuration() {
+	    return SmoothScrollRunnable.ANIMATION_DURATION_MS;
 	}
 
 	public static enum Mode {
@@ -1131,15 +1143,17 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 		private final Interpolator mInterpolator;
 		private final int mScrollToY;
 		private final int mScrollFromY;
+		private final int mAnimationDuration;
 
 		private boolean mContinueRunning = true;
 		private long mStartTime = -1;
 		private int mCurrentY = -1;
 
-		public SmoothScrollRunnable(int fromY, int toY) {
+		public SmoothScrollRunnable(int fromY, int toY, int animationDuration) {
 			mScrollFromY = fromY;
 			mScrollToY = toY;
-			mInterpolator = new OvershootInterpolator(ANIMATION_OVERSHOOT_TENSION);
+			mAnimationDuration = animationDuration;
+			mInterpolator = getInterpolator();
 		}
 
 		@Override
@@ -1158,7 +1172,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout {
 				 * calculations. We use 1000 as it gives us good accuracy and
 				 * small rounding errors
 				 */
-				long normalizedTime = (1000 * (System.currentTimeMillis() - mStartTime)) / ANIMATION_DURATION_MS;
+				long normalizedTime = (1000 * (System.currentTimeMillis() - mStartTime)) / mAnimationDuration;
 				normalizedTime = Math.max(Math.min(normalizedTime, 1000), 0);
 
 				final int deltaY = Math.round((mScrollFromY - mScrollToY)
