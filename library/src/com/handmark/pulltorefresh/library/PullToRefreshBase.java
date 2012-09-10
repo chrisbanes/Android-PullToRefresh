@@ -30,6 +30,7 @@ import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
 import com.handmark.pulltorefresh.library.internal.LoadingLayout;
@@ -79,6 +80,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 
 	private Mode mCurrentMode;
 	T mRefreshableView;
+	private FrameLayout mRefreshableViewWrapper;
 
 	private boolean mShowViewWhileRefreshing = true;
 	private boolean mDisableScrollingWhileRefreshing = true;
@@ -468,10 +470,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		mShowViewWhileRefreshing = showView;
 	}
 
-	protected void addRefreshableView(Context context, T refreshableView) {
-		addViewInternal(refreshableView, new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, 0, 1.0f));
-	}
-
 	/**
 	 * Used internally for adding view. Need because we override addView to
 	 * pass-through to the Refreshable View
@@ -520,6 +518,10 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 
 	protected final LoadingLayout getHeaderLayout() {
 		return mHeaderLayout;
+	}
+
+	protected FrameLayout getRefreshableViewWrapper() {
+		return mRefreshableViewWrapper;
 	}
 
 	protected final int getState() {
@@ -657,8 +659,11 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	}
 
 	/**
-	 * Smooth Scroll to Y position using the default duration of {@value #SMOOTH_SCROLL_DURATION_MS} ms.
-	 * @param y - Y position to scroll to
+	 * Smooth Scroll to Y position using the default duration of
+	 * {@value #SMOOTH_SCROLL_DURATION_MS} ms.
+	 * 
+	 * @param y
+	 *            - Y position to scroll to
 	 */
 	protected final void smoothScrollTo(int y) {
 		smoothScrollTo(y, SMOOTH_SCROLL_DURATION_MS);
@@ -666,8 +671,11 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 
 	/**
 	 * Smooth Scroll to Y position using the specific duration
-	 * @param y - Y position to scroll to
-	 * @param duration - Duration of animation in milliseconds
+	 * 
+	 * @param y
+	 *            - Y position to scroll to
+	 * @param duration
+	 *            - Duration of animation in milliseconds
 	 */
 	protected final void smoothScrollTo(int y, long duration) {
 		if (null != mCurrentSmoothScrollRunnable) {
@@ -713,6 +721,13 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		// If we're not using Mode.BOTH, set mCurrentMode to mMode, otherwise
 		// set it to pull down
 		mCurrentMode = (mMode != Mode.BOTH) ? mMode : Mode.PULL_DOWN_TO_REFRESH;
+	}
+	
+	private void addRefreshableView(Context context, T refreshableView) {
+		mRefreshableViewWrapper = new FrameLayout(context);
+		mRefreshableViewWrapper.addView(refreshableView, ViewGroup.LayoutParams.MATCH_PARENT,
+				ViewGroup.LayoutParams.MATCH_PARENT);
+		addViewInternal(mRefreshableViewWrapper, new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, 0, 1.0f));
 	}
 
 	@SuppressWarnings("deprecation")
