@@ -27,8 +27,11 @@ import android.view.ViewParent;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.Adapter;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 
 import com.handmark.pulltorefresh.library.internal.EmptyViewMethodAccessor;
 import com.handmark.pulltorefresh.library.internal.IndicatorLayout;
@@ -123,14 +126,35 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 			mOnScrollListener.onScrollStateChanged(view, scrollState);
 		}
 	}
-	
-	
+
 	@Override
 	protected void onScrollChanged(int l, int t, int oldl, int oldt) {
 		super.onScrollChanged(l, t, oldl, oldt);
 		if (null != mEmptyView && !mScrollEmptyView) {
 			mEmptyView.scrollTo(-l, -t);
 		}
+	}
+
+	/**
+	 * Pass-through method for {@link PullToRefreshBase#getRefreshableView()
+	 * getRefreshableView()}.{@link AdapterView#setAdapter(ListAdapter)
+	 * setAdapter(adapter)}. This is just for convenience!
+	 * 
+	 * @param adapter - Adapter to set
+	 */
+	public void setAdapter(ListAdapter adapter) {
+		((AdapterView<ListAdapter>) mRefreshableView).setAdapter(adapter);
+	}
+	
+	/**
+	 * Pass-through method for {@link PullToRefreshBase#getRefreshableView()
+	 * getRefreshableView()}.{@link AdapterView#setOnItemClickListener(OnItemClickListener)
+	 * setOnItemClickListener(listener)}. This is just for convenience!
+	 * 
+	 * @param listener - OnItemClickListener to use
+	 */
+	public void setOnItemClickListener(OnItemClickListener listener) {
+		mRefreshableView.setOnItemClickListener(listener);
 	}
 
 	/**
@@ -174,7 +198,7 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 			mEmptyView = newEmptyView;
 		}
 	}
-	
+
 	public final void setScrollEmptyView(boolean doScroll) {
 		mScrollEmptyView = doScroll;
 	}
@@ -336,7 +360,7 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 				Log.d(LOG_TAG, "isFirstItemVisible. Empty View.");
 			}
 			return true;
-			
+
 		} else if (mRefreshableView.getFirstVisiblePosition() == 0) {
 			final View firstVisibleChild = mRefreshableView.getChildAt(0);
 			if (firstVisibleChild != null) {
