@@ -4,7 +4,7 @@
 	<groupId>com.github.chrisbanes.pulltorefresh</groupId>
 	<artifactId>parent</artifactId>
 	<packaging>pom</packaging>
-	<version>1.3.4-SNAPSHOT</version>
+	<version>1.4.0-SNAPSHOT</version>
 	<name>Android-PullToRefresh Project</name>
 	<description>Implementation of the Pull-to-Refresh UI Pattern for Android.</description>
 	<url>https://github.com/chrisbanes/Android-PullToRefresh</url>
@@ -41,8 +41,8 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.6</java.version>
-		<android.version>2.2.1</android.version>
-		<android.platform>8</android.platform>
+		<android.version>4.1.1.4</android.version>
+		<android.platform>16</android.platform>
 		<android-maven.version>3.2.0</android-maven.version>
 	</properties>
 	<dependencyManagement>
