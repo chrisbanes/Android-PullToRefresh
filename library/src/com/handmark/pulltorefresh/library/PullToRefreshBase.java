@@ -722,7 +722,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		// set it to pull down
 		mCurrentMode = (mMode != Mode.BOTH) ? mMode : Mode.PULL_DOWN_TO_REFRESH;
 	}
-	
+
 	private void addRefreshableView(Context context, T refreshableView) {
 		mRefreshableViewWrapper = new FrameLayout(context);
 		mRefreshableViewWrapper.addView(refreshableView, ViewGroup.LayoutParams.MATCH_PARENT,
@@ -739,7 +739,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 
 		// Styleables from XML
 		TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.PullToRefresh);
-		handleStyledAttributes(a);
 
 		if (a.hasValue(R.styleable.PullToRefresh_ptrMode)) {
 			mMode = Mode.mapIntToMode(a.getInteger(R.styleable.PullToRefresh_ptrMode, 0));
@@ -753,9 +752,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		// We need to create now layouts now
 		mHeaderLayout = createLoadingLayout(context, Mode.PULL_DOWN_TO_REFRESH, a);
 		mFooterLayout = createLoadingLayout(context, Mode.PULL_UP_TO_REFRESH, a);
-
-		// Add Header/Footer Views
-		updateUIForMode();
 
 		// Styleables from XML
 		if (a.hasValue(R.styleable.PullToRefresh_ptrHeaderBackground)) {
@@ -774,8 +770,13 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 			mOverScrollEnabled = a.getBoolean(R.styleable.PullToRefresh_ptrOverScroll, true);
 		}
 
+		// Let the derivative classes have a go at handling attributes, then
+		// recycle them...
+		handleStyledAttributes(a);
 		a.recycle();
-		a = null;
+
+		// Finally update the UI for the modes
+		updateUIForMode();
 	}
 
 	private boolean isReadyForPull() {
