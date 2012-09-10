@@ -174,7 +174,7 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 	 */
 	public final void setEmptyView(View newEmptyView) {
 		FrameLayout refreshableViewWrapper = getRefreshableViewWrapper();
-		
+
 		// If we already have an Empty View, remove it
 		if (null != mEmptyView) {
 			refreshableViewWrapper.removeView(mEmptyView);
@@ -358,10 +358,20 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 			}
 			return true;
 
-		} else if (mRefreshableView.getFirstVisiblePosition() == 0) {
-			final View firstVisibleChild = mRefreshableView.getChildAt(0);
-			if (firstVisibleChild != null) {
-				return firstVisibleChild.getTop() >= mRefreshableView.getTop();
+		} else {
+
+			/**
+			 * This check should really just be:
+			 * mRefreshableView.getFirstVisiblePosition() == 0, but PtRListView
+			 * internally use a HeaderView which messes the positions up. For
+			 * now we'll just add one to account for it and rely on the inner
+			 * condition which checks getTop().
+			 */
+			if (mRefreshableView.getFirstVisiblePosition() <= 1) {
+				final View firstVisibleChild = mRefreshableView.getChildAt(0);
+				if (firstVisibleChild != null) {
+					return firstVisibleChild.getTop() >= mRefreshableView.getTop();
+				}
 			}
 		}
 
@@ -377,14 +387,22 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 			}
 			return true;
 		} else {
-			final int count = mRefreshableView.getCount();
+			final int lastItemPosition = mRefreshableView.getCount() - 1;
 			final int lastVisiblePosition = mRefreshableView.getLastVisiblePosition();
 
 			if (DEBUG) {
-				Log.d(LOG_TAG, "isLastItemVisible. Count: " + count + " Last Visible Pos: " + lastVisiblePosition);
+				Log.d(LOG_TAG, "isLastItemVisible. Last Item Position: " + lastItemPosition + " Last Visible Pos: "
+						+ lastVisiblePosition);
 			}
 
-			if (lastVisiblePosition == count - 1) {
+			/**
+			 * This check should really just be: lastVisiblePosition ==
+			 * lastItemPosition, but PtRListView internally uses a FooterView
+			 * which messes the positions up. For me we'll just subtract one to
+			 * account for it and rely on the inner condition which checks
+			 * getBottom().
+			 */
+			if (lastVisiblePosition >= lastItemPosition - 1) {
 				final int childIndex = lastVisiblePosition - mRefreshableView.getFirstVisiblePosition();
 				final View lastVisibleChild = mRefreshableView.getChildAt(childIndex);
 				if (lastVisibleChild != null) {
