@@ -10,6 +10,7 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 final class OverscrollHelper {
 
 	static final String LOG_TAG = "OverscrollHelper";
+	static final float DEFAULT_OVERSCROLL_SCALE = 1f;
 
 	/**
 	 * Helper method for Overscrolling that encapsulates all of the necessary
@@ -31,13 +32,15 @@ final class OverscrollHelper {
 	 *            - true if this scroll operation is the result of a touch
 	 *            event, passed through from from overScrollBy call
 	 */
-	static void overScrollBy(PullToRefreshBase<?> view, int deltaY, int scrollY, boolean isTouchEvent) {
+	static void overScrollBy(final PullToRefreshBase<?> view, final int deltaY, final int scrollY,
+			final boolean isTouchEvent) {
 		overScrollBy(view, deltaY, scrollY, 0, isTouchEvent);
 	}
 
 	/**
 	 * Helper method for Overscrolling that encapsulates all of the necessary
-	 * function.
+	 * function. This version of the call is used for Views that need to specify
+	 * a Scroll Range but scroll back to it's edge correctly.
 	 * 
 	 * @param view
 	 *            - PullToRefreshView that is calling this.
@@ -53,7 +56,37 @@ final class OverscrollHelper {
 	 *            - true if this scroll operation is the result of a touch
 	 *            event, passed through from from overScrollBy call
 	 */
-	static void overScrollBy(PullToRefreshBase<?> view, int deltaY, int scrollY, int scrollRange, boolean isTouchEvent) {
+	static void overScrollBy(final PullToRefreshBase<?> view, final int deltaY, final int scrollY,
+			final int scrollRange, final boolean isTouchEvent) {
+		overScrollBy(view, deltaY, scrollY, scrollRange, 0, DEFAULT_OVERSCROLL_SCALE, isTouchEvent);
+	}
+
+	/**
+	 * Helper method for Overscrolling that encapsulates all of the necessary
+	 * function. This is the advanced version of the call.
+	 * 
+	 * @param view
+	 *            - PullToRefreshView that is calling this.
+	 * @param deltaY
+	 *            - Change in Y in pixels, passed through from from overScrollBy
+	 *            call
+	 * @param scrollY
+	 *            - Current Y scroll value in pixels before applying deltaY,
+	 *            passed through from from overScrollBy call
+	 * @param scrollRange
+	 *            - Scroll Range of the View, specifically needed for ScrollView
+	 * @param fuzzyThreshold
+	 *            - Threshold for which the values how fuzzy we should treat the
+	 *            other values. Needed for WebView as it doesn't always scroll
+	 *            back to it's edge. 0 = no fuzziness.
+	 * @param scaleFactor
+	 *            - Scale Factor for overscroll amount
+	 * @param isTouchEvent
+	 *            - true if this scroll operation is the result of a touch
+	 *            event, passed through from from overScrollBy call
+	 */
+	static void overScrollBy(final PullToRefreshBase<?> view, final int deltaY, final int scrollY,
+			final int scrollRange, final int fuzzyThreshold, final float scaleFactor, final boolean isTouchEvent) {
 
 		// Check that OverScroll is enabled
 		if (view.isPullToRefreshOverScrollEnabled()) {
@@ -68,19 +101,19 @@ final class OverscrollHelper {
 							+ ", ScrollRange: " + scrollRange);
 				}
 
-				if (newY < 0) {
+				if (newY < (0 - fuzzyThreshold)) {
 					// Check the mode supports the overscroll direction, and
 					// then move scroll
 					if (mode.canPullDown()) {
-						view.setHeaderScroll(view.getScrollY() + newY);
+						view.setHeaderScroll((int) (scaleFactor * (view.getScrollY() + newY)));
 					}
-				} else if (newY > scrollRange) {
+				} else if (newY > (scrollRange + fuzzyThreshold)) {
 					// Check the mode supports the overscroll direction, and
 					// then move scroll
 					if (mode.canPullUp()) {
-						view.setHeaderScroll(view.getScrollY() + newY - scrollRange);
+						view.setHeaderScroll((int) (scaleFactor * (view.getScrollY() + newY - scrollRange)));
 					}
-				} else if (newY == 0 || newY == scrollRange) {
+				} else if (Math.abs(newY) <= fuzzyThreshold || Math.abs(newY - scrollRange) <= fuzzyThreshold) {
 					// Means we've stopped overscrolling, so scroll back to 0
 					view.smoothScrollTo(0, PullToRefreshBase.SMOOTH_SCROLL_LONG_DURATION_MS);
 				}
