@@ -39,7 +39,7 @@ import com.handmark.pulltorefresh.library.R;
 
 public class LoadingLayout extends FrameLayout {
 
-	static final int DEFAULT_ROTATION_ANIMATION_DURATION = 600;
+	static final int DEFAULT_ROTATION_ANIMATION_DURATION = 1200;
 
 	private final ImageView mHeaderImage;
 	private final Matrix mHeaderImageMatrix;
@@ -67,7 +67,7 @@ public class LoadingLayout extends FrameLayout {
 		mHeaderImage.setImageMatrix(mHeaderImageMatrix);
 
 		final Interpolator interpolator = new LinearInterpolator();
-		mRotateAnimation = new RotateAnimation(0, 360, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
+		mRotateAnimation = new RotateAnimation(0, 720, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
 				0.5f);
 		mRotateAnimation.setInterpolator(interpolator);
 		mRotateAnimation.setDuration(DEFAULT_ROTATION_ANIMATION_DURATION);
@@ -206,7 +206,7 @@ public class LoadingLayout extends FrameLayout {
 		mHeaderImageMatrix.reset();
 		mHeaderImage.setImageMatrix(mHeaderImageMatrix);
 	}
-	
+
 	private CharSequence wrapHtmlLabel(String label) {
 		if (!isInEditMode()) {
 			return Html.fromHtml(label);

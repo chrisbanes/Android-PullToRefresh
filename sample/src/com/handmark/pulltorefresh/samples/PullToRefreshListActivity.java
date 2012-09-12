@@ -81,7 +81,8 @@ public final class PullToRefreshListActivity extends ListActivity {
 
 		mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, mListItems);
 
-		// You can also just use setListAdapter(mAdapter)
+		// You can also just use setListAdapter(mAdapter) or
+		// mPullRefreshListView.setAdapter(mAdapter)
 		actualListView.setAdapter(mAdapter);
 	}
 

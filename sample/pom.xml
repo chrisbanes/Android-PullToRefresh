@@ -10,7 +10,7 @@
 	<parent>
 		<groupId>com.github.chrisbanes.pulltorefresh</groupId>
 		<artifactId>parent</artifactId>
-		<version>1.3.4-SNAPSHOT</version>
+		<version>1.4.0</version>
 	</parent>
 
 	<dependencies>
