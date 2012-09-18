@@ -665,31 +665,19 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	 * @param y
 	 *            - Y position to scroll to
 	 */
-	protected final void smoothScrollTo(int y) {
+	protected void smoothScrollTo(int y) {
 		smoothScrollTo(y, SMOOTH_SCROLL_DURATION_MS);
 	}
-
+	
 	/**
-	 * Smooth Scroll to Y position using the specific duration
+	 * Smooth Scroll to Y position using the longer default duration of
+	 * {@value #SMOOTH_SCROLL_LONG_DURATION_MS} ms.
 	 * 
 	 * @param y
 	 *            - Y position to scroll to
-	 * @param duration
-	 *            - Duration of animation in milliseconds
 	 */
-	protected final void smoothScrollTo(int y, long duration) {
-		if (null != mCurrentSmoothScrollRunnable) {
-			mCurrentSmoothScrollRunnable.stop();
-		}
-
-		if (getScrollY() != y) {
-			if (null == mScrollAnimationInterpolator) {
-				// Default interpolator is a Decelerate Interpolator
-				mScrollAnimationInterpolator = new DecelerateInterpolator();
-			}
-			mCurrentSmoothScrollRunnable = new SmoothScrollRunnable(getScrollY(), y, duration);
-			post(mCurrentSmoothScrollRunnable);
-		}
+	protected void smoothScrollToLonger(int y) {
+		smoothScrollTo(y, SMOOTH_SCROLL_LONG_DURATION_MS);
 	}
 
 	/**
@@ -887,6 +875,29 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 			default:
 				setPadding(0, -mHeaderHeight, 0, 0);
 				break;
+		}
+	}
+	
+	/**
+	 * Smooth Scroll to Y position using the specific duration
+	 * 
+	 * @param y
+	 *            - Y position to scroll to
+	 * @param duration
+	 *            - Duration of animation in milliseconds
+	 */
+	private final void smoothScrollTo(int y, long duration) {
+		if (null != mCurrentSmoothScrollRunnable) {
+			mCurrentSmoothScrollRunnable.stop();
+		}
+
+		if (getScrollY() != y) {
+			if (null == mScrollAnimationInterpolator) {
+				// Default interpolator is a Decelerate Interpolator
+				mScrollAnimationInterpolator = new DecelerateInterpolator();
+			}
+			mCurrentSmoothScrollRunnable = new SmoothScrollRunnable(getScrollY(), y, duration);
+			post(mCurrentSmoothScrollRunnable);
 		}
 	}
 
