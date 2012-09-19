@@ -519,6 +519,14 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	protected final LoadingLayout getHeaderLayout() {
 		return mHeaderLayout;
 	}
+	
+	protected int getPullToRefreshScrollDuration() {
+		return SMOOTH_SCROLL_DURATION_MS;
+	}
+	
+	protected int getPullToRefreshScrollDurationLonger() {
+		return SMOOTH_SCROLL_LONG_DURATION_MS;
+	}
 
 	protected FrameLayout getRefreshableViewWrapper() {
 		return mRefreshableViewWrapper;
@@ -665,8 +673,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	 * @param y
 	 *            - Y position to scroll to
 	 */
-	protected void smoothScrollTo(int y) {
-		smoothScrollTo(y, SMOOTH_SCROLL_DURATION_MS);
+	protected final void smoothScrollTo(int y) {
+		smoothScrollTo(y, getPullToRefreshScrollDuration());
 	}
 	
 	/**
@@ -676,8 +684,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	 * @param y
 	 *            - Y position to scroll to
 	 */
-	protected void smoothScrollToLonger(int y) {
-		smoothScrollTo(y, SMOOTH_SCROLL_LONG_DURATION_MS);
+	protected final void smoothScrollToLonger(int y) {
+		smoothScrollTo(y, getPullToRefreshScrollDurationLonger());
 	}
 
 	/**
