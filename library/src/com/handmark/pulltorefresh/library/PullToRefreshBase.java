@@ -95,6 +95,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	private LoadingLayout mFooterLayout;
 
 	private int mHeaderHeight;
+	private int mFooterHeight;
 
 	private OnRefreshListener<T> mOnRefreshListener;
 	private OnRefreshListener2<T> mOnRefreshListener2;
@@ -517,6 +518,10 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	 * @return New instance of the Refreshable View
 	 */
 	protected abstract T createRefreshableView(Context context, AttributeSet attrs);
+	
+	protected final int getFooterHeight() {
+		return mFooterHeight;
+	}
 
 	protected final LoadingLayout getFooterLayout() {
 		return mFooterLayout;
@@ -683,7 +688,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 
 		if (doScroll) {
 			if (mShowViewWhileRefreshing) {
-				smoothScrollTo(mCurrentMode == Mode.PULL_DOWN_TO_REFRESH ? -mHeaderHeight : mHeaderHeight);
+				smoothScrollTo(mCurrentMode == Mode.PULL_DOWN_TO_REFRESH ? -mHeaderHeight : mFooterHeight);
 			} else {
 				smoothScrollTo(0);
 			}
@@ -834,26 +839,26 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	 * @return true if the Event has been handled, false if there has been no
 	 *         change
 	 */
-	private boolean pullEvent() {
-
-		final int newHeight;
-		final int oldHeight = getScrollY();
+	private void pullEvent() {
+		final int newScrollY;
+		final int itemHeight;
 
 		switch (mCurrentMode) {
 			case PULL_UP_TO_REFRESH:
-				newHeight = Math.round(Math.max(mInitialMotionY - mLastMotionY, 0) / FRICTION);
+				newScrollY = Math.round(Math.max(mInitialMotionY - mLastMotionY, 0) / FRICTION);
+				itemHeight = mFooterHeight;
 				break;
 			case PULL_DOWN_TO_REFRESH:
 			default:
-				newHeight = Math.round(Math.min(mInitialMotionY - mLastMotionY, 0) / FRICTION);
+				newScrollY = Math.round(Math.min(mInitialMotionY - mLastMotionY, 0) / FRICTION);
+				itemHeight = mHeaderHeight;
 				break;
 		}
 
-		setHeaderScroll(newHeight);
+		setHeaderScroll(newScrollY);
 
-		if (newHeight != 0) {
-
-			float scale = Math.abs(newHeight) / (float) mHeaderHeight;
+		if (newScrollY != 0) {
+			float scale = Math.abs(newScrollY) / (float) itemHeight;
 			switch (mCurrentMode) {
 				case PULL_UP_TO_REFRESH:
 					mFooterLayout.onPullY(scale);
@@ -863,7 +868,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 					break;
 			}
 
-			if (mState != PULL_TO_REFRESH && mHeaderHeight >= Math.abs(newHeight)) {
+			if (mState != PULL_TO_REFRESH && itemHeight >= Math.abs(newScrollY)) {
 				// If the state is WAITING then we've only just started pulling
 				if (mState == WAITING) {
 					onPullEventStarted();
@@ -871,15 +876,11 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 
 				mState = PULL_TO_REFRESH;
 				onPullToRefresh();
-				return true;
-			} else if (mState == PULL_TO_REFRESH && mHeaderHeight < Math.abs(newHeight)) {
+			} else if (mState == PULL_TO_REFRESH && itemHeight < Math.abs(newScrollY)) {
 				mState = RELEASE_TO_REFRESH;
 				onReleaseToRefresh();
-				return true;
 			}
 		}
-
-		return oldHeight != newHeight;
 	}
 
 	/**
@@ -887,14 +888,15 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	 * necessary
 	 */
 	private void refreshLoadingViewsHeight() {
+		mHeaderHeight = mFooterHeight = 0;
+
 		if (mMode.canPullDown()) {
 			measureView(mHeaderLayout);
 			mHeaderHeight = mHeaderLayout.getMeasuredHeight();
-		} else if (mMode.canPullUp()) {
+		}
+		if (mMode.canPullUp()) {
 			measureView(mFooterLayout);
-			mHeaderHeight = mFooterLayout.getMeasuredHeight();
-		} else {
-			mHeaderHeight = 0;
+			mFooterHeight = mFooterLayout.getMeasuredHeight();
 		}
 
 		// Hide Loading Views
@@ -902,10 +904,10 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 			case DISABLED:
 				setPadding(0, 0, 0, 0);
 			case BOTH:
-				setPadding(0, -mHeaderHeight, 0, -mHeaderHeight);
+				setPadding(0, -mHeaderHeight, 0, -mFooterHeight);
 				break;
 			case PULL_UP_TO_REFRESH:
-				setPadding(0, 0, 0, -mHeaderHeight);
+				setPadding(0, 0, 0, -mFooterHeight);
 				break;
 			case PULL_DOWN_TO_REFRESH:
 			default:

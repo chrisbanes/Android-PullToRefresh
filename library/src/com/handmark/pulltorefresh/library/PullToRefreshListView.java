@@ -168,8 +168,7 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		LoadingLayout originalLoadingLayout;
 		LoadingLayout listViewLoadingLayout;
 
-		int scrollToHeight = getHeaderHeight();
-		int selection;
+		int scrollToHeight, selection;
 		boolean scroll;
 
 		switch (getCurrentMode()) {
@@ -177,13 +176,14 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 				originalLoadingLayout = getFooterLayout();
 				listViewLoadingLayout = mFooterLoadingView;
 				selection = mRefreshableView.getCount() - 1;
+				scrollToHeight = getFooterHeight();
 				scroll = mRefreshableView.getLastVisiblePosition() == selection;
 				break;
 			case PULL_DOWN_TO_REFRESH:
 			default:
 				originalLoadingLayout = getHeaderLayout();
 				listViewLoadingLayout = mHeaderLoadingView;
-				scrollToHeight *= -1;
+				scrollToHeight = -getHeaderHeight();
 				selection = 0;
 				scroll = mRefreshableView.getFirstVisiblePosition() == selection;
 				break;
@@ -237,7 +237,7 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 				originalLoadingLayout = getHeaderLayout();
 				listViewLoadingLayout = mHeaderLoadingView;
 				selection = 0;
-				scrollToY = getScrollY() + getHeaderHeight();
+				scrollToY = getScrollY() + getFooterHeight();
 				break;
 		}
 
