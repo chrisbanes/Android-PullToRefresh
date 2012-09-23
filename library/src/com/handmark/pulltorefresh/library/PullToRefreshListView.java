@@ -19,6 +19,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.util.AttributeSet;
@@ -56,6 +57,30 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 	@Override
 	public ContextMenuInfo getContextMenuInfo() {
 		return ((InternalListView) getRefreshableView()).getContextMenuInfo();
+	}
+	
+	@Override
+	public void setLastUpdatedLabel(CharSequence label) {
+		super.setLastUpdatedLabel(label);
+		
+		if (null != mHeaderLoadingView) {
+			mHeaderLoadingView.setSubHeaderText(label);
+		}
+		if (null != mFooterLoadingView) {
+			mFooterLoadingView.setSubHeaderText(label);
+		}
+	}
+	
+	@Override
+	public void setLoadingDrawable(Drawable drawable, Mode mode) {
+		super.setLoadingDrawable(drawable, mode);
+		
+		if (null != mHeaderLoadingView && mode.canPullDown()) {
+			mHeaderLoadingView.setLoadingDrawable(drawable);
+		}
+		if (null != mFooterLoadingView && mode.canPullUp()) {
+			mFooterLoadingView.setLoadingDrawable(drawable);
+		}
 	}
 
 	public void setPullLabel(String pullLabel, Mode mode) {
