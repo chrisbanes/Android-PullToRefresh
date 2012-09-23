@@ -58,11 +58,11 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 	public ContextMenuInfo getContextMenuInfo() {
 		return ((InternalListView) getRefreshableView()).getContextMenuInfo();
 	}
-	
+
 	@Override
 	public void setLastUpdatedLabel(CharSequence label) {
 		super.setLastUpdatedLabel(label);
-		
+
 		if (null != mHeaderLoadingView) {
 			mHeaderLoadingView.setSubHeaderText(label);
 		}
@@ -70,11 +70,11 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 			mFooterLoadingView.setSubHeaderText(label);
 		}
 	}
-	
+
 	@Override
 	public void setLoadingDrawable(Drawable drawable, Mode mode) {
 		super.setLoadingDrawable(drawable, mode);
-		
+
 		if (null != mHeaderLoadingView && mode.canPullDown()) {
 			mHeaderLoadingView.setLoadingDrawable(drawable);
 		}
@@ -116,15 +116,15 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		}
 	}
 
-    protected ListView createListView(Context context, AttributeSet attrs) {
-    	final ListView lv;
+	protected ListView createListView(Context context, AttributeSet attrs) {
+		final ListView lv;
 		if (VERSION.SDK_INT >= VERSION_CODES.GINGERBREAD) {
 			lv = new InternalListViewSDK9(context, attrs);
 		} else {
 			lv = new InternalListView(context, attrs);
 		}
 		return lv;
-    }
+	}
 
 	@Override
 	protected final ListView createRefreshableView(Context context, AttributeSet attrs) {
@@ -177,7 +177,7 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 				listViewLoadingLayout = mFooterLoadingView;
 				selection = mRefreshableView.getCount() - 1;
 				scrollToHeight = getFooterHeight();
-				scroll = mRefreshableView.getLastVisiblePosition() == selection;
+				scroll = Math.abs(mRefreshableView.getLastVisiblePosition() - selection) <= 1;
 				break;
 			case PULL_DOWN_TO_REFRESH:
 			default:
@@ -185,7 +185,7 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 				listViewLoadingLayout = mHeaderLoadingView;
 				scrollToHeight = -getHeaderHeight();
 				selection = 0;
-				scroll = mRefreshableView.getFirstVisiblePosition() == selection;
+				scroll = Math.abs(mRefreshableView.getFirstVisiblePosition() - selection) <= 1;
 				break;
 		}
 
