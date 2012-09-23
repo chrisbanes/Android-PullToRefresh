@@ -51,12 +51,14 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	public static final int SMOOTH_SCROLL_DURATION_MS = 200;
 	public static final int SMOOTH_SCROLL_LONG_DURATION_MS = 325;
 
-	static final int PULL_TO_REFRESH = 0x0;
-	static final int RELEASE_TO_REFRESH = 0x1;
-	static final int REFRESHING = 0x2;
-	static final int MANUAL_REFRESHING = 0x3;
+	static final int WAITING = 0x0;
+	static final int PULL_TO_REFRESH = 0x1;
+	static final int RELEASE_TO_REFRESH = 0x2;
+	static final int REFRESHING = 0x8;
+	static final int MANUAL_REFRESHING = 0x9;
 
 	static final Mode DEFAULT_MODE = Mode.PULL_DOWN_TO_REFRESH;
+	static final int INITIAL_STATE = WAITING;
 
 	static final String STATE_STATE = "ptr_state";
 	static final String STATE_MODE = "ptr_mode";
@@ -75,7 +77,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	private float mInitialMotionY;
 
 	private boolean mIsBeingDragged = false;
-	private int mState = PULL_TO_REFRESH;
+	private int mState = INITIAL_STATE;
 	private Mode mMode = DEFAULT_MODE;
 
 	private Mode mCurrentMode;
@@ -96,6 +98,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 
 	private OnRefreshListener<T> mOnRefreshListener;
 	private OnRefreshListener2<T> mOnRefreshListener2;
+	private OnPullEventListener<T> mOnPullEventListener;
 
 	private SmoothScrollRunnable mCurrentSmoothScrollRunnable;
 
@@ -251,7 +254,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 
 	@Override
 	public final void onRefreshComplete() {
-		if (mState != PULL_TO_REFRESH) {
+		if (isRefreshing()) {
 			resetHeader();
 		}
 	}
@@ -296,6 +299,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 					mIsBeingDragged = false;
 
 					if (mState == RELEASE_TO_REFRESH) {
+						onPullEventFinished();
+
 						if (null != mOnRefreshListener) {
 							setRefreshingInternal(true);
 							mOnRefreshListener.onRefresh(this);
@@ -316,7 +321,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 						}
 					}
 
-					smoothScrollTo(0);
+					onPullEventFinished();
+					resetHeader();
 					return true;
 				}
 				break;
@@ -381,6 +387,10 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 			mMode = mode;
 			updateUIForMode();
 		}
+	}
+
+	public void setOnPullEventListener(OnPullEventListener<T> listener) {
+		mOnPullEventListener = listener;
 	}
 
 	@Override
@@ -519,11 +529,11 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	protected final LoadingLayout getHeaderLayout() {
 		return mHeaderLayout;
 	}
-	
+
 	protected int getPullToRefreshScrollDuration() {
 		return SMOOTH_SCROLL_DURATION_MS;
 	}
-	
+
 	protected int getPullToRefreshScrollDurationLonger() {
 		return SMOOTH_SCROLL_LONG_DURATION_MS;
 	}
@@ -606,7 +616,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 			// Let super Restore Itself
 			super.onRestoreInstanceState(bundle.getParcelable(STATE_SUPER));
 
-			final int viewState = bundle.getInt(STATE_STATE, PULL_TO_REFRESH);
+			final int viewState = bundle.getInt(STATE_STATE, WAITING);
 			if (viewState == REFRESHING) {
 				setRefreshingInternal(true);
 				mState = viewState;
@@ -629,8 +639,22 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		return bundle;
 	}
 
+	protected void onPullEventFinished() {
+		// Call OnPullEventListener
+		if (null != mOnPullEventListener) {
+			mOnPullEventListener.onRelease(this);
+		}
+	}
+
+	protected void onPullEventStarted() {
+		// Call OnPullEventListener
+		if (null != mOnPullEventListener) {
+			mOnPullEventListener.onPull(this);
+		}
+	}
+
 	protected void resetHeader() {
-		mState = PULL_TO_REFRESH;
+		mState = WAITING;
 		mIsBeingDragged = false;
 
 		if (mMode.canPullDown()) {
@@ -676,7 +700,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	protected final void smoothScrollTo(int y) {
 		smoothScrollTo(y, getPullToRefreshScrollDuration());
 	}
-	
+
 	/**
 	 * Smooth Scroll to Y position using the longer default duration of
 	 * {@value #SMOOTH_SCROLL_LONG_DURATION_MS} ms.
@@ -839,14 +863,18 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 					break;
 			}
 
-			if (mState == PULL_TO_REFRESH && mHeaderHeight < Math.abs(newHeight)) {
-				mState = RELEASE_TO_REFRESH;
-				onReleaseToRefresh();
-				return true;
+			if (mState != PULL_TO_REFRESH && mHeaderHeight >= Math.abs(newHeight)) {
+				// If the state is WAITING then we've only just started pulling
+				if (mState == WAITING) {
+					onPullEventStarted();
+				}
 
-			} else if (mState == RELEASE_TO_REFRESH && mHeaderHeight >= Math.abs(newHeight)) {
 				mState = PULL_TO_REFRESH;
 				onPullToRefresh();
+				return true;
+			} else if (mState == PULL_TO_REFRESH && mHeaderHeight < Math.abs(newHeight)) {
+				mState = RELEASE_TO_REFRESH;
+				onReleaseToRefresh();
 				return true;
 			}
 		}
@@ -885,7 +913,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 				break;
 		}
 	}
-	
+
 	/**
 	 * Smooth Scroll to Y position using the specific duration
 	 * 
@@ -1001,6 +1029,30 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		 * Called when the user has scrolled to the end of the list
 		 */
 		public void onLastItemVisible();
+
+	}
+
+	/**
+	 * Listener that allows you to be notified when the user has started or
+	 * finished a touch event. Useful when you want to append extra UI events
+	 * (such as sounds). See (
+	 * {@link PullToRefreshAdapterViewBase#setOnPullEventListener}.
+	 * 
+	 * @author Chris Banes
+	 * 
+	 */
+	public static interface OnPullEventListener<V extends View> {
+
+		/**
+		 * Call when the user has started a Pull-to-Refresh gesture.
+		 */
+		public void onPull(final PullToRefreshBase<V> refreshView);
+
+		/**
+		 * Call when the user has finished a Pull-to-Refresh gesture. This is
+		 * called regardless of whether the user has initiated a refresh or not.
+		 */
+		public void onRelease(final PullToRefreshBase<V> refreshView);
 
 	}
 

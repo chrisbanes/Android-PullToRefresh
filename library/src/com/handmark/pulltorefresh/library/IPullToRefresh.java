@@ -5,6 +5,7 @@ import android.view.View;
 import android.view.animation.Interpolator;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
+import com.handmark.pulltorefresh.library.PullToRefreshBase.OnPullEventListener;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener2;
 
@@ -157,6 +158,8 @@ public interface IPullToRefresh<T extends View> {
 	 *            - Mode to set the View to
 	 */
 	public void setMode(Mode mode);
+	
+	public void setOnPullEventListener(OnPullEventListener<T> listener);
 
 	/**
 	 * Set OnRefreshListener for the Widget
