@@ -40,6 +40,10 @@ public class LoadingLayout extends FrameLayout {
 
 	static final int DEFAULT_ROTATION_ANIMATION_DURATION = 1200;
 
+	private Drawable mPullToRefreshImage;
+	private Drawable mReleaseToRefreshImage;
+	private Drawable mRefreshingImage;
+
 	private final ImageView mHeaderImage;
 	private final Matrix mHeaderImageMatrix;
 
@@ -79,6 +83,12 @@ public class LoadingLayout extends FrameLayout {
 				mPullLabel = context.getString(R.string.pull_to_refresh_from_bottom_pull_label);
 				mRefreshingLabel = context.getString(R.string.pull_to_refresh_from_bottom_refreshing_label);
 				mReleaseLabel = context.getString(R.string.pull_to_refresh_from_bottom_release_label);
+				if (attrs.hasValue(R.styleable.PullToRefresh_ptrPullBottomDrawable)) {
+					mPullToRefreshImage = attrs.getDrawable(R.styleable.PullToRefresh_ptrPullBottomDrawable);
+				}
+				if (attrs.hasValue(R.styleable.PullToRefresh_ptrReleaseBottomDrawable)) {
+					mReleaseToRefreshImage = attrs.getDrawable(R.styleable.PullToRefresh_ptrReleaseBottomDrawable);
+				}
 				break;
 
 			case PULL_DOWN_TO_REFRESH:
@@ -87,6 +97,12 @@ public class LoadingLayout extends FrameLayout {
 				mPullLabel = context.getString(R.string.pull_to_refresh_pull_label);
 				mRefreshingLabel = context.getString(R.string.pull_to_refresh_refreshing_label);
 				mReleaseLabel = context.getString(R.string.pull_to_refresh_release_label);
+				if (attrs.hasValue(R.styleable.PullToRefresh_ptrPullDrawable)) {
+					mPullToRefreshImage = attrs.getDrawable(R.styleable.PullToRefresh_ptrPullDrawable);
+				}
+				if (attrs.hasValue(R.styleable.PullToRefresh_ptrReleaseDrawable)) {
+					mReleaseToRefreshImage = attrs.getDrawable(R.styleable.PullToRefresh_ptrReleaseDrawable);
+				}
 				break;
 		}
 
@@ -106,18 +122,17 @@ public class LoadingLayout extends FrameLayout {
 		}
 
 		// Try and get defined drawable from Attrs
-		Drawable imageDrawable = null;
 		if (attrs.hasValue(R.styleable.PullToRefresh_ptrDrawable)) {
-			imageDrawable = attrs.getDrawable(R.styleable.PullToRefresh_ptrDrawable);
+			mRefreshingImage = attrs.getDrawable(R.styleable.PullToRefresh_ptrDrawable);
 		}
 
 		// If we don't have a user defined drawable, load the default
-		if (null == imageDrawable) {
-			imageDrawable = context.getResources().getDrawable(R.drawable.default_ptr_drawable);
+		if (null == mRefreshingImage) {
+			mRefreshingImage = context.getResources().getDrawable(R.drawable.default_ptr_drawable);
 		}
 
 		// Set Drawable, and save width/height
-		setLoadingDrawable(imageDrawable);
+		setLoadingDrawable(mRefreshingImage);
 
 		reset();
 	}
@@ -138,6 +153,8 @@ public class LoadingLayout extends FrameLayout {
 
 	public void releaseToRefresh() {
 		mHeaderText.setText(wrapHtmlLabel(mReleaseLabel));
+		if (mReleaseToRefreshImage != null)
+			mHeaderImage.setImageDrawable(mReleaseToRefreshImage);
 	}
 
 	public void setPullLabel(String pullLabel) {
@@ -147,6 +164,7 @@ public class LoadingLayout extends FrameLayout {
 	public void refreshing() {
 		mHeaderText.setText(wrapHtmlLabel(mRefreshingLabel));
 		mHeaderImage.startAnimation(mRotateAnimation);
+		mHeaderImage.setImageDrawable(mRefreshingImage);
 
 		mSubHeaderText.setVisibility(View.GONE);
 	}
@@ -161,6 +179,8 @@ public class LoadingLayout extends FrameLayout {
 
 	public void pullToRefresh() {
 		mHeaderText.setText(wrapHtmlLabel(mPullLabel));
+		if (mPullToRefreshImage != null)
+			mHeaderImage.setImageDrawable(mPullToRefreshImage);
 	}
 
 	public void setTextColor(ColorStateList color) {
@@ -197,6 +217,8 @@ public class LoadingLayout extends FrameLayout {
 	}
 
 	public void onPullY(float scaleOfHeight) {
+		if(mPullToRefreshImage!=null || mReleaseToRefreshImage!=null) return;
+
 		mHeaderImageMatrix.setRotate(scaleOfHeight * 90, mRotationPivotX, mRotationPivotY);
 		mHeaderImage.setImageMatrix(mHeaderImageMatrix);
 	}
