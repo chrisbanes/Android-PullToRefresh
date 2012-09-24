@@ -74,7 +74,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	private float mInitialMotionY;
 
 	private boolean mIsBeingDragged = false;
-    private boolean isPullStart = true;
 	private int mState = PULL_TO_REFRESH;
 	private Mode mMode = DEFAULT_MODE;
 
@@ -274,10 +273,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 
 		switch (event.getAction()) {
 			case MotionEvent.ACTION_MOVE: {
-                if (isPullStart) {
-                    isPullStart = false;
-                    onPullToRefresh();
-                }
 				if (mIsBeingDragged) {
 					mLastMotionY = event.getY();
 					pullEvent();
@@ -296,7 +291,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 
 			case MotionEvent.ACTION_CANCEL:
 			case MotionEvent.ACTION_UP: {
-                isPullStart = true;
 				if (mIsBeingDragged) {
 					mIsBeingDragged = false;
 
@@ -604,7 +598,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 			super.onRestoreInstanceState(bundle.getParcelable(STATE_SUPER));
 
 			final int viewState = bundle.getInt(STATE_STATE, PULL_TO_REFRESH);
-			if (viewState == REFRESHING || viewState == MANUAL_REFRESHING) {
+			if (viewState == REFRESHING) {
 				setRefreshingInternal(true);
 				mState = viewState;
 			}
