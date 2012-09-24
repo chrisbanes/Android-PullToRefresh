@@ -24,7 +24,7 @@ import android.widget.ListView;
 
 public class LauncherActivity extends ListActivity {
 
-	public static final String[] options = { "ListView", "ExpandableListView", "GridView", "WebView" };
+	public static final String[] options = { "ListView", "ExpandableListView", "GridView", "WebView", "ScrollView" };
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +49,9 @@ public class LauncherActivity extends ListActivity {
 				break;
 			case 3:
 				intent = new Intent(this, PullToRefreshWebViewActivity.class);
+				break;
+			case 4:
+				intent = new Intent(this, PullToRefreshScrollViewActivity.class);
 				break;
 		}
 

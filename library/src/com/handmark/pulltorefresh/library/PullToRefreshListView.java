@@ -15,9 +15,12 @@
  *******************************************************************************/
 package com.handmark.pulltorefresh.library;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.util.AttributeSet;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View;
@@ -88,22 +91,32 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		}
 	}
 
+    protected ListView createListView(Context context, AttributeSet attrs) {
+    	final ListView lv;
+		if (VERSION.SDK_INT >= VERSION_CODES.GINGERBREAD) {
+			lv = new InternalListViewSDK9(context, attrs);
+		} else {
+			lv = new InternalListView(context, attrs);
+		}
+		return lv;
+    }
+
 	@Override
 	protected final ListView createRefreshableView(Context context, AttributeSet attrs) {
-		ListView lv = new InternalListView(context, attrs);
+		ListView lv = createListView(context, attrs);
 
 		// Get Styles from attrs
 		TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.PullToRefresh);
 
 		// Create Loading Views ready for use later
 		FrameLayout frame = new FrameLayout(context);
-		mHeaderLoadingView = new LoadingLayout(context, Mode.PULL_DOWN_TO_REFRESH, a);
+		mHeaderLoadingView = createLoadingLayout(context, Mode.PULL_DOWN_TO_REFRESH, a);
 		frame.addView(mHeaderLoadingView, FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT);
 		mHeaderLoadingView.setVisibility(View.GONE);
 		lv.addHeaderView(frame, null, false);
 
 		mLvFooterLoadingFrame = new FrameLayout(context);
-		mFooterLoadingView = new LoadingLayout(context, Mode.PULL_UP_TO_REFRESH, a);
+		mFooterLoadingView = createLoadingLayout(context, Mode.PULL_UP_TO_REFRESH, a);
 		mLvFooterLoadingFrame.addView(mFooterLoadingView, FrameLayout.LayoutParams.MATCH_PARENT,
 				FrameLayout.LayoutParams.WRAP_CONTENT);
 		mFooterLoadingView.setVisibility(View.GONE);
@@ -226,7 +239,7 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		}
 	}
 
-	class InternalListView extends ListView implements EmptyViewMethodAccessor {
+	protected class InternalListView extends ListView implements EmptyViewMethodAccessor {
 
 		private boolean mAddedLvFooter = false;
 
@@ -271,6 +284,28 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		@Override
 		public void setEmptyViewInternal(View emptyView) {
 			super.setEmptyView(emptyView);
+		}
+
+	}
+
+	@TargetApi(9)
+	final class InternalListViewSDK9 extends InternalListView {
+
+		public InternalListViewSDK9(Context context, AttributeSet attrs) {
+			super(context, attrs);
+		}
+
+		@Override
+		protected boolean overScrollBy(int deltaX, int deltaY, int scrollX, int scrollY, int scrollRangeX,
+				int scrollRangeY, int maxOverScrollX, int maxOverScrollY, boolean isTouchEvent) {
+
+			final boolean returnValue = super.overScrollBy(deltaX, deltaY, scrollX, scrollY, scrollRangeX,
+					scrollRangeY, maxOverScrollX, maxOverScrollY, isTouchEvent);
+
+			// Does all of the hard work...
+			OverscrollHelper.overScrollBy(PullToRefreshListView.this, deltaY, scrollY, isTouchEvent);
+
+			return returnValue;
 		}
 	}
 

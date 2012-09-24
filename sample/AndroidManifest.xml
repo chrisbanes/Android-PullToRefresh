@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.handmark.pulltorefresh.samples"
-    android:versionCode="132"
-    android:versionName="1.3.2" >
+    android:versionCode="1330"
+    android:versionName="1.3.3" >
 
     <uses-sdk
         android:minSdkVersion="4"
@@ -36,6 +36,10 @@
         <activity
             android:name=".PullToRefreshWebViewActivity"
             android:label="PtR WebView" >
+        </activity>
+        <activity
+            android:name=".PullToRefreshScrollViewActivity"
+            android:label="PtR ScrollView" >
         </activity>
     </application>
 

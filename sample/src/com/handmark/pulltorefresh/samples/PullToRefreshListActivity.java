@@ -26,9 +26,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
+import com.handmark.pulltorefresh.library.PullToRefreshBase.OnLastItemVisibleListener;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 
@@ -63,6 +65,15 @@ public final class PullToRefreshListActivity extends ListActivity {
 			}
 		});
 
+		// Add an end-of-list listener
+		mPullRefreshListView.setOnLastItemVisibleListener(new OnLastItemVisibleListener() {
+
+			@Override
+			public void onLastItemVisible() {
+				Toast.makeText(PullToRefreshListActivity.this, "End of List!", Toast.LENGTH_SHORT).show();
+			}
+		});
+
 		ListView actualListView = mPullRefreshListView.getRefreshableView();
 
 		mListItems = new LinkedList<String>();
@@ -70,7 +81,8 @@ public final class PullToRefreshListActivity extends ListActivity {
 
 		mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, mListItems);
 
-		// You can also just use setListAdapter(mAdapter)
+		// You can also just use setListAdapter(mAdapter) or
+		// mPullRefreshListView.setAdapter(mAdapter)
 		actualListView.setAdapter(mAdapter);
 	}
 
@@ -104,9 +116,8 @@ public final class PullToRefreshListActivity extends ListActivity {
 		menu.add(0, MENU_DISABLE_SCROLL, 1,
 				mPullRefreshListView.isDisableScrollingWhileRefreshing() ? "Enable Scrolling while Refreshing"
 						: "Disable Scrolling while Refreshing");
-		menu.add(0, MENU_SET_MODE, 0,
-				mPullRefreshListView.getMode() == Mode.BOTH ? "Change to MODE_PULL_DOWN"
-						: "Change to MODE_PULL_BOTH");
+		menu.add(0, MENU_SET_MODE, 0, mPullRefreshListView.getMode() == Mode.BOTH ? "Change to MODE_PULL_DOWN"
+				: "Change to MODE_PULL_BOTH");
 		return super.onCreateOptionsMenu(menu);
 	}
 
@@ -137,9 +148,8 @@ public final class PullToRefreshListActivity extends ListActivity {
 						.isDisableScrollingWhileRefreshing());
 				break;
 			case MENU_SET_MODE:
-				mPullRefreshListView
-						.setMode(mPullRefreshListView.getMode() == Mode.BOTH ? Mode.PULL_DOWN_TO_REFRESH
-								: Mode.BOTH);
+				mPullRefreshListView.setMode(mPullRefreshListView.getMode() == Mode.BOTH ? Mode.PULL_DOWN_TO_REFRESH
+						: Mode.BOTH);
 				break;
 		}
 
