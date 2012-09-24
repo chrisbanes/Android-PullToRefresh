@@ -604,7 +604,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 			super.onRestoreInstanceState(bundle.getParcelable(STATE_SUPER));
 
 			final int viewState = bundle.getInt(STATE_STATE, PULL_TO_REFRESH);
-			if (viewState == REFRESHING) {
+			if (viewState == REFRESHING || viewState == MANUAL_REFRESHING) {
 				setRefreshingInternal(true);
 				mState = viewState;
 			}
