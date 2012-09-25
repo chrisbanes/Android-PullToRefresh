@@ -5,6 +5,7 @@ import android.media.MediaPlayer;
 import android.view.View;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
+import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 
 public class SoundPullEventListener<V extends View> implements PullToRefreshBase.OnPullEventListener<V> {
 
@@ -32,12 +33,12 @@ public class SoundPullEventListener<V extends View> implements PullToRefreshBase
 	}
 
 	@Override
-	public void onPull(PullToRefreshBase<V> refreshView) {
+	public void onPull(PullToRefreshBase<V> refreshView, Mode direction) {
 		playSound(mPullSoundResId);
 	}
 
 	@Override
-	public void onRelease(PullToRefreshBase<V> refreshView) {
+	public void onRelease(PullToRefreshBase<V> refreshView, Mode direction) {
 		playSound(mReleaseSoundResId);
 	}
 

@@ -518,7 +518,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	 * @return New instance of the Refreshable View
 	 */
 	protected abstract T createRefreshableView(Context context, AttributeSet attrs);
-	
+
 	protected final int getFooterHeight() {
 		return mFooterHeight;
 	}
@@ -647,14 +647,14 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	protected void onPullEventFinished() {
 		// Call OnPullEventListener
 		if (null != mOnPullEventListener) {
-			mOnPullEventListener.onRelease(this);
+			mOnPullEventListener.onRelease(this, mCurrentMode);
 		}
 	}
 
 	protected void onPullEventStarted() {
 		// Call OnPullEventListener
 		if (null != mOnPullEventListener) {
-			mOnPullEventListener.onPull(this);
+			mOnPullEventListener.onPull(this, mCurrentMode);
 		}
 	}
 
@@ -1047,14 +1047,28 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 
 		/**
 		 * Call when the user has started a Pull-to-Refresh gesture.
+		 * 
+		 * @param refreshView
+		 *            - View from which the event has originated.
+		 * @param direction
+		 *            - Either {@link Mode#PULL_DOWN_TO_REFRESH} or
+		 *            {@link Mode#PULL_UP_TO_REFRESH} depending on which
+		 *            direction the user is pulling.
 		 */
-		public void onPull(final PullToRefreshBase<V> refreshView);
+		public void onPull(final PullToRefreshBase<V> refreshView, Mode direction);
 
 		/**
 		 * Call when the user has finished a Pull-to-Refresh gesture. This is
 		 * called regardless of whether the user has initiated a refresh or not.
+		 * 
+		 * @param refreshView
+		 *            - View from which the event has originated.
+		 * @param direction
+		 *            - Either {@link Mode#PULL_DOWN_TO_REFRESH} or
+		 *            {@link Mode#PULL_UP_TO_REFRESH} depending on which
+		 *            direction the user is pulling.
 		 */
-		public void onRelease(final PullToRefreshBase<V> refreshView);
+		public void onRelease(final PullToRefreshBase<V> refreshView, Mode direction);
 
 	}
 
