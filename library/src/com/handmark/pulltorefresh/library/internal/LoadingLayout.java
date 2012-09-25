@@ -22,6 +22,7 @@ import android.graphics.Matrix;
 import android.graphics.drawable.Drawable;
 import android.text.Html;
 import android.text.TextUtils;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +34,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.TextView;
-
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.handmark.pulltorefresh.library.R;
 
@@ -106,6 +106,17 @@ public class LoadingLayout extends FrameLayout {
 			}
 		}
 
+		if (attrs.hasValue(R.styleable.PullToRefresh_ptrHeaderTextAppearance)) {
+			TypedValue styleID = new TypedValue();
+			attrs.getValue(R.styleable.PullToRefresh_ptrHeaderTextAppearance, styleID);
+			setTextAppearance(styleID.data);
+		}
+		if (attrs.hasValue(R.styleable.PullToRefresh_ptrSubHeaderTextAppearance)) {
+			TypedValue styleID = new TypedValue();
+			attrs.getValue(R.styleable.PullToRefresh_ptrSubHeaderTextAppearance, styleID);
+			setSubTextAppearance(styleID.data);
+		}
+
 		// Try and get defined drawable from Attrs
 		Drawable imageDrawable = null;
 		if (attrs.hasValue(R.styleable.PullToRefresh_ptrDrawable)) {
@@ -175,6 +186,15 @@ public class LoadingLayout extends FrameLayout {
 
 	public void setTextColor(int color) {
 		setTextColor(ColorStateList.valueOf(color));
+	}
+
+	public void setTextAppearance(int value) {
+		mHeaderText.setTextAppearance(getContext(), value);
+		mSubHeaderText.setTextAppearance(getContext(), value);
+	}
+
+	public void setSubTextAppearance(int value) {
+		mSubHeaderText.setTextAppearance(getContext(), value);
 	}
 
 	public void setLoadingDrawable(Drawable imageDrawable) {
