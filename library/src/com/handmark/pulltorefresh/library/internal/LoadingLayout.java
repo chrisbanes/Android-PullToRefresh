@@ -19,6 +19,7 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Matrix;
+import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
 import android.text.Html;
 import android.text.TextUtils;
@@ -43,6 +44,7 @@ public class LoadingLayout extends FrameLayout {
 
 	private final ImageView mHeaderImage;
 	private final Matrix mHeaderImageMatrix;
+	private boolean mUseIntrinisicAnimation;
 
 	private final TextView mHeaderText;
 	private final TextView mSubHeaderText;
@@ -137,7 +139,12 @@ public class LoadingLayout extends FrameLayout {
 	public void reset() {
 		mHeaderText.setText(wrapHtmlLabel(mPullLabel));
 		mHeaderImage.setVisibility(View.VISIBLE);
-		mHeaderImage.clearAnimation();
+		
+		if (mUseIntrinisicAnimation) {
+			((AnimationDrawable)mHeaderImage.getDrawable()).stop();
+		} else {
+			mHeaderImage.clearAnimation();
+		}
 
 		resetImageRotation();
 
@@ -158,7 +165,12 @@ public class LoadingLayout extends FrameLayout {
 
 	public void refreshing() {
 		mHeaderText.setText(wrapHtmlLabel(mRefreshingLabel));
-		mHeaderImage.startAnimation(mRotateAnimation);
+		
+		if (mUseIntrinisicAnimation) {
+			((AnimationDrawable) mHeaderImage.getDrawable()).start();
+		} else {
+			mHeaderImage.startAnimation(mRotateAnimation);
+		}
 
 		mSubHeaderText.setVisibility(View.GONE);
 	}
@@ -202,6 +214,8 @@ public class LoadingLayout extends FrameLayout {
 		mHeaderImage.setImageDrawable(imageDrawable);
 		mRotationPivotX = imageDrawable.getIntrinsicWidth() / 2f;
 		mRotationPivotY = imageDrawable.getIntrinsicHeight() / 2f;
+		
+		mUseIntrinisicAnimation = (imageDrawable instanceof AnimationDrawable);
 	}
 
 	public void setSubTextColor(int color) {
@@ -218,13 +232,17 @@ public class LoadingLayout extends FrameLayout {
 	}
 
 	public void onPullY(float scaleOfHeight) {
-		mHeaderImageMatrix.setRotate(scaleOfHeight * 90, mRotationPivotX, mRotationPivotY);
-		mHeaderImage.setImageMatrix(mHeaderImageMatrix);
+		if (!mUseIntrinisicAnimation) {
+			mHeaderImageMatrix.setRotate(scaleOfHeight * 90, mRotationPivotX, mRotationPivotY);
+			mHeaderImage.setImageMatrix(mHeaderImageMatrix);
+		}
 	}
 
 	private void resetImageRotation() {
-		mHeaderImageMatrix.reset();
-		mHeaderImage.setImageMatrix(mHeaderImageMatrix);
+		if (!mUseIntrinisicAnimation) {
+			mHeaderImageMatrix.reset();
+			mHeaderImage.setImageMatrix(mHeaderImageMatrix);
+		}
 	}
 
 	private CharSequence wrapHtmlLabel(String label) {
