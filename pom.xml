@@ -36,6 +36,7 @@
 	<modules>
 		<module>library</module>
 		<module>sample</module>
+		<module>extras</module>
 	</modules>
 	<properties>
 		<!-- build settings -->
