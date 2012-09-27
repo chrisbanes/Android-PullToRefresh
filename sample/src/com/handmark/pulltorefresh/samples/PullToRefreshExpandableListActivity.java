@@ -42,7 +42,7 @@ public final class PullToRefreshExpandableListActivity extends ExpandableListAct
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.pull_to_refresh_expandable_list);
+		setContentView(R.layout.activity_ptr_expandable_list);
 
 		mPullRefreshListView = (PullToRefreshExpandableListView) findViewById(R.id.pull_refresh_expandable_list);
 
