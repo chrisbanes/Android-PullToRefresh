@@ -93,7 +93,7 @@ final class OverscrollHelper {
 			final Mode mode = view.getMode();
 
 			// Check that we're not disabled, and the event isn't from touch
-			if (mode != Mode.DISABLED && !isTouchEvent) {
+			if (mode != Mode.DISABLED && !isTouchEvent && deltaY != 0) {
 				final int newY = (deltaY + scrollY);
 
 				if (PullToRefreshBase.DEBUG) {
