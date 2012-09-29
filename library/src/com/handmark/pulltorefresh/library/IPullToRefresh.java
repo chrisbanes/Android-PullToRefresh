@@ -192,21 +192,21 @@ public interface IPullToRefresh<T extends View> {
 	 * <code>setPullLabel(releaseLabel, Mode.BOTH)</code>
 	 * 
 	 * @param releaseLabel
-	 *            - String to display
+	 *            - CharSequence to display
 	 */
-	public void setPullLabel(String pullLabel);
+	public void setPullLabel(CharSequence pullLabel);
 
 	/**
 	 * Set Text to show when the Widget is being Pulled
 	 * 
 	 * @param pullLabel
-	 *            - String to display
+	 *            - CharSequence to display
 	 * @param mode
 	 *            - Controls which Header/Footer Views will be updated.
 	 *            <code>Mode.BOTH</code> will update all available, other values
 	 *            will update the relevant View.
 	 */
-	public void setPullLabel(String pullLabel, Mode mode);
+	public void setPullLabel(CharSequence pullLabel, Mode mode);
 
 	/**
 	 * @deprecated This simple calls setMode with an appropriate mode based on
@@ -233,21 +233,21 @@ public interface IPullToRefresh<T extends View> {
 	 * <code>setRefreshingLabel(releaseLabel, Mode.BOTH)</code>
 	 * 
 	 * @param releaseLabel
-	 *            - String to display
+	 *            - CharSequence to display
 	 */
-	public void setRefreshingLabel(String refreshingLabel);
+	public void setRefreshingLabel(CharSequence refreshingLabel);
 
 	/**
 	 * Set Text to show when the Widget is refreshing
 	 * 
 	 * @param refreshingLabel
-	 *            - String to display
+	 *            - CharSequence to display
 	 * @param mode
 	 *            - Controls which Header/Footer Views will be updated.
 	 *            <code>Mode.BOTH</code> will update all available, other values
 	 *            will update the relevant View.
 	 */
-	public void setRefreshingLabel(String refreshingLabel, Mode mode);
+	public void setRefreshingLabel(CharSequence refreshingLabel, Mode mode);
 
 	/**
 	 * Set Text to show when the Widget is being pulled, and will refresh when
@@ -255,22 +255,22 @@ public interface IPullToRefresh<T extends View> {
 	 * <code>setReleaseLabel(releaseLabel, Mode.BOTH)</code>
 	 * 
 	 * @param releaseLabel
-	 *            - String to display
+	 *            - CharSequence to display
 	 */
-	public void setReleaseLabel(String releaseLabel);
+	public void setReleaseLabel(CharSequence releaseLabel);
 
 	/**
 	 * Set Text to show when the Widget is being pulled, and will refresh when
 	 * released
 	 * 
 	 * @param releaseLabel
-	 *            - String to display
+	 *            - CharSequence to display
 	 * @param mode
 	 *            - Controls which Header/Footer Views will be updated.
 	 *            <code>Mode.BOTH</code> will update all available, other values
 	 *            will update the relevant View.
 	 */
-	public void setReleaseLabel(String releaseLabel, Mode mode);
+	public void setReleaseLabel(CharSequence releaseLabel, Mode mode);
 
 	/**
 	 * Sets the Animation Interpolator that is used for animated scrolling.

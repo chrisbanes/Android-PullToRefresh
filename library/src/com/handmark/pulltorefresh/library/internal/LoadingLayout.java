@@ -21,7 +21,6 @@ import android.content.res.TypedArray;
 import android.graphics.Matrix;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
-import android.text.Html;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -35,6 +34,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.TextView;
+
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.handmark.pulltorefresh.library.R;
 
@@ -49,9 +49,9 @@ public class LoadingLayout extends FrameLayout {
 	private final TextView mHeaderText;
 	private final TextView mSubHeaderText;
 
-	private String mPullLabel;
-	private String mRefreshingLabel;
-	private String mReleaseLabel;
+	private CharSequence mPullLabel;
+	private CharSequence mRefreshingLabel;
+	private CharSequence mReleaseLabel;
 
 	private float mRotationPivotX, mRotationPivotY;
 
@@ -137,11 +137,11 @@ public class LoadingLayout extends FrameLayout {
 	}
 
 	public void reset() {
-		mHeaderText.setText(wrapHtmlLabel(mPullLabel));
+		mHeaderText.setText(mPullLabel);
 		mHeaderImage.setVisibility(View.VISIBLE);
-		
+
 		if (mUseIntrinisicAnimation) {
-			((AnimationDrawable)mHeaderImage.getDrawable()).stop();
+			((AnimationDrawable) mHeaderImage.getDrawable()).stop();
 		} else {
 			mHeaderImage.clearAnimation();
 		}
@@ -156,16 +156,16 @@ public class LoadingLayout extends FrameLayout {
 	}
 
 	public void releaseToRefresh() {
-		mHeaderText.setText(wrapHtmlLabel(mReleaseLabel));
+		mHeaderText.setText(mReleaseLabel);
 	}
 
-	public void setPullLabel(String pullLabel) {
+	public void setPullLabel(CharSequence pullLabel) {
 		mPullLabel = pullLabel;
 	}
 
 	public void refreshing() {
-		mHeaderText.setText(wrapHtmlLabel(mRefreshingLabel));
-		
+		mHeaderText.setText(mRefreshingLabel);
+
 		if (mUseIntrinisicAnimation) {
 			((AnimationDrawable) mHeaderImage.getDrawable()).start();
 		} else {
@@ -175,16 +175,16 @@ public class LoadingLayout extends FrameLayout {
 		mSubHeaderText.setVisibility(View.GONE);
 	}
 
-	public void setRefreshingLabel(String refreshingLabel) {
+	public void setRefreshingLabel(CharSequence refreshingLabel) {
 		mRefreshingLabel = refreshingLabel;
 	}
 
-	public void setReleaseLabel(String releaseLabel) {
+	public void setReleaseLabel(CharSequence releaseLabel) {
 		mReleaseLabel = releaseLabel;
 	}
 
 	public void pullToRefresh() {
-		mHeaderText.setText(wrapHtmlLabel(mPullLabel));
+		mHeaderText.setText(mPullLabel);
 	}
 
 	public void setTextColor(ColorStateList color) {
@@ -214,7 +214,7 @@ public class LoadingLayout extends FrameLayout {
 		mHeaderImage.setImageDrawable(imageDrawable);
 		mRotationPivotX = imageDrawable.getIntrinsicWidth() / 2f;
 		mRotationPivotY = imageDrawable.getIntrinsicHeight() / 2f;
-		
+
 		mUseIntrinisicAnimation = (imageDrawable instanceof AnimationDrawable);
 	}
 
@@ -242,14 +242,6 @@ public class LoadingLayout extends FrameLayout {
 		if (!mUseIntrinisicAnimation) {
 			mHeaderImageMatrix.reset();
 			mHeaderImage.setImageMatrix(mHeaderImageMatrix);
-		}
-	}
-
-	private CharSequence wrapHtmlLabel(String label) {
-		if (!isInEditMode()) {
-			return Html.fromHtml(label);
-		} else {
-			return label;
 		}
 	}
 }

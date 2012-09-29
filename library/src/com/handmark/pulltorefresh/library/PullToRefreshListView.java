@@ -83,7 +83,7 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		}
 	}
 
-	public void setPullLabel(String pullLabel, Mode mode) {
+	public void setPullLabel(CharSequence pullLabel, Mode mode) {
 		super.setPullLabel(pullLabel, mode);
 
 		if (null != mHeaderLoadingView && mode.canPullDown()) {
@@ -94,7 +94,7 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		}
 	}
 
-	public void setRefreshingLabel(String refreshingLabel, Mode mode) {
+	public void setRefreshingLabel(CharSequence refreshingLabel, Mode mode) {
 		super.setRefreshingLabel(refreshingLabel, mode);
 
 		if (null != mHeaderLoadingView && mode.canPullDown()) {
@@ -105,7 +105,7 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		}
 	}
 
-	public void setReleaseLabel(String releaseLabel, Mode mode) {
+	public void setReleaseLabel(CharSequence releaseLabel, Mode mode) {
 		super.setReleaseLabel(releaseLabel, mode);
 
 		if (null != mHeaderLoadingView && mode.canPullDown()) {

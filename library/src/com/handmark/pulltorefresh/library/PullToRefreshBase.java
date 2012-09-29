@@ -405,12 +405,12 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	}
 
 	@Override
-	public void setPullLabel(String pullLabel) {
+	public void setPullLabel(CharSequence pullLabel) {
 		setPullLabel(pullLabel, Mode.BOTH);
 	}
 
 	@Override
-	public void setPullLabel(String pullLabel, Mode mode) {
+	public void setPullLabel(CharSequence pullLabel, Mode mode) {
 		if (null != mHeaderLayout && mode.canPullDown()) {
 			mHeaderLayout.setPullLabel(pullLabel);
 		}
@@ -443,12 +443,12 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	}
 
 	@Override
-	public void setRefreshingLabel(String refreshingLabel) {
+	public void setRefreshingLabel(CharSequence refreshingLabel) {
 		setRefreshingLabel(refreshingLabel, Mode.BOTH);
 	}
 
 	@Override
-	public void setRefreshingLabel(String refreshingLabel, Mode mode) {
+	public void setRefreshingLabel(CharSequence refreshingLabel, Mode mode) {
 		if (null != mHeaderLayout && mode.canPullDown()) {
 			mHeaderLayout.setRefreshingLabel(refreshingLabel);
 		}
@@ -458,12 +458,12 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	}
 
 	@Override
-	public void setReleaseLabel(String releaseLabel) {
+	public void setReleaseLabel(CharSequence releaseLabel) {
 		setReleaseLabel(releaseLabel, Mode.BOTH);
 	}
 
 	@Override
-	public void setReleaseLabel(String releaseLabel, Mode mode) {
+	public void setReleaseLabel(CharSequence releaseLabel, Mode mode) {
 		if (null != mHeaderLayout && mode.canPullDown()) {
 			mHeaderLayout.setReleaseLabel(releaseLabel);
 		}
