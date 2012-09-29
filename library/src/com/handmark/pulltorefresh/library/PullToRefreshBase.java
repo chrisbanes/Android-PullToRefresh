@@ -180,10 +180,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 
 	@Override
 	public final boolean isPullToRefreshOverScrollEnabled() {
-		if (VERSION.SDK_INT >= VERSION_CODES.GINGERBREAD) {
-			return mOverScrollEnabled && OverscrollHelper.isAndroidOverScrollEnabled(mRefreshableView);
-		}
-		return false;
+		return VERSION.SDK_INT >= VERSION_CODES.GINGERBREAD && mOverScrollEnabled
+				&& OverscrollHelper.isAndroidOverScrollEnabled(mRefreshableView);
 	}
 
 	@Override
