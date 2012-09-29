@@ -18,29 +18,31 @@ package com.handmark.pulltorefresh.library.internal;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.handmark.pulltorefresh.library.R;
 
-public class LoadingLayout extends FrameLayout {
+public class LoadingLayout extends LinearLayout {
 
 	static final int DEFAULT_ROTATION_ANIMATION_DURATION = 1200;
+	static final Interpolator ANIMATION_INTERPOLATOR = new LinearInterpolator();
 
 	private final ImageView mHeaderImage;
 	private final Matrix mHeaderImageMatrix;
@@ -59,19 +61,25 @@ public class LoadingLayout extends FrameLayout {
 
 	public LoadingLayout(Context context, final Mode mode, TypedArray attrs) {
 		super(context);
-		ViewGroup header = (ViewGroup) LayoutInflater.from(context).inflate(R.layout.pull_to_refresh_header, this);
-		mHeaderText = (TextView) header.findViewById(R.id.pull_to_refresh_text);
-		mSubHeaderText = (TextView) header.findViewById(R.id.pull_to_refresh_sub_text);
-		mHeaderImage = (ImageView) header.findViewById(R.id.pull_to_refresh_image);
+
+		setGravity(Gravity.CENTER_VERTICAL);
+
+		final int tbPadding = getResources().getDimensionPixelSize(R.dimen.header_footer_top_bottom_padding);
+		final int lrPadding = getResources().getDimensionPixelSize(R.dimen.header_footer_left_right_padding);
+		setPadding(lrPadding, tbPadding, lrPadding, tbPadding);
+
+		LayoutInflater.from(context).inflate(R.layout.pull_to_refresh_header, this);
+		mHeaderText = (TextView) findViewById(R.id.pull_to_refresh_text);
+		mSubHeaderText = (TextView) findViewById(R.id.pull_to_refresh_sub_text);
+		mHeaderImage = (ImageView) findViewById(R.id.pull_to_refresh_image);
 
 		mHeaderImage.setScaleType(ScaleType.MATRIX);
 		mHeaderImageMatrix = new Matrix();
 		mHeaderImage.setImageMatrix(mHeaderImageMatrix);
 
-		final Interpolator interpolator = new LinearInterpolator();
 		mRotateAnimation = new RotateAnimation(0, 720, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
 				0.5f);
-		mRotateAnimation.setInterpolator(interpolator);
+		mRotateAnimation.setInterpolator(ANIMATION_INTERPOLATOR);
 		mRotateAnimation.setDuration(DEFAULT_ROTATION_ANIMATION_DURATION);
 		mRotateAnimation.setRepeatCount(Animation.INFINITE);
 		mRotateAnimation.setRepeatMode(Animation.RESTART);
@@ -95,11 +103,11 @@ public class LoadingLayout extends FrameLayout {
 
 		if (attrs.hasValue(R.styleable.PullToRefresh_ptrHeaderTextColor)) {
 			ColorStateList colors = attrs.getColorStateList(R.styleable.PullToRefresh_ptrHeaderTextColor);
-			setTextColor(null != colors ? colors : ColorStateList.valueOf(0xFF000000));
+			setTextColor(null != colors ? colors : ColorStateList.valueOf(Color.BLACK));
 		}
 		if (attrs.hasValue(R.styleable.PullToRefresh_ptrHeaderSubTextColor)) {
 			ColorStateList colors = attrs.getColorStateList(R.styleable.PullToRefresh_ptrHeaderSubTextColor);
-			setSubTextColor(null != colors ? colors : ColorStateList.valueOf(0xFF000000));
+			setSubTextColor(null != colors ? colors : ColorStateList.valueOf(Color.BLACK));
 		}
 		if (attrs.hasValue(R.styleable.PullToRefresh_ptrHeaderBackground)) {
 			Drawable background = attrs.getDrawable(R.styleable.PullToRefresh_ptrHeaderBackground);
