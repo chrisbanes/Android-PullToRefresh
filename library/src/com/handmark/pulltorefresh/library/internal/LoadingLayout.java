@@ -220,8 +220,11 @@ public class LoadingLayout extends LinearLayout {
 	public void setLoadingDrawable(Drawable imageDrawable) {
 		// Set Drawable, and save width/height
 		mHeaderImage.setImageDrawable(imageDrawable);
-		mRotationPivotX = imageDrawable.getIntrinsicWidth() / 2f;
-		mRotationPivotY = imageDrawable.getIntrinsicHeight() / 2f;
+
+		if (null != imageDrawable) {
+			mRotationPivotX = imageDrawable.getIntrinsicWidth() / 2f;
+			mRotationPivotY = imageDrawable.getIntrinsicHeight() / 2f;
+		}
 
 		mUseIntrinisicAnimation = (imageDrawable instanceof AnimationDrawable);
 	}
