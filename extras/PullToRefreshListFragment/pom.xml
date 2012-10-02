@@ -3,13 +3,13 @@
 	<modelVersion>4.0.0</modelVersion>
 	
 	<groupId>com.github.chrisbanes.pulltorefresh</groupId>
-	<artifactId>library</artifactId>
+	<artifactId>extra-listfragment</artifactId>
 	<packaging>apklib</packaging>
-	<name>Android-PullToRefresh Library</name>
+	<name>Android-PullToRefresh Extras: ListFragment</name>
 	
 	<parent>
 		<groupId>com.github.chrisbanes.pulltorefresh</groupId>
-		<artifactId>parent</artifactId>
+		<artifactId>extras</artifactId>
 		<version>1.4.1.1</version>
 	</parent>
 	
@@ -18,7 +18,19 @@
 			<groupId>com.google.android</groupId>
 			<artifactId>android</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.google.android</groupId>
+			<artifactId>support-v4</artifactId>
+			<version>r7</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>library</artifactId>
+			<type>apklib</type>
+			<version>${project.version}</version>
+		</dependency>
 	</dependencies>
+	
 	<build>
 		<plugins>
 			<plugin>

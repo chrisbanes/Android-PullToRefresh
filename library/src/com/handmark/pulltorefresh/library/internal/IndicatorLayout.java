@@ -16,7 +16,6 @@
 package com.handmark.pulltorefresh.library.internal;
 
 import android.content.Context;
-import android.view.Gravity;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
@@ -43,11 +42,9 @@ public class IndicatorLayout extends FrameLayout implements AnimationListener {
 		super(context);
 
 		mArrowImageView = new ImageView(context);
-		FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT,
-				FrameLayout.LayoutParams.WRAP_CONTENT, Gravity.CENTER);
-		lp.topMargin = lp.bottomMargin = lp.leftMargin = lp.rightMargin = getResources().getDimensionPixelSize(
-				R.dimen.indicator_internal_padding);
-		addView(mArrowImageView, lp);
+		final int padding = getResources().getDimensionPixelSize(R.dimen.indicator_internal_padding);
+		mArrowImageView.setPadding(padding, padding, padding, padding);
+		addView(mArrowImageView);
 
 		int inAnimResId, outAnimResId;
 		switch (mode) {

@@ -5,6 +5,7 @@ import android.view.View;
 import android.view.animation.Interpolator;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
+import com.handmark.pulltorefresh.library.PullToRefreshBase.OnPullEventListener;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener2;
 
@@ -53,12 +54,6 @@ public interface IPullToRefresh<T extends View> {
 	 * @return - true if the Refreshing View will be show
 	 */
 	public boolean getShowViewWhileRefreshing();
-
-	/**
-	 * @deprecated Use the value from <code>getCurrentMode()</code> instead
-	 * @return true if the current mode is Mode.PULL_DOWN_TO_REFRESH
-	 */
-	public boolean hasPullFromTop();
 
 	/**
 	 * Returns whether the widget has disabled scrolling on the Refreshable View
@@ -159,6 +154,15 @@ public interface IPullToRefresh<T extends View> {
 	public void setMode(Mode mode);
 
 	/**
+	 * Set OnPullEventListener for the Widget
+	 * 
+	 * @param listener
+	 *            - Listener to be used when the Widget has a pull event to
+	 *            propogate.
+	 */
+	public void setOnPullEventListener(OnPullEventListener<T> listener);
+
+	/**
 	 * Set OnRefreshListener for the Widget
 	 * 
 	 * @param listener
@@ -189,31 +193,26 @@ public interface IPullToRefresh<T extends View> {
 	 * <code>setPullLabel(releaseLabel, Mode.BOTH)</code>
 	 * 
 	 * @param releaseLabel
-	 *            - String to display
+	 *            - CharSequence to display
 	 */
-	public void setPullLabel(String pullLabel);
+	public void setPullLabel(CharSequence pullLabel);
 
 	/**
 	 * Set Text to show when the Widget is being Pulled
 	 * 
 	 * @param pullLabel
-	 *            - String to display
+	 *            - CharSequence to display
 	 * @param mode
 	 *            - Controls which Header/Footer Views will be updated.
 	 *            <code>Mode.BOTH</code> will update all available, other values
 	 *            will update the relevant View.
 	 */
-	public void setPullLabel(String pullLabel, Mode mode);
+	public void setPullLabel(CharSequence pullLabel, Mode mode);
 
 	/**
-	 * @deprecated This simple calls setMode with an appropriate mode based on
-	 *             the passed value.
-	 * 
-	 * @param enable
-	 *            Whether Pull-To-Refresh should be used
+	 * Sets the Widget to be in the refresh state. The UI will be updated to
+	 * show the 'Refreshing' view, and be scrolled to show such.
 	 */
-	public void setPullToRefreshEnabled(boolean enable);
-
 	public void setRefreshing();
 
 	/**
@@ -230,21 +229,21 @@ public interface IPullToRefresh<T extends View> {
 	 * <code>setRefreshingLabel(releaseLabel, Mode.BOTH)</code>
 	 * 
 	 * @param releaseLabel
-	 *            - String to display
+	 *            - CharSequence to display
 	 */
-	public void setRefreshingLabel(String refreshingLabel);
+	public void setRefreshingLabel(CharSequence refreshingLabel);
 
 	/**
 	 * Set Text to show when the Widget is refreshing
 	 * 
 	 * @param refreshingLabel
-	 *            - String to display
+	 *            - CharSequence to display
 	 * @param mode
 	 *            - Controls which Header/Footer Views will be updated.
 	 *            <code>Mode.BOTH</code> will update all available, other values
 	 *            will update the relevant View.
 	 */
-	public void setRefreshingLabel(String refreshingLabel, Mode mode);
+	public void setRefreshingLabel(CharSequence refreshingLabel, Mode mode);
 
 	/**
 	 * Set Text to show when the Widget is being pulled, and will refresh when
@@ -252,28 +251,29 @@ public interface IPullToRefresh<T extends View> {
 	 * <code>setReleaseLabel(releaseLabel, Mode.BOTH)</code>
 	 * 
 	 * @param releaseLabel
-	 *            - String to display
+	 *            - CharSequence to display
 	 */
-	public void setReleaseLabel(String releaseLabel);
+	public void setReleaseLabel(CharSequence releaseLabel);
 
 	/**
 	 * Set Text to show when the Widget is being pulled, and will refresh when
 	 * released
 	 * 
 	 * @param releaseLabel
-	 *            - String to display
+	 *            - CharSequence to display
 	 * @param mode
 	 *            - Controls which Header/Footer Views will be updated.
 	 *            <code>Mode.BOTH</code> will update all available, other values
 	 *            will update the relevant View.
 	 */
-	public void setReleaseLabel(String releaseLabel, Mode mode);
+	public void setReleaseLabel(CharSequence releaseLabel, Mode mode);
 
 	/**
 	 * Sets the Animation Interpolator that is used for animated scrolling.
 	 * Defaults to a DecelerateInterpolator
 	 * 
-	 * @param interpolator - Interpolator to use
+	 * @param interpolator
+	 *            - Interpolator to use
 	 */
 	public void setScrollAnimationInterpolator(Interpolator interpolator);
 

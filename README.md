@@ -7,12 +7,13 @@ This project aims to provide a reusable Pull to Refresh widget for Android. It w
 ## Features
 
  * Supports both Pulling Down from the top, and Pulling Up from the bottom (or even both).
- * Animated Scrolling for all devices (Tested on 1.6+)
- * Works for all AbsListView derived classes. ListView, ExpandableListView & GridView have been implemented.
- * Also Works with WebView!
+ * Animated Scrolling for all devices.
+ * Over Scroll supports for devices on Android v2.3+.
+ * Currently works with **ListView**, **ExpandableListView** & **GridView**, **WebView** and **ScrollView**!
  * Integrated End of List Listener for use of detecting when the user has scrolled to the bottom.
- * Maven Support (thanks to Stefano Dacchille)
- * Indicators to show the user when a Pull-to-Refresh is available
+ * Maven Support.
+ * Indicators to show the user when a Pull-to-Refresh is available.
+ * Support for **ListFragment**!
  * Lots of [Customisation](https://github.com/chrisbanes/Android-PullToRefresh/wiki/Customisation) options!
 
 Repository at <https://github.com/chrisbanes/Android-PullToRefresh>.
@@ -46,6 +47,7 @@ I will gladly accept pull requests for fixes and feature enhancements but please
 * [Stefano Dacchille](https://github.com/stefanodacchille)
 * [Steve Lhomme](https://github.com/robUx4)
 * [Maxim Galkin](https://github.com/mgalkin)
+* [Scorcher](https://github.com/Scorcher)
 
 
 ## License

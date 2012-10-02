@@ -4,9 +4,14 @@
 
     <solid android:color="#40000000" />
 
+    <!--
+    I know the android:radius is useless here but it's needed to fix an old bug:
+    http://code.google.com/p/android/issues/detail?id=939
+    -->
     <corners
         android:bottomLeftRadius="@dimen/indicator_corner_radius"
         android:bottomRightRadius="@dimen/indicator_corner_radius"
+        android:radius="1dp"
         android:topLeftRadius="0dp"
         android:topRightRadius="0dp" />
 

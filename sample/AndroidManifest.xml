@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.handmark.pulltorefresh.samples"
-    android:versionCode="1330"
-    android:versionName="1.3.3" >
+    android:versionCode="1410"
+    android:versionName="1.4.1" >
 
     <uses-sdk
         android:minSdkVersion="4"
@@ -24,6 +24,10 @@
         <activity
             android:name=".PullToRefreshListActivity"
             android:label="PtR ListView" >
+        </activity>
+        <activity
+            android:name=".PullToRefreshListFragmentActivity"
+            android:label="PtR ListView Fragment" >
         </activity>
         <activity
             android:name=".PullToRefreshGridActivity"

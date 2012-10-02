@@ -4,7 +4,7 @@
 	<groupId>com.github.chrisbanes.pulltorefresh</groupId>
 	<artifactId>parent</artifactId>
 	<packaging>pom</packaging>
-	<version>1.4.0</version>
+	<version>1.4.1.1</version>
 	<name>Android-PullToRefresh Project</name>
 	<description>Implementation of the Pull-to-Refresh UI Pattern for Android.</description>
 	<url>https://github.com/chrisbanes/Android-PullToRefresh</url>
@@ -24,7 +24,7 @@
 		<url>https://github.com/chrisbanes/Android-PullToRefresh</url>
 		<connection>scm:git:git://github.com/chrisbanes/Android-PullToRefresh.git</connection>
 		<developerConnection>scm:git:git@github.com:chrisbanes/Android-PullToRefresh.git</developerConnection>
-	  <tag>v1.4.0</tag>
+	  <tag>v1.4.1.1</tag>
   </scm>
 	<developers>
 		<developer>
@@ -36,6 +36,7 @@
 	<modules>
 		<module>library</module>
 		<module>sample</module>
+		<module>extras</module>
 	</modules>
 	<properties>
 		<!-- build settings -->
@@ -71,7 +72,6 @@
 					<version>2.3.2</version>
 					<configuration>
 						<tagNameFormat>v@{project.version}</tagNameFormat>
-						<updateWorkingCopyVersions>false</updateWorkingCopyVersions>
 					</configuration>
 				</plugin>
 				<plugin>

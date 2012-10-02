@@ -93,7 +93,7 @@ final class OverscrollHelper {
 			final Mode mode = view.getMode();
 
 			// Check that we're not disabled, and the event isn't from touch
-			if (mode != Mode.DISABLED && !isTouchEvent) {
+			if (mode != Mode.DISABLED && !isTouchEvent && deltaY != 0) {
 				final int newY = (deltaY + scrollY);
 
 				if (PullToRefreshBase.DEBUG) {
@@ -115,7 +115,7 @@ final class OverscrollHelper {
 					}
 				} else if (Math.abs(newY) <= fuzzyThreshold || Math.abs(newY - scrollRange) <= fuzzyThreshold) {
 					// Means we've stopped overscrolling, so scroll back to 0
-					view.smoothScrollTo(0, PullToRefreshBase.SMOOTH_SCROLL_LONG_DURATION_MS);
+					view.smoothScrollToLonger(0);
 				}
 			}
 		}
