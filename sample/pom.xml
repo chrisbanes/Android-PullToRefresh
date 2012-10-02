@@ -24,6 +24,12 @@
 			<type>apklib</type>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>extra-listfragment</artifactId>
+			<type>apklib</type>
+			<version>${project.version}</version>
+		</dependency>
 	</dependencies>
 
 	<build>
