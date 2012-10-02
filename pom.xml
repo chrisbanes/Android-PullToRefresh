@@ -72,7 +72,6 @@
 					<version>2.3.2</version>
 					<configuration>
 						<tagNameFormat>v@{project.version}</tagNameFormat>
-						<updateWorkingCopyVersions>false</updateWorkingCopyVersions>
 					</configuration>
 				</plugin>
 				<plugin>
