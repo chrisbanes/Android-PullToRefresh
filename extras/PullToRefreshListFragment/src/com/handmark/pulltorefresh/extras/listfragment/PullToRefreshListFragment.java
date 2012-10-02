@@ -34,7 +34,8 @@ public class PullToRefreshListFragment extends ListFragment {
 		ListView lv = (ListView) layout.findViewById(android.R.id.list);
 		ViewGroup parent = (ViewGroup) lv.getParent();
 
-		// Iterate through parent's children until we find the ListView
+		// Iterate through parent's children until we find the ListView, we need
+		// to do it this way as we need to find out the child index
 		for (int i = 0, z = parent.getChildCount(); i < z; i++) {
 			View child = parent.getChildAt(i);
 
