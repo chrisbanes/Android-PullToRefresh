@@ -165,11 +165,9 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 			return;
 		}
 
-		LoadingLayout originalLoadingLayout;
-		LoadingLayout listViewLoadingLayout;
-
+		LoadingLayout originalLoadingLayout, listViewLoadingLayout;
 		int scrollToHeight, selection;
-		boolean scroll;
+		boolean scrollLvToEdge;
 
 		switch (getCurrentMode()) {
 			case PULL_UP_TO_REFRESH:
@@ -177,7 +175,7 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 				listViewLoadingLayout = mFooterLoadingView;
 				selection = mRefreshableView.getCount() - 1;
 				scrollToHeight = getFooterHeight();
-				scroll = Math.abs(mRefreshableView.getLastVisiblePosition() - selection) <= 1;
+				scrollLvToEdge = Math.abs(mRefreshableView.getLastVisiblePosition() - selection) <= 1;
 				break;
 			case PULL_DOWN_TO_REFRESH:
 			default:
@@ -185,7 +183,7 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 				listViewLoadingLayout = mHeaderLoadingView;
 				scrollToHeight = -getHeaderHeight();
 				selection = 0;
-				scroll = Math.abs(mRefreshableView.getFirstVisiblePosition() - selection) <= 1;
+				scrollLvToEdge = Math.abs(mRefreshableView.getFirstVisiblePosition() - selection) <= 1;
 				break;
 		}
 
@@ -194,10 +192,10 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 
 		/**
 		 * Scroll so the View is at the same Y as the ListView header/footer,
-		 * but only scroll if we've pulled to refresh and it's positioned
-		 * correctly
+		 * but only scroll if: we've pulled to refresh, it's positioned
+		 * correctly, and we're currently showing the ListViewLoadingLayout
 		 */
-		if (scroll && getState() != MANUAL_REFRESHING) {
+		if (scrollLvToEdge && getState() != MANUAL_REFRESHING && listViewLoadingLayout.getVisibility() == View.VISIBLE) {
 			mRefreshableView.setSelection(selection);
 			setHeaderScroll(scrollToHeight);
 		}
