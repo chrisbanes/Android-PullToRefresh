@@ -56,12 +56,6 @@ public interface IPullToRefresh<T extends View> {
 	public boolean getShowViewWhileRefreshing();
 
 	/**
-	 * @deprecated Use the value from <code>getCurrentMode()</code> instead
-	 * @return true if the current mode is Mode.PULL_DOWN_TO_REFRESH
-	 */
-	public boolean hasPullFromTop();
-
-	/**
 	 * Returns whether the widget has disabled scrolling on the Refreshable View
 	 * while refreshing.
 	 * 
@@ -158,7 +152,14 @@ public interface IPullToRefresh<T extends View> {
 	 *            - Mode to set the View to
 	 */
 	public void setMode(Mode mode);
-	
+
+	/**
+	 * Set OnPullEventListener for the Widget
+	 * 
+	 * @param listener
+	 *            - Listener to be used when the Widget has a pull event to
+	 *            propogate.
+	 */
 	public void setOnPullEventListener(OnPullEventListener<T> listener);
 
 	/**
@@ -209,14 +210,9 @@ public interface IPullToRefresh<T extends View> {
 	public void setPullLabel(CharSequence pullLabel, Mode mode);
 
 	/**
-	 * @deprecated This simple calls setMode with an appropriate mode based on
-	 *             the passed value.
-	 * 
-	 * @param enable
-	 *            Whether Pull-To-Refresh should be used
+	 * Sets the Widget to be in the refresh state. The UI will be updated to
+	 * show the 'Refreshing' view, and be scrolled to show such.
 	 */
-	public void setPullToRefreshEnabled(boolean enable);
-
 	public void setRefreshing();
 
 	/**
@@ -276,7 +272,8 @@ public interface IPullToRefresh<T extends View> {
 	 * Sets the Animation Interpolator that is used for animated scrolling.
 	 * Defaults to a DecelerateInterpolator
 	 * 
-	 * @param interpolator - Interpolator to use
+	 * @param interpolator
+	 *            - Interpolator to use
 	 */
 	public void setScrollAnimationInterpolator(Interpolator interpolator);
 

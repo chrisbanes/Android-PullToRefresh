@@ -163,7 +163,10 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		return mShowViewWhileRefreshing;
 	}
 
-	@Override
+	/**
+	 * @deprecated Use the value from <code>getCurrentMode()</code> instead
+	 * @return true if the current mode is Mode.PULL_DOWN_TO_REFRESH
+	 */
 	public final boolean hasPullFromTop() {
 		return mCurrentMode == Mode.PULL_DOWN_TO_REFRESH;
 	}
@@ -417,7 +420,13 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		}
 	}
 
-	@Override
+	/**
+	 * @deprecated This simple calls setMode with an appropriate mode based on
+	 *             the passed value.
+	 * 
+	 * @param enable
+	 *            Whether Pull-To-Refresh should be used
+	 */
 	public final void setPullToRefreshEnabled(boolean enable) {
 		setMode(enable ? DEFAULT_MODE : Mode.DISABLED);
 	}
