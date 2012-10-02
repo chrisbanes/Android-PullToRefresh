@@ -54,6 +54,13 @@ public class PullToRefreshListFragment extends ListFragment {
 	}
 
 	/**
+	 * @return The {@link PullToRefreshListView} attached to this ListFragment.
+	 */
+	public final PullToRefreshListView getPullToRefreshListView() {
+		return mPullToRefreshListView;
+	}
+
+	/**
 	 * Returns the {@link PullToRefreshListView} which will replace the ListView
 	 * created from ListFragment. You should override this method if you wish to
 	 * customise the {@link PullToRefreshListView} from the default.
@@ -71,10 +78,4 @@ public class PullToRefreshListFragment extends ListFragment {
 		return new PullToRefreshListView(getActivity());
 	}
 
-	/**
-	 * @return The {@link PullToRefreshListView} attached to this ListFragment.
-	 */
-	protected final PullToRefreshListView getPullToRefreshListView() {
-		return mPullToRefreshListView;
-	}
 }
