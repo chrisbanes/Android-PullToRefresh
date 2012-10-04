@@ -38,6 +38,9 @@ public final class PullToRefreshWebView2Activity extends Activity implements OnR
 		WebView webView = pullRefreshWebView.getRefreshableView();
 		webView.getSettings().setJavaScriptEnabled(true);
 		webView.setWebViewClient(new SampleWebViewClient());
+
+		// We just load a prepared HTML page from the assets folder for this
+		// sample, see that file for the Javascript implementation
 		webView.loadUrl("file:///android_asset/ptr_webview2_sample.html");
 	}
 
