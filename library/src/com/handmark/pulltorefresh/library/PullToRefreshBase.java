@@ -615,7 +615,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	}
 
 	@Override
-	protected void onRestoreInstanceState(Parcelable state) {
+	protected final void onRestoreInstanceState(Parcelable state) {
 		if (state instanceof Bundle) {
 			Bundle bundle = (Bundle) state;
 
@@ -633,6 +633,9 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 				setRefreshingInternal(true);
 				mState = viewState;
 			}
+
+			// Now let derivative classes restore their state
+			onPtrRestoreInstanceState(bundle);
 			return;
 		}
 
@@ -640,15 +643,41 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	}
 
 	@Override
-	protected Parcelable onSaveInstanceState() {
+	protected final Parcelable onSaveInstanceState() {
 		Bundle bundle = new Bundle();
+
+		// Let derivative classes get a chance to save state first, that way we
+		// can make sure they don't overrite any of our values
+		onPtrSaveInstanceState(bundle);
+
 		bundle.putInt(STATE_STATE, mState);
 		bundle.putInt(STATE_MODE, mMode.getIntValue());
 		bundle.putInt(STATE_CURRENT_MODE, mCurrentMode.getIntValue());
 		bundle.putBoolean(STATE_DISABLE_SCROLLING_REFRESHING, mDisableScrollingWhileRefreshing);
 		bundle.putBoolean(STATE_SHOW_REFRESHING_VIEW, mShowViewWhileRefreshing);
 		bundle.putParcelable(STATE_SUPER, super.onSaveInstanceState());
+
 		return bundle;
+	}
+
+	/**
+	 * Called by {@link #onSaveInstanceState()} so that derivative classes can
+	 * save their instance state.
+	 * 
+	 * @param saveState
+	 *            - Bundle to be updated with saved state.
+	 */
+	protected void onPtrSaveInstanceState(Bundle saveState) {
+	}
+
+	/**
+	 * Called by {@link #onRestoreInstanceState(Parcelable)} so that derivative
+	 * classes can handle their saved instance state.
+	 * 
+	 * @param savedInstanceState
+	 *            - Bundle which contains saved instance state.
+	 */
+	protected void onPtrRestoreInstanceState(Bundle savedInstanceState) {
 	}
 
 	protected void onPullEventFinished() {
