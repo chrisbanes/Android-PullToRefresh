@@ -133,6 +133,14 @@ public class LoadingLayout extends LinearLayout {
 			imageDrawable = attrs.getDrawable(R.styleable.PullToRefresh_ptrDrawable);
 		}
 
+		// Check Specific Drawable from Attrs, these overright the generic
+		// drawable attr above
+		if (attrs.hasValue(R.styleable.PullToRefresh_ptrDrawableTop) && mode == Mode.PULL_DOWN_TO_REFRESH) {
+			imageDrawable = attrs.getDrawable(R.styleable.PullToRefresh_ptrDrawableTop);
+		} else if (attrs.hasValue(R.styleable.PullToRefresh_ptrDrawableBottom) && mode == Mode.PULL_UP_TO_REFRESH) {
+			imageDrawable = attrs.getDrawable(R.styleable.PullToRefresh_ptrDrawableTop);
+		}
+
 		// If we don't have a user defined drawable, load the default
 		if (null == imageDrawable) {
 			imageDrawable = context.getResources().getDrawable(R.drawable.default_ptr_drawable);

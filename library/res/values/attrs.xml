@@ -14,6 +14,8 @@
         </attr>
         <attr name="ptrShowIndicator" format="reference|boolean" />
         <attr name="ptrDrawable" format="reference" />
+        <attr name="ptrDrawableTop" format="reference" />
+        <attr name="ptrDrawableBottom" format="reference" />
         <attr name="ptrOverScroll" format="reference|boolean" />
         <attr name="ptrHeaderTextAppearance" format="reference" />
         <attr name="ptrSubHeaderTextAppearance" format="reference" />
