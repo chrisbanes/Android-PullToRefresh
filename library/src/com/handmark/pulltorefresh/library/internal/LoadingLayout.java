@@ -19,7 +19,6 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
@@ -30,8 +29,8 @@ import android.view.View;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
-import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
@@ -42,7 +41,8 @@ public abstract class LoadingLayout extends LinearLayout {
 	static final Interpolator ANIMATION_INTERPOLATOR = new LinearInterpolator();
 
 	protected final ImageView mHeaderImage;
-	protected final Matrix mHeaderImageMatrix;
+	protected final ProgressBar mHeaderProgress;
+	
 	private boolean mUseIntrinisicAnimation;
 
 	private final TextView mHeaderText;
@@ -63,12 +63,9 @@ public abstract class LoadingLayout extends LinearLayout {
 
 		LayoutInflater.from(context).inflate(R.layout.pull_to_refresh_header, this);
 		mHeaderText = (TextView) findViewById(R.id.pull_to_refresh_text);
+		mHeaderProgress = (ProgressBar) findViewById(R.id.pull_to_refresh_progress);
 		mSubHeaderText = (TextView) findViewById(R.id.pull_to_refresh_sub_text);
 		mHeaderImage = (ImageView) findViewById(R.id.pull_to_refresh_image);
-
-		mHeaderImage.setScaleType(ScaleType.MATRIX);
-		mHeaderImageMatrix = new Matrix();
-		mHeaderImage.setImageMatrix(mHeaderImageMatrix);
 
 		switch (mode) {
 			case PULL_UP_TO_REFRESH:
