@@ -39,7 +39,6 @@ import com.handmark.pulltorefresh.library.R;
 
 public abstract class LoadingLayout extends LinearLayout {
 
-	static final int DEFAULT_ROTATION_ANIMATION_DURATION = 1200;
 	static final Interpolator ANIMATION_INTERPOLATOR = new LinearInterpolator();
 
 	protected final ImageView mHeaderImage;
