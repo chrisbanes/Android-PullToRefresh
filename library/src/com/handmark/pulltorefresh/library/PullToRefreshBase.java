@@ -33,6 +33,7 @@ import android.view.animation.Interpolator;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
+import com.handmark.pulltorefresh.library.internal.FlipLoadingLayout;
 import com.handmark.pulltorefresh.library.internal.LoadingLayout;
 import com.handmark.pulltorefresh.library.internal.RotateLoadingLayout;
 import com.handmark.pulltorefresh.library.internal.SDK16;
@@ -91,6 +92,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	private boolean mOverScrollEnabled = true;
 
 	private Interpolator mScrollAnimationInterpolator;
+	private AnimationStyle mLoadingAnimationStyle;
 
 	private LoadingLayout mHeaderLayout;
 	private LoadingLayout mFooterLayout;
@@ -506,7 +508,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	}
 
 	protected LoadingLayout createLoadingLayout(Context context, Mode mode, TypedArray attrs) {
-		return new RotateLoadingLayout(context, mode, attrs);
+		return mLoadingAnimationStyle.createLoadingLayout(context, mode, attrs);
 	}
 
 	/**
@@ -620,8 +622,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		if (state instanceof Bundle) {
 			Bundle bundle = (Bundle) state;
 
-			mMode = Mode.mapIntToMode(bundle.getInt(STATE_MODE, 0));
-			mCurrentMode = Mode.mapIntToMode(bundle.getInt(STATE_CURRENT_MODE, 0));
+			mMode = Mode.mapIntToValue(bundle.getInt(STATE_MODE, 0));
+			mCurrentMode = Mode.mapIntToValue(bundle.getInt(STATE_CURRENT_MODE, 0));
 
 			mDisableScrollingWhileRefreshing = bundle.getBoolean(STATE_DISABLE_SCROLLING_REFRESHING, true);
 			mShowViewWhileRefreshing = bundle.getBoolean(STATE_SHOW_REFRESHING_VIEW, true);
@@ -803,8 +805,11 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.PullToRefresh);
 
 		if (a.hasValue(R.styleable.PullToRefresh_ptrMode)) {
-			mMode = Mode.mapIntToMode(a.getInteger(R.styleable.PullToRefresh_ptrMode, 0));
+			mMode = Mode.mapIntToValue(a.getInteger(R.styleable.PullToRefresh_ptrMode, 0));
 		}
+
+		mLoadingAnimationStyle = AnimationStyle.mapIntToValue(a.getInteger(R.styleable.PullToRefresh_ptrAnimationStyle,
+				0));
 
 		// Refreshable View
 		// By passing the attrs, we can add ListView/GridView params via XML
@@ -976,6 +981,50 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		}
 	}
 
+	public static enum AnimationStyle {
+		/**
+		 * This is the default for Android-PullToRefresh. Allows you to use any
+		 * drawable, which is automatically rotated and used as a Progress Bar.
+		 */
+		ROTATE,
+
+		/**
+		 * This is the old default, and what is commonly used on iOS. Uses an
+		 * arrow image which flips depending on where the user has scrolled.
+		 */
+		FLIP;
+
+		/**
+		 * Maps an int to a specific mode. This is needed when saving state, or
+		 * inflating the view from XML where the mode is given through a attr
+		 * int.
+		 * 
+		 * @param modeInt
+		 *            - int to map a Mode to
+		 * @return Mode that modeInt maps to, or PULL_DOWN_TO_REFRESH by
+		 *         default.
+		 */
+		public static AnimationStyle mapIntToValue(int modeInt) {
+			switch (modeInt) {
+				case 0x0:
+				default:
+					return ROTATE;
+				case 0x1:
+					return FLIP;
+			}
+		}
+
+		public LoadingLayout createLoadingLayout(Context context, Mode mode, TypedArray attrs) {
+			switch (this) {
+				case ROTATE:
+				default:
+					return new RotateLoadingLayout(context, mode, attrs);
+				case FLIP:
+					return new FlipLoadingLayout(context, mode, attrs);
+			}
+		}
+	}
+
 	public static enum Mode {
 		/**
 		 * Disable all Pull-to-Refresh gesture handling
@@ -1009,7 +1058,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		 * @return Mode that modeInt maps to, or PULL_DOWN_TO_REFRESH by
 		 *         default.
 		 */
-		public static Mode mapIntToMode(int modeInt) {
+		public static Mode mapIntToValue(int modeInt) {
 			switch (modeInt) {
 				case 0x0:
 					return DISABLED;
