@@ -6,12 +6,11 @@
 
     <uses-sdk
         android:minSdkVersion="4"
-        android:targetSdkVersion="10" />
+        android:targetSdkVersion="15" />
 
     <application
         android:icon="@drawable/icon"
-        android:label="@string/app_name"
-        android:theme="@android:style/Theme.Light" >
+        android:label="@string/app_name" >
         <activity
             android:name=".LauncherActivity"
             android:label="PullToRefresh Samples" >
