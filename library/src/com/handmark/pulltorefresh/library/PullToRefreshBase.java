@@ -488,6 +488,83 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	}
 
 	/**
+	 * Called when the UI has been to be updated to be in the
+	 * {@link State#PULL_TO_REFRESH} state.
+	 */
+	void onPullToRefresh() {
+		switch (mCurrentMode) {
+			case PULL_UP_TO_REFRESH:
+				mFooterLayout.pullToRefresh();
+				break;
+			case PULL_DOWN_TO_REFRESH:
+				mHeaderLayout.pullToRefresh();
+				break;
+		}
+	}
+
+	/**
+	 * Called when the UI has been to be updated to be in the
+	 * {@link State#REFRESHING} or {@link State#MANUAL_REFRESHING} state.
+	 * 
+	 * @param doScroll
+	 *            - Whether the UI should scroll for this event.
+	 */
+	void onRefreshing(final boolean doScroll) {
+		if (mMode.canPullDown()) {
+			mHeaderLayout.refreshing();
+		}
+		if (mMode.canPullUp()) {
+			mFooterLayout.refreshing();
+		}
+
+		if (doScroll) {
+			if (mShowViewWhileRefreshing) {
+				smoothScrollTo(mCurrentMode == Mode.PULL_DOWN_TO_REFRESH ? -mHeaderHeight : mFooterHeight);
+			} else {
+				smoothScrollTo(0);
+			}
+		}
+
+		// Call the deprecated method
+		setRefreshingInternal(doScroll);
+	}
+
+	/**
+	 * Called when the UI has been to be updated to be in the
+	 * {@link State#RELEASE_TO_REFRESH} state.
+	 */
+	void onReleaseToRefresh() {
+		switch (mCurrentMode) {
+			case PULL_UP_TO_REFRESH:
+				mFooterLayout.releaseToRefresh();
+				break;
+			case PULL_DOWN_TO_REFRESH:
+				mHeaderLayout.releaseToRefresh();
+				break;
+		}
+	}
+
+	/**
+	 * Called when the UI has been to be updated to be in the
+	 * {@link State#RESET} state.
+	 */
+	void onReset() {
+		mIsBeingDragged = false;
+
+		if (mMode.canPullDown()) {
+			mHeaderLayout.reset();
+		}
+		if (mMode.canPullUp()) {
+			mFooterLayout.reset();
+		}
+
+		smoothScrollTo(0);
+
+		// Call the deprecated method
+		resetHeader();
+	}
+
+	/**
 	 * Used internally for adding view. Need because we override addView to
 	 * pass-through to the Refreshable View
 	 */
@@ -601,83 +678,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	protected void onPtrSaveInstanceState(Bundle saveState) {
 	}
 
-	/**
-	 * Called when the UI has been to be updated to be in the
-	 * {@link State#PULL_TO_REFRESH} state.
-	 */
-	protected void onPullToRefresh() {
-		switch (mCurrentMode) {
-			case PULL_UP_TO_REFRESH:
-				mFooterLayout.pullToRefresh();
-				break;
-			case PULL_DOWN_TO_REFRESH:
-				mHeaderLayout.pullToRefresh();
-				break;
-		}
-	}
-
-	/**
-	 * Called when the UI has been to be updated to be in the
-	 * {@link State#REFRESHING} or {@link State#MANUAL_REFRESHING} state.
-	 * 
-	 * @param doScroll
-	 *            - Whether the UI should scroll for this event.
-	 */
-	protected void onRefreshing(final boolean doScroll) {
-		if (mMode.canPullDown()) {
-			mHeaderLayout.refreshing();
-		}
-		if (mMode.canPullUp()) {
-			mFooterLayout.refreshing();
-		}
-
-		if (doScroll) {
-			if (mShowViewWhileRefreshing) {
-				smoothScrollTo(mCurrentMode == Mode.PULL_DOWN_TO_REFRESH ? -mHeaderHeight : mFooterHeight);
-			} else {
-				smoothScrollTo(0);
-			}
-		}
-
-		// Call the deprecated method
-		setRefreshingInternal(doScroll);
-	}
-
-	/**
-	 * Called when the UI has been to be updated to be in the
-	 * {@link State#RELEASE_TO_REFRESH} state.
-	 */
-	protected void onReleaseToRefresh() {
-		switch (mCurrentMode) {
-			case PULL_UP_TO_REFRESH:
-				mFooterLayout.releaseToRefresh();
-				break;
-			case PULL_DOWN_TO_REFRESH:
-				mHeaderLayout.releaseToRefresh();
-				break;
-		}
-	}
-
-	/**
-	 * Called when the UI has been to be updated to be in the
-	 * {@link State#RESET} state.
-	 */
-	protected void onReset() {
-		mIsBeingDragged = false;
-
-		if (mMode.canPullDown()) {
-			mHeaderLayout.reset();
-		}
-		if (mMode.canPullUp()) {
-			mFooterLayout.reset();
-		}
-
-		smoothScrollTo(0);
-
-		// Call the deprecated method
-		resetHeader();
-	}
-
 	@Override
 	protected final void onRestoreInstanceState(Parcelable state) {
 		if (state instanceof Bundle) {
@@ -724,9 +724,12 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	}
 
 	/**
-	 * @deprecated This is a legacy callback, if you're overriding this method
-	 *             then please use the new onReset() instead. This deprecated
-	 *             method will be removed some time in the future.
+	 * @deprecated This is a deprecated callback. If you're overriding this
+	 *             method then use
+	 *             {@link #setOnPullEventListener(OnPullEventListener)
+	 *             setOnPullEventListener()} instead to be notified when the
+	 *             state changes to {@link State#RESET RESET}. This deprecated
+	 *             method will be removed in the future.
 	 */
 	protected void resetHeader() {
 	}
@@ -741,9 +744,13 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	}
 
 	/**
-	 * @deprecated This is a legacy callback, if you're overriding this method
-	 *             then please use the new onRefreshing() instead. This
-	 *             deprecated method will be removed some time in the future.
+	 * @deprecated This is a deprecated callback. If you're overriding this
+	 *             method then use
+	 *             {@link #setOnPullEventListener(OnPullEventListener)
+	 *             setOnPullEventListener()} instead to be notified when the
+	 *             state changes to {@link State#REFRESHING REFRESHING} or
+	 *             {@link State#MANUAL_REFRESHING MANUAL_REFRESHING}. This
+	 *             deprecated method will be removed in the future.
 	 */
 	protected void setRefreshingInternal(final boolean doScroll) {
 	}
