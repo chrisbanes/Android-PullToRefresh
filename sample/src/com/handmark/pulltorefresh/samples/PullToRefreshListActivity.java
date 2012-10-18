@@ -88,7 +88,8 @@ public final class PullToRefreshListActivity extends ListActivity {
 		 */
 		SoundPullEventListener<ListView> soundListener = new SoundPullEventListener<ListView>(this);
 		soundListener.addSoundEvent(State.PULL_TO_REFRESH, R.raw.pull_event);
-		soundListener.addSoundEvent(State.RESET, R.raw.release_event);
+		soundListener.addSoundEvent(State.RESET, R.raw.reset_sound);
+		soundListener.addSoundEvent(State.REFRESHING, R.raw.refreshing_sound);
 		mPullRefreshListView.setOnPullEventListener(soundListener);
 
 		// You can also just use setListAdapter(mAdapter) or
