@@ -195,7 +195,8 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		 * but only scroll if: we've pulled to refresh, it's positioned
 		 * correctly, and we're currently showing the ListViewLoadingLayout
 		 */
-		if (scrollLvToEdge && getState() != MANUAL_REFRESHING && listViewLoadingLayout.getVisibility() == View.VISIBLE) {
+		if (scrollLvToEdge && getState() != State.MANUAL_REFRESHING
+				&& listViewLoadingLayout.getVisibility() == View.VISIBLE) {
 			mRefreshableView.setSelection(selection);
 			setHeaderScroll(scrollToHeight);
 		}
