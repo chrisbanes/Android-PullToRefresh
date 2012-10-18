@@ -23,6 +23,7 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnPullEventListener;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener2;
+import com.handmark.pulltorefresh.library.PullToRefreshBase.State;
 
 public interface IPullToRefresh<T extends View> {
 
@@ -69,6 +70,11 @@ public interface IPullToRefresh<T extends View> {
 	 * @return - true if the Refreshing View will be show
 	 */
 	public boolean getShowViewWhileRefreshing();
+
+	/**
+	 * @return - The state that the View is currently in.
+	 */
+	public State getState();
 
 	/**
 	 * Returns whether the widget has disabled scrolling on the Refreshable View

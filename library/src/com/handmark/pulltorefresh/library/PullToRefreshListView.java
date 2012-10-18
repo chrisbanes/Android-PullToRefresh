@@ -154,14 +154,14 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 	}
 
 	@Override
-	protected void resetHeader() {
+	protected void onReset() {
 
 		// If we're not showing the Refreshing view, or the list is empty, then
 		// the header/footer views won't show so we use the
 		// normal method
 		ListAdapter adapter = mRefreshableView.getAdapter();
 		if (!getShowViewWhileRefreshing() || null == adapter || adapter.isEmpty()) {
-			super.resetHeader();
+			super.onReset();
 			return;
 		}
 
@@ -204,22 +204,22 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		// Hide the ListView Header/Footer
 		listViewLoadingLayout.setVisibility(View.GONE);
 
-		super.resetHeader();
+		super.onReset();
 	}
 
 	@Override
-	protected void setRefreshingInternal(final boolean doScroll) {
+	protected void onRefreshing(final boolean doScroll) {
 
 		// If we're not showing the Refreshing view, or the list is empty, then
 		// the header/footer views won't show so we use the
 		// normal method
 		ListAdapter adapter = mRefreshableView.getAdapter();
 		if (!getShowViewWhileRefreshing() || null == adapter || adapter.isEmpty()) {
-			super.setRefreshingInternal(doScroll);
+			super.onRefreshing(doScroll);
 			return;
 		}
 
-		super.setRefreshingInternal(false);
+		super.onRefreshing(false);
 
 		final LoadingLayout originalLoadingLayout, listViewLoadingLayout;
 		final int selection, scrollToY;
