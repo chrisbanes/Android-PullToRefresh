@@ -42,7 +42,7 @@ public abstract class LoadingLayout extends LinearLayout {
 
 	protected final ImageView mHeaderImage;
 	protected final ProgressBar mHeaderProgress;
-	
+
 	private boolean mUseIntrinisicAnimation;
 
 	private final TextView mHeaderText;
@@ -116,7 +116,7 @@ public abstract class LoadingLayout extends LinearLayout {
 			imageDrawable = attrs.getDrawable(R.styleable.PullToRefresh_ptrDrawable);
 		}
 
-		// Check Specific Drawable from Attrs, these overright the generic
+		// Check Specific Drawable from Attrs, these overrite the generic
 		// drawable attr above
 		if (attrs.hasValue(R.styleable.PullToRefresh_ptrDrawableTop) && mode == Mode.PULL_DOWN_TO_REFRESH) {
 			imageDrawable = attrs.getDrawable(R.styleable.PullToRefresh_ptrDrawableTop);

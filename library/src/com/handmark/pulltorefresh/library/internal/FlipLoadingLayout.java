@@ -19,6 +19,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 
@@ -49,7 +50,16 @@ public class FlipLoadingLayout extends LoadingLayout {
 
 	@Override
 	protected void onLoadingDrawableSet(Drawable imageDrawable) {
-		// NO-OP
+		/**
+		 * We need to set the width/height of the ImageView so that it is square
+		 * with each side the size of the largest drawable dimension. This is so
+		 * that it doesn't clip when rotated.
+		 */
+		if (null != imageDrawable) {
+			ViewGroup.LayoutParams lp = mHeaderImage.getLayoutParams();
+			lp.width = lp.height = Math.max(imageDrawable.getIntrinsicWidth(), imageDrawable.getIntrinsicHeight());
+			mHeaderImage.requestLayout();
+		}
 	}
 
 	@Override
