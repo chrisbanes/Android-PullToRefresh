@@ -32,6 +32,7 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnLastItemVisibleListener;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
+import com.handmark.pulltorefresh.library.PullToRefreshBase.State;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.handmark.pulltorefresh.library.extras.SoundPullEventListener;
 
@@ -82,8 +83,14 @@ public final class PullToRefreshListActivity extends ListActivity {
 
 		mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, mListItems);
 
-		mPullRefreshListView.setOnPullEventListener(new SoundPullEventListener<ListView>(this, R.raw.pull_event,
-				R.raw.release_event));
+		/**
+		 * Add Sound Event Listener
+		 */
+		SoundPullEventListener<ListView> soundListener = new SoundPullEventListener<ListView>(this);
+		soundListener.addSoundEvent(State.PULL_TO_REFRESH, R.raw.pull_event);
+		soundListener.addSoundEvent(State.RESET, R.raw.reset_sound);
+		soundListener.addSoundEvent(State.REFRESHING, R.raw.refreshing_sound);
+		mPullRefreshListView.setOnPullEventListener(soundListener);
 
 		// You can also just use setListAdapter(mAdapter) or
 		// mPullRefreshListView.setAdapter(mAdapter)

@@ -124,14 +124,6 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 		}
 	}
 
-	@Override
-	protected void onScrollChanged(int l, int t, int oldl, int oldt) {
-		super.onScrollChanged(l, t, oldl, oldt);
-		if (null != mEmptyView && !mScrollEmptyView) {
-			mEmptyView.scrollTo(-l, -t);
-		}
-	}
-
 	/**
 	 * Pass-through method for {@link PullToRefreshBase#getRefreshableView()
 	 * getRefreshableView()}.{@link AdapterView#setAdapter(ListAdapter)
@@ -142,19 +134,6 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 	 */
 	public void setAdapter(ListAdapter adapter) {
 		((AdapterView<ListAdapter>) mRefreshableView).setAdapter(adapter);
-	}
-
-	/**
-	 * Pass-through method for {@link PullToRefreshBase#getRefreshableView()
-	 * getRefreshableView()}.
-	 * {@link AdapterView#setOnItemClickListener(OnItemClickListener)
-	 * setOnItemClickListener(listener)}. This is just for convenience!
-	 * 
-	 * @param listener
-	 *            - OnItemClickListener to use
-	 */
-	public void setOnItemClickListener(OnItemClickListener listener) {
-		mRefreshableView.setOnItemClickListener(listener);
 	}
 
 	/**
@@ -201,8 +180,17 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 		}
 	}
 
-	public final void setScrollEmptyView(boolean doScroll) {
-		mScrollEmptyView = doScroll;
+	/**
+	 * Pass-through method for {@link PullToRefreshBase#getRefreshableView()
+	 * getRefreshableView()}.
+	 * {@link AdapterView#setOnItemClickListener(OnItemClickListener)
+	 * setOnItemClickListener(listener)}. This is just for convenience!
+	 * 
+	 * @param listener
+	 *            - OnItemClickListener to use
+	 */
+	public void setOnItemClickListener(OnItemClickListener listener) {
+		mRefreshableView.setOnItemClickListener(listener);
 	}
 
 	public final void setOnLastItemVisibleListener(OnLastItemVisibleListener listener) {
@@ -211,7 +199,11 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 
 	public final void setOnScrollListener(OnScrollListener listener) {
 		mOnScrollListener = listener;
-	};
+	}
+
+	public final void setScrollEmptyView(boolean doScroll) {
+		mScrollEmptyView = doScroll;
+	}
 
 	/**
 	 * Sets whether an indicator graphic should be displayed when the View is in
@@ -232,6 +224,55 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 			// If not, then remove then
 			removeIndicatorViews();
 		}
+	};
+
+	@Override
+	void onPullToRefresh() {
+		super.onPullToRefresh();
+
+		if (getShowIndicatorInternal()) {
+			switch (getCurrentMode()) {
+				case PULL_UP_TO_REFRESH:
+					mIndicatorIvBottom.pullToRefresh();
+					break;
+				case PULL_DOWN_TO_REFRESH:
+					mIndicatorIvTop.pullToRefresh();
+					break;
+			}
+		}
+	}
+
+	void onRefreshing(boolean doScroll) {
+		super.onRefreshing(doScroll);
+
+		if (getShowIndicatorInternal()) {
+			updateIndicatorViewsVisibility();
+		}
+	}
+
+	@Override
+	void onReleaseToRefresh() {
+		super.onReleaseToRefresh();
+
+		if (getShowIndicatorInternal()) {
+			switch (getCurrentMode()) {
+				case PULL_UP_TO_REFRESH:
+					mIndicatorIvBottom.releaseToRefresh();
+					break;
+				case PULL_DOWN_TO_REFRESH:
+					mIndicatorIvTop.releaseToRefresh();
+					break;
+			}
+		}
+	}
+
+	@Override
+	void onReset() {
+		super.onReset();
+
+		if (getShowIndicatorInternal()) {
+			updateIndicatorViewsVisibility();
+		}
 	}
 
 	@Override
@@ -249,51 +290,10 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 	}
 
 	@Override
-	protected void onPullToRefresh() {
-		super.onPullToRefresh();
-
-		if (getShowIndicatorInternal()) {
-			switch (getCurrentMode()) {
-				case PULL_UP_TO_REFRESH:
-					mIndicatorIvBottom.pullToRefresh();
-					break;
-				case PULL_DOWN_TO_REFRESH:
-					mIndicatorIvTop.pullToRefresh();
-					break;
-			}
-		}
-	}
-
-	@Override
-	protected void onReleaseToRefresh() {
-		super.onReleaseToRefresh();
-
-		if (getShowIndicatorInternal()) {
-			switch (getCurrentMode()) {
-				case PULL_UP_TO_REFRESH:
-					mIndicatorIvBottom.releaseToRefresh();
-					break;
-				case PULL_DOWN_TO_REFRESH:
-					mIndicatorIvTop.releaseToRefresh();
-					break;
-			}
-		}
-	}
-
-	@Override
-	protected void resetHeader() {
-		super.resetHeader();
-
-		if (getShowIndicatorInternal()) {
-			updateIndicatorViewsVisibility();
-		}
-	}
-
-	protected void setRefreshingInternal(boolean doScroll) {
-		super.setRefreshingInternal(doScroll);
-
-		if (getShowIndicatorInternal()) {
-			updateIndicatorViewsVisibility();
+	protected void onScrollChanged(int l, int t, int oldl, int oldt) {
+		super.onScrollChanged(l, t, oldl, oldt);
+		if (null != mEmptyView && !mScrollEmptyView) {
+			mEmptyView.scrollTo(-l, -t);
 		}
 	}
 

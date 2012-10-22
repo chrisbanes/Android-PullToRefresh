@@ -19,6 +19,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
+import android.os.Bundle;
 import android.util.AttributeSet;
 import android.util.FloatMath;
 import android.webkit.WebChromeClient;
@@ -32,6 +33,7 @@ public class PullToRefreshWebView extends PullToRefreshBase<WebView> {
 		public void onRefresh(PullToRefreshBase<WebView> refreshView) {
 			refreshView.getRefreshableView().reload();
 		}
+
 	};
 
 	private final WebChromeClient defaultWebChromeClient = new WebChromeClient() {
@@ -97,6 +99,18 @@ public class PullToRefreshWebView extends PullToRefreshBase<WebView> {
 	protected boolean isReadyForPullUp() {
 		float exactContentHeight = FloatMath.floor(mRefreshableView.getContentHeight() * mRefreshableView.getScale());
 		return mRefreshableView.getScrollY() >= (exactContentHeight - mRefreshableView.getHeight());
+	}
+
+	@Override
+	protected void onPtrRestoreInstanceState(Bundle savedInstanceState) {
+		super.onPtrRestoreInstanceState(savedInstanceState);
+		mRefreshableView.restoreState(savedInstanceState);
+	}
+
+	@Override
+	protected void onPtrSaveInstanceState(Bundle saveState) {
+		super.onPtrSaveInstanceState(saveState);
+		mRefreshableView.saveState(saveState);
 	}
 
 	@TargetApi(9)
