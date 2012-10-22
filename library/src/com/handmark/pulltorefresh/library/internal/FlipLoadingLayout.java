@@ -34,14 +34,16 @@ public class FlipLoadingLayout extends LoadingLayout {
 
 	public FlipLoadingLayout(Context context, Mode mode, TypedArray attrs) {
 		super(context, mode, attrs);
+		
+		final int rotateAngle = mode == Mode.PULL_DOWN_TO_REFRESH ? 180 : -180;
 
-		mRotateAnimation = new RotateAnimation(0, -180, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
+		mRotateAnimation = new RotateAnimation(0, rotateAngle, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
 				0.5f);
 		mRotateAnimation.setInterpolator(ANIMATION_INTERPOLATOR);
 		mRotateAnimation.setDuration(FLIP_ANIMATION_DURATION);
 		mRotateAnimation.setFillAfter(true);
 
-		mResetRotateAnimation = new RotateAnimation(-180, 0, Animation.RELATIVE_TO_SELF, 0.5f,
+		mResetRotateAnimation = new RotateAnimation(rotateAngle, 0, Animation.RELATIVE_TO_SELF, 0.5f,
 				Animation.RELATIVE_TO_SELF, 0.5f);
 		mResetRotateAnimation.setInterpolator(ANIMATION_INTERPOLATOR);
 		mResetRotateAnimation.setDuration(FLIP_ANIMATION_DURATION);
