@@ -172,19 +172,9 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 
 	@Override
 	void onReset() {
-
-		// If we're not showing the Refreshing view, or the list is empty, then
-		// the header/footer views won't show so we use the
-		// normal method
-		ListAdapter adapter = mRefreshableView.getAdapter();
-		if (!getShowViewWhileRefreshing() || null == adapter || adapter.isEmpty()) {
-			super.onReset();
-			return;
-		}
-
-		LoadingLayout originalLoadingLayout, listViewLoadingLayout;
-		int scrollToHeight, selection;
-		boolean scrollLvToEdge;
+		final LoadingLayout originalLoadingLayout, listViewLoadingLayout;
+		final int scrollToHeight, selection;
+		final boolean scrollLvToEdge;
 
 		switch (getCurrentMode()) {
 			case PULL_UP_TO_REFRESH:
@@ -204,23 +194,28 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 				break;
 		}
 
-		// Set our Original View to Visible
-		originalLoadingLayout.setVisibility(View.VISIBLE);
+		// If the ListView header loading layout is showing, then we need to
+		// flip so that the original one is showing instead
+		if (listViewLoadingLayout.getVisibility() == View.VISIBLE) {
 
-		/**
-		 * Scroll so the View is at the same Y as the ListView header/footer,
-		 * but only scroll if: we've pulled to refresh, it's positioned
-		 * correctly, and we're currently showing the ListViewLoadingLayout
-		 */
-		if (scrollLvToEdge && getState() != State.MANUAL_REFRESHING
-				&& listViewLoadingLayout.getVisibility() == View.VISIBLE) {
-			mRefreshableView.setSelection(selection);
-			setHeaderScroll(scrollToHeight);
+			// Set our Original View to Visible
+			originalLoadingLayout.setVisibility(View.VISIBLE);
+
+			// Hide the ListView Header/Footer
+			listViewLoadingLayout.setVisibility(View.GONE);
+
+			/**
+			 * Scroll so the View is at the same Y as the ListView
+			 * header/footer, but only scroll if: we've pulled to refresh, it's
+			 * positioned correctly
+			 */
+			if (scrollLvToEdge && getState() != State.MANUAL_REFRESHING) {
+				mRefreshableView.setSelection(selection);
+				setHeaderScroll(scrollToHeight);
+			}
 		}
 
-		// Hide the ListView Header/Footer
-		listViewLoadingLayout.setVisibility(View.GONE);
-
+		// Finally, call up to super
 		super.onReset();
 	}
 
