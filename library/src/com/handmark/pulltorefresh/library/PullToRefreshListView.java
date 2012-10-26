@@ -24,6 +24,7 @@ import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.util.AttributeSet;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ListAdapter;
@@ -286,16 +287,31 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		}
 
 		@Override
-		public void draw(Canvas canvas) {
+		protected void dispatchDraw(Canvas canvas) {
 			/**
-			 * This is a bit hacky, but ListView has got a bug in it when using
+			 * This is a bit hacky, but Samsung's ListView has got a bug in it when using
 			 * Header/Footer Views and the list is empty. This masks the issue
 			 * so that it doesn't cause an FC. See Issue #66.
 			 */
 			try {
-				super.draw(canvas);
-			} catch (Exception e) {
+				super.dispatchDraw(canvas);
+			} catch (IndexOutOfBoundsException e) {
 				e.printStackTrace();
+			}
+		}
+
+		@Override
+		public boolean dispatchTouchEvent(MotionEvent ev) {
+			/**
+			 * This is a bit hacky, but Samsung's ListView has got a bug in it when using
+			 * Header/Footer Views and the list is empty. This masks the issue
+			 * so that it doesn't cause an FC. See Issue #66.
+			 */
+			try {
+				return super.dispatchTouchEvent(ev);
+			} catch (IndexOutOfBoundsException e) {
+				e.printStackTrace();
+				return false;
 			}
 		}
 
