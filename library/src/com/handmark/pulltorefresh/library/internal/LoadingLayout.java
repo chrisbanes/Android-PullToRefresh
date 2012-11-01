@@ -15,6 +15,7 @@
  *******************************************************************************/
 package com.handmark.pulltorefresh.library.internal;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
@@ -26,6 +27,7 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
@@ -36,6 +38,7 @@ import android.widget.TextView;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.handmark.pulltorefresh.library.R;
 
+@SuppressLint("ViewConstructor")
 public abstract class LoadingLayout extends LinearLayout {
 
 	static final Interpolator ANIMATION_INTERPOLATOR = new LinearInterpolator();
@@ -52,6 +55,9 @@ public abstract class LoadingLayout extends LinearLayout {
 	private CharSequence mRefreshingLabel;
 	private CharSequence mReleaseLabel;
 
+	// Max Width that this can be
+	private int mMaxWidth;
+
 	public LoadingLayout(Context context, final Mode mode, TypedArray attrs) {
 		super(context);
 
@@ -60,6 +66,8 @@ public abstract class LoadingLayout extends LinearLayout {
 		final int tbPadding = getResources().getDimensionPixelSize(R.dimen.header_footer_top_bottom_padding);
 		final int lrPadding = getResources().getDimensionPixelSize(R.dimen.header_footer_left_right_padding);
 		setPadding(lrPadding, tbPadding, lrPadding, tbPadding);
+
+		mMaxWidth = getResources().getDimensionPixelSize(R.dimen.header_footer_max_width);
 
 		LayoutInflater.from(context).inflate(R.layout.pull_to_refresh_header, this);
 		mHeaderText = (TextView) findViewById(R.id.pull_to_refresh_text);
@@ -187,6 +195,18 @@ public abstract class LoadingLayout extends LinearLayout {
 			mSubHeaderText.setVisibility(View.GONE);
 		} else {
 			mSubHeaderText.setVisibility(View.VISIBLE);
+		}
+	}
+
+	@Override
+	protected void onSizeChanged(final int w, int h, int oldw, int oldh) {
+		super.onSizeChanged(w, h, oldw, oldh);
+
+		// If we're bigger than the Max Width, resize us
+		if (w > mMaxWidth) {
+			ViewGroup.LayoutParams lp = getLayoutParams();
+			lp.width = mMaxWidth;
+			setLayoutParams(lp);
 		}
 	}
 

@@ -24,8 +24,10 @@ import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.util.AttributeSet;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -153,7 +155,13 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		// Hide our original Loading View
 		originalLoadingLayout.setVisibility(View.INVISIBLE);
 
-		// Show the ListView Loading View and set it to refresh
+		// Show the ListView Loading View and set it to refresh. If it has a 0
+		// height, then we need to set it to WRAP_CONTENT
+		if (listViewLoadingLayout.getHeight() == 0) {
+			ViewGroup.LayoutParams lp = listViewLoadingLayout.getLayoutParams();
+			lp.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+			listViewLoadingLayout.setLayoutParams(lp);
+		}
 		listViewLoadingLayout.setVisibility(View.VISIBLE);
 		listViewLoadingLayout.refreshing();
 
@@ -237,18 +245,20 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		// Get Styles from attrs
 		TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.PullToRefresh);
 
+		// We use a 0 height (instead of View.GONE) for now so that it's still
+		// layed out
+		final FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, 0,
+				Gravity.CENTER_HORIZONTAL);
+
 		// Create Loading Views ready for use later
 		FrameLayout frame = new FrameLayout(context);
 		mHeaderLoadingView = createLoadingLayout(context, Mode.PULL_DOWN_TO_REFRESH, a);
-		frame.addView(mHeaderLoadingView, FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT);
-		mHeaderLoadingView.setVisibility(View.GONE);
+		frame.addView(mHeaderLoadingView, lp);
 		lv.addHeaderView(frame, null, false);
 
 		mLvFooterLoadingFrame = new FrameLayout(context);
 		mFooterLoadingView = createLoadingLayout(context, Mode.PULL_UP_TO_REFRESH, a);
-		mLvFooterLoadingFrame.addView(mFooterLoadingView, FrameLayout.LayoutParams.MATCH_PARENT,
-				FrameLayout.LayoutParams.WRAP_CONTENT);
-		mFooterLoadingView.setVisibility(View.GONE);
+		mLvFooterLoadingFrame.addView(mFooterLoadingView, lp);
 
 		a.recycle();
 
@@ -289,9 +299,9 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		@Override
 		protected void dispatchDraw(Canvas canvas) {
 			/**
-			 * This is a bit hacky, but Samsung's ListView has got a bug in it when using
-			 * Header/Footer Views and the list is empty. This masks the issue
-			 * so that it doesn't cause an FC. See Issue #66.
+			 * This is a bit hacky, but Samsung's ListView has got a bug in it
+			 * when using Header/Footer Views and the list is empty. This masks
+			 * the issue so that it doesn't cause an FC. See Issue #66.
 			 */
 			try {
 				super.dispatchDraw(canvas);
@@ -303,9 +313,9 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		@Override
 		public boolean dispatchTouchEvent(MotionEvent ev) {
 			/**
-			 * This is a bit hacky, but Samsung's ListView has got a bug in it when using
-			 * Header/Footer Views and the list is empty. This masks the issue
-			 * so that it doesn't cause an FC. See Issue #66.
+			 * This is a bit hacky, but Samsung's ListView has got a bug in it
+			 * when using Header/Footer Views and the list is empty. This masks
+			 * the issue so that it doesn't cause an FC. See Issue #66.
 			 */
 			try {
 				return super.dispatchTouchEvent(ev);
