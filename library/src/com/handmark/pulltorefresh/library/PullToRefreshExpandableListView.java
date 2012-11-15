@@ -46,7 +46,7 @@ public class PullToRefreshExpandableListView extends PullToRefreshAdapterViewBas
 	}
 
 	@Override
-	protected final ExpandableListView createRefreshableView(Context context, AttributeSet attrs) {
+	protected ExpandableListView createRefreshableView(Context context, AttributeSet attrs) {
 		final ExpandableListView lv;
 		if (VERSION.SDK_INT >= VERSION_CODES.GINGERBREAD) {
 			lv = new InternalExpandableListViewSDK9(context, attrs);

@@ -239,7 +239,7 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 	}
 
 	@Override
-	protected final ListView createRefreshableView(Context context, AttributeSet attrs) {
+	protected ListView createRefreshableView(Context context, AttributeSet attrs) {
 		ListView lv = createListView(context, attrs);
 
 		// Get Styles from attrs
