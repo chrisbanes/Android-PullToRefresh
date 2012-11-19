@@ -78,10 +78,10 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 	public void setLoadingDrawable(Drawable drawable, Mode mode) {
 		super.setLoadingDrawable(drawable, mode);
 
-		if (null != mHeaderLoadingView && mode.canPullDown()) {
+		if (null != mHeaderLoadingView && mode.showHeaderLoadingLayout()) {
 			mHeaderLoadingView.setLoadingDrawable(drawable);
 		}
-		if (null != mFooterLoadingView && mode.canPullUp()) {
+		if (null != mFooterLoadingView && mode.showFooterLoadingLayout()) {
 			mFooterLoadingView.setLoadingDrawable(drawable);
 		}
 	}
@@ -89,10 +89,10 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 	public void setPullLabel(CharSequence pullLabel, Mode mode) {
 		super.setPullLabel(pullLabel, mode);
 
-		if (null != mHeaderLoadingView && mode.canPullDown()) {
+		if (null != mHeaderLoadingView && mode.showHeaderLoadingLayout()) {
 			mHeaderLoadingView.setPullLabel(pullLabel);
 		}
-		if (null != mFooterLoadingView && mode.canPullUp()) {
+		if (null != mFooterLoadingView && mode.showFooterLoadingLayout()) {
 			mFooterLoadingView.setPullLabel(pullLabel);
 		}
 	}
@@ -100,10 +100,10 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 	public void setRefreshingLabel(CharSequence refreshingLabel, Mode mode) {
 		super.setRefreshingLabel(refreshingLabel, mode);
 
-		if (null != mHeaderLoadingView && mode.canPullDown()) {
+		if (null != mHeaderLoadingView && mode.showHeaderLoadingLayout()) {
 			mHeaderLoadingView.setRefreshingLabel(refreshingLabel);
 		}
-		if (null != mFooterLoadingView && mode.canPullUp()) {
+		if (null != mFooterLoadingView && mode.showFooterLoadingLayout()) {
 			mFooterLoadingView.setRefreshingLabel(refreshingLabel);
 		}
 	}
@@ -111,10 +111,10 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 	public void setReleaseLabel(CharSequence releaseLabel, Mode mode) {
 		super.setReleaseLabel(releaseLabel, mode);
 
-		if (null != mHeaderLoadingView && mode.canPullDown()) {
+		if (null != mHeaderLoadingView && mode.showHeaderLoadingLayout()) {
 			mHeaderLoadingView.setReleaseLabel(releaseLabel);
 		}
-		if (null != mFooterLoadingView && mode.canPullUp()) {
+		if (null != mFooterLoadingView && mode.showFooterLoadingLayout()) {
 			mFooterLoadingView.setReleaseLabel(releaseLabel);
 		}
 	}

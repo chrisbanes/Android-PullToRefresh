@@ -119,13 +119,13 @@ final class OverscrollHelper {
 				if (newY < (0 - fuzzyThreshold)) {
 					// Check the mode supports the overscroll direction, and
 					// then move scroll
-					if (mode.canPullDown()) {
+					if (mode.showHeaderLoadingLayout()) {
 						view.setHeaderScroll((int) (scaleFactor * (view.getScrollY() + newY)));
 					}
 				} else if (newY > (scrollRange + fuzzyThreshold)) {
 					// Check the mode supports the overscroll direction, and
 					// then move scroll
-					if (mode.canPullUp()) {
+					if (mode.showFooterLoadingLayout()) {
 						view.setHeaderScroll((int) (scaleFactor * (view.getScrollY() + newY - scrollRange)));
 					}
 				} else if (Math.abs(newY) <= fuzzyThreshold || Math.abs(newY - scrollRange) <= fuzzyThreshold) {
