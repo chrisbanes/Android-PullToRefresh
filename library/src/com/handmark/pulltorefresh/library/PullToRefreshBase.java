@@ -178,7 +178,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 
 	@Override
 	public final boolean isPullToRefreshEnabled() {
-		return mMode.allowsPullsToRefresh();
+		return mMode.permitsPullToRefresh();
 	}
 
 	@Override
@@ -1064,7 +1064,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 
 	public static enum Mode {
 		/**
-		 * Disable all Pull-to-Refresh gesture handling
+		 * Disable all Pull-to-Refresh gesture and Refreshing handling
 		 */
 		DISABLED(0x0),
 
@@ -1085,7 +1085,11 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		 */
 		BOTH(0x3),
 
-		// TODO Add Javadoc
+		/**
+		 * Disables Pull-to-Refresh gesture handling, but allows manually
+		 * setting the Refresh state via
+		 * {@link PullToRefreshBase#setRefreshing() setRefreshing()}.
+		 */
 		MANUAL_REFRESH_ONLY(0x4);
 
 		/**
@@ -1121,21 +1125,24 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		}
 
 		/**
-		 * @return true if this mode permits Pulling Down from the top
+		 * @return true if the mode permits Pull-to-Refresh
+		 */
+		boolean permitsPullToRefresh() {
+			return !(this == DISABLED || this == MANUAL_REFRESH_ONLY);
+		}
+
+		/**
+		 * @return true if this mode wants the Loading Layout Header to be shown
 		 */
 		boolean showHeaderLoadingLayout() {
 			return this == PULL_DOWN_TO_REFRESH || this == BOTH;
 		}
 
 		/**
-		 * @return true if this mode permits Pulling Up from the bottom
+		 * @return true if this mode wants the Loading Layout Footer to be shown
 		 */
 		boolean showFooterLoadingLayout() {
 			return this == PULL_UP_TO_REFRESH || this == BOTH || this == MANUAL_REFRESH_ONLY;
-		}
-
-		boolean allowsPullsToRefresh() {
-			return !(this == DISABLED || this == MANUAL_REFRESH_ONLY);
 		}
 
 		int getIntValue() {

@@ -108,7 +108,7 @@ final class OverscrollHelper {
 			final Mode mode = view.getMode();
 
 			// Check that Pull-to-Refresh is enabled, and the event isn't from touch
-			if (mode.allowsPullsToRefresh() && !isTouchEvent && deltaY != 0) {
+			if (mode.permitsPullToRefresh() && !isTouchEvent && deltaY != 0) {
 				final int newY = (deltaY + scrollY);
 
 				if (PullToRefreshBase.DEBUG) {
