@@ -137,6 +137,7 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		final int selection, scrollToY;
 
 		switch (getCurrentMode()) {
+			case MANUAL_REFRESH_ONLY:
 			case PULL_UP_TO_REFRESH:
 				originalLoadingLayout = getFooterLayout();
 				listViewLoadingLayout = mFooterLoadingView;
@@ -186,6 +187,7 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		final boolean scrollLvToEdge;
 
 		switch (getCurrentMode()) {
+			case MANUAL_REFRESH_ONLY:
 			case PULL_UP_TO_REFRESH:
 				originalLoadingLayout = getFooterLayout();
 				listViewLoadingLayout = mFooterLoadingView;

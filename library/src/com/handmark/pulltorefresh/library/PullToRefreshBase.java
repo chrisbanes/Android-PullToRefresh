@@ -178,7 +178,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 
 	@Override
 	public final boolean isPullToRefreshEnabled() {
-		return mMode != Mode.DISABLED;
+		return mMode.allowsPullsToRefresh();
 	}
 
 	@Override
@@ -519,6 +519,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		if (doScroll) {
 			if (mShowViewWhileRefreshing) {
 				switch (mCurrentMode) {
+					case MANUAL_REFRESH_ONLY:
 					case PULL_UP_TO_REFRESH:
 						smoothScrollTo(mFooterHeight);
 						break;
@@ -963,21 +964,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 			mFooterHeight = mFooterLayout.getMeasuredHeight();
 		}
 
-		// Hide Loading Views
-		switch (mMode) {
-			case DISABLED:
-				setPadding(0, 0, 0, 0);
-			case BOTH:
-				setPadding(0, -mHeaderHeight, 0, -mFooterHeight);
-				break;
-			case PULL_UP_TO_REFRESH:
-				setPadding(0, 0, 0, -mFooterHeight);
-				break;
-			case PULL_DOWN_TO_REFRESH:
-			default:
-				setPadding(0, -mHeaderHeight, 0, 0);
-				break;
-		}
+		setPadding(0, -mHeaderHeight, 0, -mFooterHeight);
 	}
 
 	private void setState(State state, final boolean... params) {
@@ -1054,7 +1041,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		 * @return Mode that modeInt maps to, or PULL_DOWN_TO_REFRESH by
 		 *         default.
 		 */
-		public static AnimationStyle mapIntToValue(int modeInt) {
+		static AnimationStyle mapIntToValue(int modeInt) {
 			switch (modeInt) {
 				case 0x0:
 				default:
@@ -1064,7 +1051,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 			}
 		}
 
-		public LoadingLayout createLoadingLayout(Context context, Mode mode, TypedArray attrs) {
+		LoadingLayout createLoadingLayout(Context context, Mode mode, TypedArray attrs) {
 			switch (this) {
 				case ROTATE:
 				default:
@@ -1096,7 +1083,10 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		 * Allow the user to both Pull Down from the top, and Pull Up from the
 		 * bottom to refresh.
 		 */
-		BOTH(0x3);
+		BOTH(0x3),
+
+		// TODO Add Javadoc
+		MANUAL_REFRESH_ONLY(0x4);
 
 		/**
 		 * Maps an int to a specific mode. This is needed when saving state, or
@@ -1108,7 +1098,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		 * @return Mode that modeInt maps to, or PULL_DOWN_TO_REFRESH by
 		 *         default.
 		 */
-		public static Mode mapIntToValue(final int modeInt) {
+		static Mode mapIntToValue(final int modeInt) {
 			for (Mode value : Mode.values()) {
 				if (modeInt == value.getIntValue()) {
 					return value;
@@ -1118,7 +1108,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 			// If not, return default
 			return getDefaultMode();
 		}
-		
+
 		static Mode getDefaultMode() {
 			return Mode.PULL_DOWN_TO_REFRESH;
 		}
@@ -1141,7 +1131,11 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		 * @return true if this mode permits Pulling Up from the bottom
 		 */
 		boolean showFooterLoadingLayout() {
-			return this == PULL_UP_TO_REFRESH || this == BOTH;
+			return this == PULL_UP_TO_REFRESH || this == BOTH || this == MANUAL_REFRESH_ONLY;
+		}
+
+		boolean allowsPullsToRefresh() {
+			return !(this == DISABLED || this == MANUAL_REFRESH_ONLY);
 		}
 
 		int getIntValue() {
@@ -1277,7 +1271,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		 *            - int to map a State to
 		 * @return State that stateInt maps to
 		 */
-		public static State mapIntToValue(final int stateInt) {
+		static State mapIntToValue(final int stateInt) {
 			for (State value : State.values()) {
 				if (stateInt == value.getIntValue()) {
 					return value;
