@@ -41,6 +41,7 @@ public final class PullToRefreshListActivity extends ListActivity {
 	static final int MENU_MANUAL_REFRESH = 0;
 	static final int MENU_DISABLE_SCROLL = 1;
 	static final int MENU_SET_MODE = 2;
+	static final int MENU_DEMO = 3;
 
 	private LinkedList<String> mListItems;
 	private PullToRefreshListView mPullRefreshListView;
@@ -129,6 +130,7 @@ public final class PullToRefreshListActivity extends ListActivity {
 						: "Disable Scrolling while Refreshing");
 		menu.add(0, MENU_SET_MODE, 0, mPullRefreshListView.getMode() == Mode.BOTH ? "Change to MODE_PULL_DOWN"
 				: "Change to MODE_PULL_BOTH");
+		menu.add(0, MENU_DEMO, 0, "Demo");
 		return super.onCreateOptionsMenu(menu);
 	}
 
@@ -161,6 +163,9 @@ public final class PullToRefreshListActivity extends ListActivity {
 			case MENU_SET_MODE:
 				mPullRefreshListView.setMode(mPullRefreshListView.getMode() == Mode.BOTH ? Mode.PULL_DOWN_TO_REFRESH
 						: Mode.BOTH);
+				break;
+			case MENU_DEMO:
+				mPullRefreshListView.demo();
 				break;
 		}
 

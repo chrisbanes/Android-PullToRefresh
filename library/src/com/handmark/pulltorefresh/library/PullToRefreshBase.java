@@ -53,6 +53,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 
 	public static final int SMOOTH_SCROLL_DURATION_MS = 200;
 	public static final int SMOOTH_SCROLL_LONG_DURATION_MS = 325;
+	static final int DEMO_SCROLL_INTERVAL = 225;
 
 	static final String STATE_STATE = "ptr_state";
 	static final String STATE_MODE = "ptr_mode";
@@ -131,6 +132,19 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		} else {
 			throw new UnsupportedOperationException("Refreshable View is not a ViewGroup so can't addView");
 		}
+	}
+
+	@Override
+	public final boolean demo() {
+		if (mMode.showHeaderLoadingLayout() && isReadyForPullDown()) {
+			smoothScrollToAndBack(-mHeaderHeight * 2);
+			return true;
+		} else if (mMode.showFooterLoadingLayout() && isReadyForPullUp()) {
+			smoothScrollToAndBack(mFooterHeight * 2);
+			return true;
+		}
+		
+		return false;
 	}
 
 	@Override
@@ -1004,6 +1018,10 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	 *            - Duration of animation in milliseconds
 	 */
 	private final void smoothScrollTo(int y, long duration) {
+		smoothScrollTo(y, duration, 0, null);
+	}
+
+	private final void smoothScrollTo(int y, long duration, long delayMillis, OnSmoothScrollFinishedListener listener) {
 		if (null != mCurrentSmoothScrollRunnable) {
 			mCurrentSmoothScrollRunnable.stop();
 		}
@@ -1013,9 +1031,24 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 				// Default interpolator is a Decelerate Interpolator
 				mScrollAnimationInterpolator = new DecelerateInterpolator();
 			}
-			mCurrentSmoothScrollRunnable = new SmoothScrollRunnable(getScrollY(), y, duration);
-			post(mCurrentSmoothScrollRunnable);
+			mCurrentSmoothScrollRunnable = new SmoothScrollRunnable(getScrollY(), y, duration, listener);
+
+			if (delayMillis > 0) {
+				postDelayed(mCurrentSmoothScrollRunnable, delayMillis);
+			} else {
+				post(mCurrentSmoothScrollRunnable);
+			}
 		}
+	}
+
+	private final void smoothScrollToAndBack(int y) {
+		smoothScrollTo(y, SMOOTH_SCROLL_DURATION_MS, 0, new OnSmoothScrollFinishedListener() {
+
+			@Override
+			public void onSmoothScrollFinished() {
+				smoothScrollTo(0, SMOOTH_SCROLL_DURATION_MS, DEMO_SCROLL_INTERVAL, null);
+			}
+		});
 	}
 
 	public static enum AnimationStyle {
@@ -1308,16 +1341,18 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		private final int mScrollToY;
 		private final int mScrollFromY;
 		private final long mDuration;
+		private OnSmoothScrollFinishedListener mListener;
 
 		private boolean mContinueRunning = true;
 		private long mStartTime = -1;
 		private int mCurrentY = -1;
 
-		public SmoothScrollRunnable(int fromY, int toY, long duration) {
+		public SmoothScrollRunnable(int fromY, int toY, long duration, OnSmoothScrollFinishedListener listener) {
 			mScrollFromY = fromY;
 			mScrollToY = toY;
 			mInterpolator = mScrollAnimationInterpolator;
 			mDuration = duration;
+			mListener = listener;
 		}
 
 		@Override
@@ -1352,6 +1387,10 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 				} else {
 					postDelayed(this, ANIMATION_DELAY);
 				}
+			} else {
+				if (null != mListener) {
+					mListener.onSmoothScrollFinished();
+				}
 			}
 		}
 
@@ -1359,6 +1398,10 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 			mContinueRunning = false;
 			removeCallbacks(this);
 		}
+	}
+
+	static interface OnSmoothScrollFinishedListener {
+		void onSmoothScrollFinished();
 	}
 
 }

@@ -28,6 +28,17 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase.State;
 public interface IPullToRefresh<T extends View> {
 
 	/**
+	 * Demos the Pull-to-Refresh functionality to the user so that they are
+	 * aware it is there. This could be useful when the user first opens your
+	 * app, etc. The animation will only happen if the Refresh View (ListView,
+	 * ScrollView, etc) is in a state where a Pull-to-Refresh could occur by a
+	 * user's touch gesture (i.e. scrolled to the top/bottom).
+	 * 
+	 * @return true - if the Demo has been started, false if not.
+	 */
+	public boolean demo();
+
+	/**
 	 * Get the mode that this view is currently in. This is only really useful
 	 * when using <code>Mode.BOTH</code>.
 	 * 
