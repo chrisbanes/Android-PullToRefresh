@@ -135,9 +135,9 @@ public abstract class LoadingLayout extends LinearLayout {
 		// If we don't have a user defined drawable, load the default
 		if (null == imageDrawable) {
 			if (mode == Mode.PULL_DOWN_TO_REFRESH) {
-				imageDrawable = context.getResources().getDrawable(getDefaultBottomDrawableResId());
-			} else {
 				imageDrawable = context.getResources().getDrawable(getDefaultTopDrawableResId());
+			} else {
+				imageDrawable = context.getResources().getDrawable(getDefaultBottomDrawableResId());
 			}
 		}
 

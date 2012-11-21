@@ -35,7 +35,7 @@ public class FlipLoadingLayout extends LoadingLayout {
 	public FlipLoadingLayout(Context context, Mode mode, TypedArray attrs) {
 		super(context, mode, attrs);
 		
-		final int rotateAngle = mode == Mode.PULL_DOWN_TO_REFRESH ? 180 : -180;
+		final int rotateAngle = mode == Mode.PULL_DOWN_TO_REFRESH ? -180 : 180;
 
 		mRotateAnimation = new RotateAnimation(0, rotateAngle, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
 				0.5f);
