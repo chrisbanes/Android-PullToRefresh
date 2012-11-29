@@ -17,12 +17,9 @@ package com.handmark.pulltorefresh.library;
 
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.os.Build.VERSION;
-import android.os.Build.VERSION_CODES;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.HorizontalScrollView;
-import android.widget.ScrollView;
 
 public class PullToRefreshHorizontalScrollView extends PullToRefreshBase<HorizontalScrollView> {
 
@@ -53,14 +50,14 @@ public class PullToRefreshHorizontalScrollView extends PullToRefreshBase<Horizon
 
 	@Override
 	protected boolean isReadyForPullStart() {
-		return mRefreshableView.getScrollY() == 0;
+		return mRefreshableView.getScrollX() == 0;
 	}
 
 	@Override
 	protected boolean isReadyForPullEnd() {
 		View scrollViewChild = mRefreshableView.getChildAt(0);
 		if (null != scrollViewChild) {
-			return mRefreshableView.getScrollY() >= (scrollViewChild.getHeight() - getHeight());
+			return mRefreshableView.getScrollX() >= (scrollViewChild.getWidth() - getWidth());
 		}
 		return false;
 	}
@@ -93,7 +90,7 @@ public class PullToRefreshHorizontalScrollView extends PullToRefreshBase<Horizon
 			int scrollRange = 0;
 			if (getChildCount() > 0) {
 				View child = getChildAt(0);
-				scrollRange = Math.max(0, child.getHeight() - (getHeight() - getPaddingBottom() - getPaddingTop()));
+				scrollRange = Math.max(0, child.getWidth() - (getWidth() - getPaddingLeft() - getPaddingRight()));
 			}
 			return scrollRange;
 		}
