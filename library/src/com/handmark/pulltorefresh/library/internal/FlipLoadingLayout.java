@@ -23,6 +23,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 
+import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.handmark.pulltorefresh.library.R;
 
@@ -97,13 +98,25 @@ public class FlipLoadingLayout extends LoadingLayout {
 	}
 
 	@Override
-	protected int getDefaultTopDrawableResId() {
-		return R.drawable.default_ptr_flip_top;
+	protected int getDefaultStartDrawableResId(final int scrollDirection) {
+		switch (scrollDirection) {
+			case PullToRefreshBase.HORIZONTAL_SCROLL:
+				return R.drawable.default_ptr_flip_left;
+			case PullToRefreshBase.VERTICAL_SCROLL:
+			default:
+				return R.drawable.default_ptr_flip_top;
+		}
 	}
 
 	@Override
-	protected int getDefaultBottomDrawableResId() {
-		return R.drawable.default_ptr_flip_bottom;
+	protected int getDefaultEndDrawableResId(final int scrollDirection) {
+		switch (scrollDirection) {
+			case PullToRefreshBase.HORIZONTAL_SCROLL:
+				return R.drawable.default_ptr_flip_right;
+			case PullToRefreshBase.VERTICAL_SCROLL:
+			default:
+				return R.drawable.default_ptr_flip_bottom;
+		}
 	}
 
 }

@@ -147,9 +147,9 @@ public abstract class LoadingLayout extends LinearLayout {
 		// If we don't have a user defined drawable, load the default
 		if (null == imageDrawable) {
 			if (mode == Mode.PULL_FROM_START) {
-				imageDrawable = context.getResources().getDrawable(getDefaultTopDrawableResId());
+				imageDrawable = context.getResources().getDrawable(getDefaultStartDrawableResId(scrollDirection));
 			} else {
-				imageDrawable = context.getResources().getDrawable(getDefaultBottomDrawableResId());
+				imageDrawable = context.getResources().getDrawable(getDefaultEndDrawableResId(scrollDirection));
 			}
 		}
 
@@ -308,9 +308,9 @@ public abstract class LoadingLayout extends LinearLayout {
 	 * Callbacks for derivative Layouts
 	 */
 
-	protected abstract int getDefaultBottomDrawableResId();
+	protected abstract int getDefaultEndDrawableResId(int scrollDirection);
 
-	protected abstract int getDefaultTopDrawableResId();
+	protected abstract int getDefaultStartDrawableResId(int scrollDirection);
 
 	protected abstract void onLoadingDrawableSet(Drawable imageDrawable);
 
