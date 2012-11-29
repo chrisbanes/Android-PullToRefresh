@@ -15,6 +15,8 @@
  *******************************************************************************/
 package com.handmark.pulltorefresh.samples;
 
+import com.handmark.pulltorefresh.library.PullToRefreshHorizontalScrollView;
+
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -25,7 +27,7 @@ import android.widget.ListView;
 public class LauncherActivity extends ListActivity {
 
 	public static final String[] options = { "ListView", "ExpandableListView", "GridView", "WebView", "ScrollView",
-			"ListView Fragment", "WebView Advanced" };
+			"Horizontal ScrollView", "ListView Fragment", "WebView Advanced" };
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -55,9 +57,12 @@ public class LauncherActivity extends ListActivity {
 				intent = new Intent(this, PullToRefreshScrollViewActivity.class);
 				break;
 			case 5:
-				intent = new Intent(this, PullToRefreshListFragmentActivity.class);
+				intent = new Intent(this, PullToRefreshHorizontalScrollViewActivity.class);
 				break;
 			case 6:
+				intent = new Intent(this, PullToRefreshListFragmentActivity.class);
+				break;
+			case 7:
 				intent = new Intent(this, PullToRefreshWebView2Activity.class);
 				break;
 		}
