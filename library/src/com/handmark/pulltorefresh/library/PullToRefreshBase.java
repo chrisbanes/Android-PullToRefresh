@@ -47,6 +47,9 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 
 	static final boolean DEBUG = false;
 
+	public static final int VERTICAL_SCROLL = LinearLayout.VERTICAL;
+	public static final int HORIZONTAL_SCROLL = LinearLayout.HORIZONTAL;
+
 	static final String LOG_TAG = "PullToRefresh";
 
 	static final float FRICTION = 2.0f;
@@ -136,14 +139,14 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 
 	@Override
 	public final boolean demo() {
-		if (mMode.showHeaderLoadingLayout() && isReadyForPullDown()) {
+		if (mMode.showHeaderLoadingLayout() && isReadyForPullStart()) {
 			smoothScrollToAndBack(-mHeaderHeight * 2);
 			return true;
-		} else if (mMode.showFooterLoadingLayout() && isReadyForPullUp()) {
+		} else if (mMode.showFooterLoadingLayout() && isReadyForPullEnd()) {
 			smoothScrollToAndBack(mFooterHeight * 2);
 			return true;
 		}
-		
+
 		return false;
 	}
 
@@ -238,13 +241,13 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 					final float xDiff = Math.abs(event.getX() - mLastMotionX);
 
 					if (yDiff > mTouchSlop && (!mFilterTouchEvents || yDiff > xDiff)) {
-						if (mMode.showHeaderLoadingLayout() && dy >= 1f && isReadyForPullDown()) {
+						if (mMode.showHeaderLoadingLayout() && dy >= 1f && isReadyForPullStart()) {
 							mLastMotionY = y;
 							mIsBeingDragged = true;
 							if (mMode == Mode.BOTH) {
 								mCurrentMode = Mode.PULL_DOWN_TO_REFRESH;
 							}
-						} else if (mMode.showFooterLoadingLayout() && dy <= -1f && isReadyForPullUp()) {
+						} else if (mMode.showFooterLoadingLayout() && dy <= -1f && isReadyForPullEnd()) {
 							mLastMotionY = y;
 							mIsBeingDragged = true;
 							if (mMode == Mode.BOTH) {
@@ -603,7 +606,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	}
 
 	protected LoadingLayout createLoadingLayout(Context context, Mode mode, TypedArray attrs) {
-		return mLoadingAnimationStyle.createLoadingLayout(context, mode, attrs);
+		return mLoadingAnimationStyle.createLoadingLayout(context, mode, getPullToRefreshScrollDirection(), attrs);
 	}
 
 	/**
@@ -653,6 +656,12 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	}
 
 	/**
+	 * @return Either {@link #VERTICAL_SCROLL} or {@link #HORIZONTAL_SCROLL}
+	 *         depending on the scroll direction.
+	 */
+	protected abstract int getPullToRefreshScrollDirection();
+
+	/**
 	 * Allows Derivative classes to handle the XML Attrs without creating a
 	 * TypedArray themsevles
 	 * 
@@ -663,22 +672,22 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	}
 
 	/**
-	 * Implemented by derived class to return whether the View is in a mState
-	 * where the user can Pull to Refresh by scrolling down.
+	 * Implemented by derived class to return whether the View is in a state
+	 * where the user can Pull to Refresh by scrolling from the start.
 	 * 
-	 * @return true if the View is currently the correct mState (for example,
+	 * @return true if the View is currently the correct state (for example,
 	 *         top of a ListView)
 	 */
-	protected abstract boolean isReadyForPullDown();
+	protected abstract boolean isReadyForPullStart();
 
 	/**
-	 * Implemented by derived class to return whether the View is in a mState
-	 * where the user can Pull to Refresh by scrolling up.
+	 * Implemented by derived class to return whether the View is in a state
+	 * where the user can Pull to Refresh by scrolling from the end.
 	 * 
-	 * @return true if the View is currently in the correct mState (for example,
+	 * @return true if the View is currently in the correct state (for example,
 	 *         bottom of a ListView)
 	 */
-	protected abstract boolean isReadyForPullUp();
+	protected abstract boolean isReadyForPullEnd();
 
 	/**
 	 * Called by {@link #onRestoreInstanceState(Parcelable)} so that derivative
@@ -893,11 +902,11 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	private boolean isReadyForPull() {
 		switch (mMode) {
 			case PULL_DOWN_TO_REFRESH:
-				return isReadyForPullDown();
+				return isReadyForPullStart();
 			case PULL_UP_TO_REFRESH:
-				return isReadyForPullUp();
+				return isReadyForPullEnd();
 			case BOTH:
-				return isReadyForPullUp() || isReadyForPullDown();
+				return isReadyForPullEnd() || isReadyForPullStart();
 		}
 		return false;
 	}
@@ -1084,13 +1093,13 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 			}
 		}
 
-		LoadingLayout createLoadingLayout(Context context, Mode mode, TypedArray attrs) {
+		LoadingLayout createLoadingLayout(Context context, Mode mode, int scrollDirection, TypedArray attrs) {
 			switch (this) {
 				case ROTATE:
 				default:
-					return new RotateLoadingLayout(context, mode, attrs);
+					return new RotateLoadingLayout(context, mode, scrollDirection, attrs);
 				case FLIP:
-					return new FlipLoadingLayout(context, mode, attrs);
+					return new FlipLoadingLayout(context, mode, scrollDirection, attrs);
 			}
 		}
 	}

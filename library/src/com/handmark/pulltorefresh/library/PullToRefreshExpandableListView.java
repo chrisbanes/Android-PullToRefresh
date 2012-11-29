@@ -58,6 +58,11 @@ public class PullToRefreshExpandableListView extends PullToRefreshAdapterViewBas
 		lv.setId(android.R.id.list);
 		return lv;
 	}
+	
+	@Override
+	protected int getPullToRefreshScrollDirection() {
+		return VERTICAL_SCROLL;
+	}
 
 	class InternalExpandableListView extends ExpandableListView implements EmptyViewMethodAccessor {
 

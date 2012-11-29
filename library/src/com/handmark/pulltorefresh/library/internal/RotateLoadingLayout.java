@@ -35,8 +35,8 @@ public class RotateLoadingLayout extends LoadingLayout {
 
 	private float mRotationPivotX, mRotationPivotY;
 
-	public RotateLoadingLayout(Context context, Mode mode, TypedArray attrs) {
-		super(context, mode, attrs);
+	public RotateLoadingLayout(Context context, Mode mode, int scrollDirection, TypedArray attrs) {
+		super(context, mode, scrollDirection, attrs);
 
 		mHeaderImage.setScaleType(ScaleType.MATRIX);
 		mHeaderImageMatrix = new Matrix();

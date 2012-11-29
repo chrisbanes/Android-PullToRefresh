@@ -91,12 +91,17 @@ public class PullToRefreshWebView extends PullToRefreshBase<WebView> {
 	}
 
 	@Override
-	protected boolean isReadyForPullDown() {
+	protected int getPullToRefreshScrollDirection() {
+		return VERTICAL_SCROLL;
+	}
+
+	@Override
+	protected boolean isReadyForPullStart() {
 		return mRefreshableView.getScrollY() == 0;
 	}
 
 	@Override
-	protected boolean isReadyForPullUp() {
+	protected boolean isReadyForPullEnd() {
 		float exactContentHeight = FloatMath.floor(mRefreshableView.getContentHeight() * mRefreshableView.getScale());
 		return mRefreshableView.getScrollY() >= (exactContentHeight - mRefreshableView.getHeight());
 	}

@@ -268,6 +268,11 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		lv.setId(android.R.id.list);
 		return lv;
 	}
+	
+	@Override
+	protected int getPullToRefreshScrollDirection() {
+		return VERTICAL_SCROLL;
+	}
 
 	@TargetApi(9)
 	final class InternalListViewSDK9 extends InternalListView {

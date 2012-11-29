@@ -281,11 +281,11 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 		mShowIndicator = a.getBoolean(R.styleable.PullToRefresh_ptrShowIndicator, !isPullToRefreshOverScrollEnabled());
 	}
 
-	protected boolean isReadyForPullDown() {
+	protected boolean isReadyForPullStart() {
 		return isFirstItemVisible();
 	}
 
-	protected boolean isReadyForPullUp() {
+	protected boolean isReadyForPullEnd() {
 		return isLastItemVisible();
 	}
 
@@ -427,7 +427,7 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 
 	private void updateIndicatorViewsVisibility() {
 		if (null != mIndicatorIvTop) {
-			if (!isRefreshing() && isReadyForPullDown()) {
+			if (!isRefreshing() && isReadyForPullStart()) {
 				if (!mIndicatorIvTop.isVisible()) {
 					mIndicatorIvTop.show();
 				}
@@ -439,7 +439,7 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 		}
 
 		if (null != mIndicatorIvBottom) {
-			if (!isRefreshing() && isReadyForPullUp()) {
+			if (!isRefreshing() && isReadyForPullEnd()) {
 				if (!mIndicatorIvBottom.isVisible()) {
 					mIndicatorIvBottom.show();
 				}

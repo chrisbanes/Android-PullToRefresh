@@ -58,6 +58,11 @@ public class PullToRefreshGridView extends PullToRefreshAdapterViewBase<GridView
 		gv.setId(R.id.gridview);
 		return gv;
 	}
+	
+	@Override
+	protected int getPullToRefreshScrollDirection() {
+		return VERTICAL_SCROLL;
+	}
 
 	class InternalGridView extends GridView implements EmptyViewMethodAccessor {
 
