@@ -66,7 +66,7 @@ public class FlipLoadingLayout extends LoadingLayout {
 	}
 
 	@Override
-	protected void onPullYImpl(float scaleOfHeight) {
+	protected void onPullImpl(float scaleOfLayout) {
 		// NO-OP
 	}
 

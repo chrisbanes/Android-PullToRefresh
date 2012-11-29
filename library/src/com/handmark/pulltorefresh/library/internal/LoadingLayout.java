@@ -159,9 +159,9 @@ public abstract class LoadingLayout extends LinearLayout {
 		reset();
 	}
 
-	public final void onPullY(float scaleOfHeight) {
+	public final void onPull(float scaleOfLayout) {
 		if (!mUseIntrinisicAnimation) {
-			onPullYImpl(scaleOfHeight);
+			onPullImpl(scaleOfLayout);
 		}
 	}
 
@@ -314,7 +314,7 @@ public abstract class LoadingLayout extends LinearLayout {
 
 	protected abstract void onLoadingDrawableSet(Drawable imageDrawable);
 
-	protected abstract void onPullYImpl(float scaleOfHeight);
+	protected abstract void onPullImpl(float scaleOfLayout);
 
 	protected abstract void pullToRefreshImpl();
 

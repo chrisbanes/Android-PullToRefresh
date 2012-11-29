@@ -57,8 +57,8 @@ public class RotateLoadingLayout extends LoadingLayout {
 		}
 	}
 
-	protected void onPullYImpl(float scaleOfHeight) {
-		mHeaderImageMatrix.setRotate(scaleOfHeight * 90, mRotationPivotX, mRotationPivotY);
+	protected void onPullImpl(float scaleOfLayout) {
+		mHeaderImageMatrix.setRotate(scaleOfLayout * 90, mRotationPivotX, mRotationPivotY);
 		mHeaderImage.setImageMatrix(mHeaderImageMatrix);
 	}
 

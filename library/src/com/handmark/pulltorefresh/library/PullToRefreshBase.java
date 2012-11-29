@@ -1027,10 +1027,10 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 			float scale = Math.abs(newScrollValue) / (float) itemDimension;
 			switch (mCurrentMode) {
 				case PULL_FROM_END:
-					mFooterLayout.onPullY(scale);
+					mFooterLayout.onPull(scale);
 					break;
 				case PULL_FROM_START:
-					mHeaderLayout.onPullY(scale);
+					mHeaderLayout.onPull(scale);
 					break;
 			}
 
