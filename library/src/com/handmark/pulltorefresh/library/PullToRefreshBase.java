@@ -70,9 +70,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	// ===========================================================
 
 	private int mTouchSlop;
-	private float mLastMotionX;
-	private float mLastMotionY;
-	private float mInitialMotionY;
+	private float mLastMotionX, mLastMotionY;
+	private float mInitialMotionX, mInitialMotionY;
 
 	private boolean mIsBeingDragged = false;
 	private State mState = State.RESET;
@@ -93,8 +92,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	private LoadingLayout mHeaderLayout;
 	private LoadingLayout mFooterLayout;
 
-	private int mHeaderHeight;
-	private int mFooterHeight;
+	private int mHeaderDimension;
+	private int mFooterDimension;
 
 	private OnRefreshListener<T> mOnRefreshListener;
 	private OnRefreshListener2<T> mOnRefreshListener2;
@@ -140,10 +139,10 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	@Override
 	public final boolean demo() {
 		if (mMode.showHeaderLoadingLayout() && isReadyForPullStart()) {
-			smoothScrollToAndBack(-mHeaderHeight * 2);
+			smoothScrollToAndBack(-mHeaderDimension * 2);
 			return true;
 		} else if (mMode.showFooterLoadingLayout() && isReadyForPullEnd()) {
-			smoothScrollToAndBack(mFooterHeight * 2);
+			smoothScrollToAndBack(mFooterDimension * 2);
 			return true;
 		}
 
@@ -235,20 +234,35 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 				}
 
 				if (isReadyForPull()) {
-					final float y = event.getY();
-					final float dy = y - mLastMotionY;
-					final float yDiff = Math.abs(dy);
-					final float xDiff = Math.abs(event.getX() - mLastMotionX);
+					final float y = event.getY(), x = event.getX();
+					final float diff, oppositeDiff, absDiff;
 
-					if (yDiff > mTouchSlop && (!mFilterTouchEvents || yDiff > xDiff)) {
-						if (mMode.showHeaderLoadingLayout() && dy >= 1f && isReadyForPullStart()) {
+					// We need to use the correct values, based on scroll
+					// direction
+					switch (getPullToRefreshScrollDirection()) {
+						case HORIZONTAL_SCROLL:
+							diff = x - mLastMotionX;
+							oppositeDiff = y - mLastMotionY;
+							break;
+						case VERTICAL_SCROLL:
+						default:
+							diff = y - mLastMotionY;
+							oppositeDiff = x - mLastMotionX;
+							break;
+					}
+					absDiff = Math.abs(diff);
+
+					if (absDiff > mTouchSlop && (!mFilterTouchEvents || absDiff > Math.abs(oppositeDiff))) {
+						if (mMode.showHeaderLoadingLayout() && diff >= 1f && isReadyForPullStart()) {
 							mLastMotionY = y;
+							mLastMotionX = x;
 							mIsBeingDragged = true;
 							if (mMode == Mode.BOTH) {
 								mCurrentMode = Mode.PULL_DOWN_TO_REFRESH;
 							}
-						} else if (mMode.showFooterLoadingLayout() && dy <= -1f && isReadyForPullEnd()) {
+						} else if (mMode.showFooterLoadingLayout() && diff <= -1f && isReadyForPullEnd()) {
 							mLastMotionY = y;
+							mLastMotionX = x;
 							mIsBeingDragged = true;
 							if (mMode == Mode.BOTH) {
 								mCurrentMode = Mode.PULL_UP_TO_REFRESH;
@@ -261,7 +275,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 			case MotionEvent.ACTION_DOWN: {
 				if (isReadyForPull()) {
 					mLastMotionY = mInitialMotionY = event.getY();
-					mLastMotionX = event.getX();
+					mLastMotionX = mInitialMotionX = event.getX();
 					mIsBeingDragged = false;
 				}
 				break;
@@ -298,6 +312,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 			case MotionEvent.ACTION_MOVE: {
 				if (mIsBeingDragged) {
 					mLastMotionY = event.getY();
+					mLastMotionX = event.getX();
 					pullEvent();
 					return true;
 				}
@@ -307,6 +322,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 			case MotionEvent.ACTION_DOWN: {
 				if (isReadyForPull()) {
 					mLastMotionY = mInitialMotionY = event.getY();
+					mLastMotionX = mInitialMotionX = event.getX();
 					return true;
 				}
 				break;
@@ -368,7 +384,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		}
 
 		// Refresh Height as it may have changed
-		refreshLoadingViewsHeight();
+		refreshLoadingViewsSize();
 	}
 
 	@Override
@@ -386,7 +402,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		}
 
 		// The Loading Height may have changed, so refresh
-		refreshLoadingViewsHeight();
+		refreshLoadingViewsSize();
 	}
 
 	@Override
@@ -538,11 +554,11 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 				switch (mCurrentMode) {
 					case MANUAL_REFRESH_ONLY:
 					case PULL_UP_TO_REFRESH:
-						smoothScrollTo(mFooterHeight);
+						smoothScrollTo(mFooterDimension);
 						break;
 					default:
 					case PULL_DOWN_TO_REFRESH:
-						smoothScrollTo(-mHeaderHeight);
+						smoothScrollTo(-mHeaderDimension);
 						break;
 				}
 			} else {
@@ -628,7 +644,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	protected abstract T createRefreshableView(Context context, AttributeSet attrs);
 
 	protected final int getFooterHeight() {
-		return mFooterHeight;
+		return mFooterDimension;
 	}
 
 	protected final LoadingLayout getFooterLayout() {
@@ -636,7 +652,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	}
 
 	protected final int getHeaderHeight() {
-		return mHeaderHeight;
+		return mHeaderDimension;
 	}
 
 	protected final LoadingLayout getHeaderLayout() {
@@ -675,8 +691,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	 * Implemented by derived class to return whether the View is in a state
 	 * where the user can Pull to Refresh by scrolling from the start.
 	 * 
-	 * @return true if the View is currently the correct state (for example,
-	 *         top of a ListView)
+	 * @return true if the View is currently the correct state (for example, top
+	 *         of a ListView)
 	 */
 	protected abstract boolean isReadyForPullStart();
 
@@ -766,12 +782,21 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	}
 
 	/**
-	 * Helper method which just calls scrollTo() but with a zero x value.
+	 * Helper method which just calls scrollTo() in the correct scrolling
+	 * direction.
 	 * 
-	 * @param y
+	 * @param value
+	 *            - New Scroll value
 	 */
-	protected final void setHeaderScroll(int y) {
-		scrollTo(0, y);
+	protected final void setHeaderScroll(final int value) {
+		switch (getPullToRefreshScrollDirection()) {
+			case VERTICAL_SCROLL:
+				scrollTo(0, value);
+				break;
+			case HORIZONTAL_SCROLL:
+				scrollTo(value, 0);
+				break;
+		}
 	}
 
 	/**
@@ -787,25 +812,25 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	}
 
 	/**
-	 * Smooth Scroll to Y position using the default duration of
+	 * Smooth Scroll to position using the default duration of
 	 * {@value #SMOOTH_SCROLL_DURATION_MS} ms.
 	 * 
-	 * @param y
-	 *            - Y position to scroll to
+	 * @param scrollValue
+	 *            - Position to scroll to
 	 */
-	protected final void smoothScrollTo(int y) {
-		smoothScrollTo(y, getPullToRefreshScrollDuration());
+	protected final void smoothScrollTo(int scrollValue) {
+		smoothScrollTo(scrollValue, getPullToRefreshScrollDuration());
 	}
 
 	/**
-	 * Smooth Scroll to Y position using the longer default duration of
+	 * Smooth Scroll to position using the longer default duration of
 	 * {@value #SMOOTH_SCROLL_LONG_DURATION_MS} ms.
 	 * 
-	 * @param y
-	 *            - Y position to scroll to
+	 * @param scrollValue
+	 *            - Position to scroll to
 	 */
-	protected final void smoothScrollToLonger(int y) {
-		smoothScrollTo(y, getPullToRefreshScrollDurationLonger());
+	protected final void smoothScrollToLonger(int scrollValue) {
+		smoothScrollTo(scrollValue, getPullToRefreshScrollDurationLonger());
 	}
 
 	/**
@@ -813,13 +838,27 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	 * checking that the mode is different to current state so always updates.
 	 */
 	protected void updateUIForMode() {
+		// We need to use the correct LayoutParam values, based on scroll
+		// direction
+		final LinearLayout.LayoutParams lp;
+		switch (getPullToRefreshScrollDirection()) {
+			case HORIZONTAL_SCROLL:
+				lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+						LinearLayout.LayoutParams.MATCH_PARENT);
+				break;
+			case VERTICAL_SCROLL:
+			default:
+				lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+						LinearLayout.LayoutParams.WRAP_CONTENT);
+				break;
+		}
+
 		// Remove Header, and then add Header Loading View again if needed
 		if (this == mHeaderLayout.getParent()) {
 			removeView(mHeaderLayout);
 		}
 		if (mMode.showHeaderLoadingLayout()) {
-			addViewInternal(mHeaderLayout, 0, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-					ViewGroup.LayoutParams.WRAP_CONTENT));
+			addViewInternal(mHeaderLayout, 0, lp);
 		}
 
 		// Remove Footer, and then add Footer Loading View again if needed
@@ -827,12 +866,11 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 			removeView(mFooterLayout);
 		}
 		if (mMode.showFooterLoadingLayout()) {
-			addViewInternal(mFooterLayout, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-					ViewGroup.LayoutParams.WRAP_CONTENT));
+			addViewInternal(mFooterLayout, lp);
 		}
 
 		// Hide Loading Views
-		refreshLoadingViewsHeight();
+		refreshLoadingViewsSize();
 
 		// If we're not using Mode.BOTH, set mCurrentMode to mMode, otherwise
 		// set it to pull down
@@ -843,13 +881,33 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		mRefreshableViewWrapper = new FrameLayout(context);
 		mRefreshableViewWrapper.addView(refreshableView, ViewGroup.LayoutParams.MATCH_PARENT,
 				ViewGroup.LayoutParams.MATCH_PARENT);
-		addViewInternal(mRefreshableViewWrapper, new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, 0, 1.0f));
+
+		switch (getPullToRefreshScrollDirection()) {
+			case HORIZONTAL_SCROLL:
+				addViewInternal(mRefreshableViewWrapper, new LinearLayout.LayoutParams(0, LayoutParams.MATCH_PARENT,
+						1.0f));
+				break;
+			case VERTICAL_SCROLL:
+			default:
+				addViewInternal(mRefreshableViewWrapper, new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, 0,
+						1.0f));
+				break;
+		}
 	}
 
 	@SuppressWarnings("deprecation")
 	private void init(Context context, AttributeSet attrs) {
-		setOrientation(LinearLayout.VERTICAL);
-		setGravity(Gravity.CENTER_HORIZONTAL);
+		switch (getPullToRefreshScrollDirection()) {
+			case HORIZONTAL_SCROLL:
+				setOrientation(LinearLayout.HORIZONTAL);
+				break;
+			case VERTICAL_SCROLL:
+			default:
+				setOrientation(LinearLayout.VERTICAL);
+				break;
+		}
+
+		setGravity(Gravity.CENTER);
 
 		ViewConfiguration config = ViewConfiguration.get(context);
 		mTouchSlop = config.getScaledTouchSlop();
@@ -935,25 +993,38 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	 *         change
 	 */
 	private void pullEvent() {
-		final int newScrollY;
-		final int itemHeight;
+		final int newScrollValue;
+		final int itemDimension;
+		final float initialMotionValue, lastMotionValue;
 
-		switch (mCurrentMode) {
-			case PULL_UP_TO_REFRESH:
-				newScrollY = Math.round(Math.max(mInitialMotionY - mLastMotionY, 0) / FRICTION);
-				itemHeight = mFooterHeight;
+		switch (getPullToRefreshScrollDirection()) {
+			case HORIZONTAL_SCROLL:
+				initialMotionValue = mInitialMotionX;
+				lastMotionValue = mLastMotionX;
 				break;
-			case PULL_DOWN_TO_REFRESH:
+			case VERTICAL_SCROLL:
 			default:
-				newScrollY = Math.round(Math.min(mInitialMotionY - mLastMotionY, 0) / FRICTION);
-				itemHeight = mHeaderHeight;
+				initialMotionValue = mInitialMotionY;
+				lastMotionValue = mLastMotionY;
 				break;
 		}
 
-		setHeaderScroll(newScrollY);
+		switch (mCurrentMode) {
+			case PULL_UP_TO_REFRESH:
+				newScrollValue = Math.round(Math.max(initialMotionValue - lastMotionValue, 0) / FRICTION);
+				itemDimension = mFooterDimension;
+				break;
+			case PULL_DOWN_TO_REFRESH:
+			default:
+				newScrollValue = Math.round(Math.min(initialMotionValue - lastMotionValue, 0) / FRICTION);
+				itemDimension = mHeaderDimension;
+				break;
+		}
 
-		if (newScrollY != 0) {
-			float scale = Math.abs(newScrollY) / (float) itemHeight;
+		setHeaderScroll(newScrollValue);
+
+		if (newScrollValue != 0) {
+			float scale = Math.abs(newScrollValue) / (float) itemDimension;
 			switch (mCurrentMode) {
 				case PULL_UP_TO_REFRESH:
 					mFooterLayout.onPullY(scale);
@@ -963,9 +1034,9 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 					break;
 			}
 
-			if (mState != State.PULL_TO_REFRESH && itemHeight >= Math.abs(newScrollY)) {
+			if (mState != State.PULL_TO_REFRESH && itemDimension >= Math.abs(newScrollValue)) {
 				setState(State.PULL_TO_REFRESH);
-			} else if (mState == State.PULL_TO_REFRESH && itemHeight < Math.abs(newScrollY)) {
+			} else if (mState == State.PULL_TO_REFRESH && itemDimension < Math.abs(newScrollValue)) {
 				setState(State.RELEASE_TO_REFRESH);
 			}
 		}
@@ -975,19 +1046,44 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	 * Re-measure the Loading Views height, and adjust internal padding as
 	 * necessary
 	 */
-	private void refreshLoadingViewsHeight() {
-		mHeaderHeight = mFooterHeight = 0;
+	private void refreshLoadingViewsSize() {
+		mHeaderDimension = mFooterDimension = 0;
+
+		int pLeft, pTop, pRight, pBottom;
+		pLeft = pTop = pRight = pBottom = 0;
 
 		if (mMode.showHeaderLoadingLayout()) {
 			measureView(mHeaderLayout);
-			mHeaderHeight = mHeaderLayout.getMeasuredHeight();
+
+			switch (getPullToRefreshScrollDirection()) {
+				case HORIZONTAL_SCROLL:
+					mHeaderDimension = mHeaderLayout.getMeasuredWidth();
+					pLeft = -mHeaderDimension;
+					break;
+				case VERTICAL_SCROLL:
+				default:
+					mHeaderDimension = mHeaderLayout.getMeasuredHeight();
+					pTop = -mHeaderDimension;
+					break;
+			}
 		}
 		if (mMode.showFooterLoadingLayout()) {
 			measureView(mFooterLayout);
-			mFooterHeight = mFooterLayout.getMeasuredHeight();
+
+			switch (getPullToRefreshScrollDirection()) {
+				case HORIZONTAL_SCROLL:
+					mFooterDimension = mFooterLayout.getMeasuredWidth();
+					pRight = -mFooterDimension;
+					break;
+				case VERTICAL_SCROLL:
+				default:
+					mFooterDimension = mFooterLayout.getMeasuredHeight();
+					pBottom = -mFooterDimension;
+					break;
+			}
 		}
 
-		setPadding(0, -mHeaderHeight, 0, -mFooterHeight);
+		setPadding(pLeft, pTop, pRight, pBottom);
 	}
 
 	private void setState(State state, final boolean... params) {
@@ -1019,28 +1115,40 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	}
 
 	/**
-	 * Smooth Scroll to Y position using the specific duration
+	 * Smooth Scroll to position using the specific duration
 	 * 
-	 * @param y
-	 *            - Y position to scroll to
+	 * @param scrollValue
+	 *            - Position to scroll to
 	 * @param duration
 	 *            - Duration of animation in milliseconds
 	 */
-	private final void smoothScrollTo(int y, long duration) {
-		smoothScrollTo(y, duration, 0, null);
+	private final void smoothScrollTo(int scrollValue, long duration) {
+		smoothScrollTo(scrollValue, duration, 0, null);
 	}
 
-	private final void smoothScrollTo(int y, long duration, long delayMillis, OnSmoothScrollFinishedListener listener) {
+	private final void smoothScrollTo(int newScrollValue, long duration, long delayMillis,
+			OnSmoothScrollFinishedListener listener) {
 		if (null != mCurrentSmoothScrollRunnable) {
 			mCurrentSmoothScrollRunnable.stop();
 		}
 
-		if (getScrollY() != y) {
+		final int oldScrollValue;
+		switch (getPullToRefreshScrollDirection()) {
+			case HORIZONTAL_SCROLL:
+				oldScrollValue = getScrollX();
+				break;
+			case VERTICAL_SCROLL:
+			default:
+				oldScrollValue = getScrollY();
+				break;
+		}
+
+		if (oldScrollValue != newScrollValue) {
 			if (null == mScrollAnimationInterpolator) {
 				// Default interpolator is a Decelerate Interpolator
 				mScrollAnimationInterpolator = new DecelerateInterpolator();
 			}
-			mCurrentSmoothScrollRunnable = new SmoothScrollRunnable(getScrollY(), y, duration, listener);
+			mCurrentSmoothScrollRunnable = new SmoothScrollRunnable(oldScrollValue, newScrollValue, duration, listener);
 
 			if (delayMillis > 0) {
 				postDelayed(mCurrentSmoothScrollRunnable, delayMillis);
