@@ -22,7 +22,7 @@ import android.view.View;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 
 @TargetApi(9)
-final class OverscrollHelper {
+public final class OverscrollHelper {
 
 	static final String LOG_TAG = "OverscrollHelper";
 	static final float DEFAULT_OVERSCROLL_SCALE = 1f;
@@ -53,7 +53,7 @@ final class OverscrollHelper {
 	 *            - true if this scroll operation is the result of a touch
 	 *            event, passed through from from overScrollBy call
 	 */
-	static void overScrollBy(final PullToRefreshBase<?> view, final int deltaX, final int scrollX, final int deltaY,
+	public static void overScrollBy(final PullToRefreshBase<?> view, final int deltaX, final int scrollX, final int deltaY,
 			final int scrollY, final boolean isTouchEvent) {
 		overScrollBy(view, deltaX, scrollX, deltaY, scrollY, 0, isTouchEvent);
 	}
@@ -83,7 +83,7 @@ final class OverscrollHelper {
 	 *            - true if this scroll operation is the result of a touch
 	 *            event, passed through from from overScrollBy call
 	 */
-	static void overScrollBy(final PullToRefreshBase<?> view, final int deltaX, final int scrollX, final int deltaY,
+	public static void overScrollBy(final PullToRefreshBase<?> view, final int deltaX, final int scrollX, final int deltaY,
 			final int scrollY, final int scrollRange, final boolean isTouchEvent) {
 		overScrollBy(view, deltaX, scrollX, deltaY, scrollY, scrollRange, 0, DEFAULT_OVERSCROLL_SCALE, isTouchEvent);
 	}
@@ -118,7 +118,7 @@ final class OverscrollHelper {
 	 *            - true if this scroll operation is the result of a touch
 	 *            event, passed through from from overScrollBy call
 	 */
-	static void overScrollBy(final PullToRefreshBase<?> view, final int deltaX, final int scrollX, final int deltaY,
+	public static void overScrollBy(final PullToRefreshBase<?> view, final int deltaX, final int scrollX, final int deltaY,
 			final int scrollY, final int scrollRange, final int fuzzyThreshold, final float scaleFactor,
 			final boolean isTouchEvent) {
 
