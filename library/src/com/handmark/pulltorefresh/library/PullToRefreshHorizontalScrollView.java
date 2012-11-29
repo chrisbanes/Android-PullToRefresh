@@ -30,7 +30,7 @@ public class PullToRefreshHorizontalScrollView extends PullToRefreshBase<Horizon
 	}
 
 	@Override
-	final int getPullToRefreshScrollDirection() {
+	public final int getPullToRefreshScrollDirection() {
 		return HORIZONTAL_SCROLL;
 	}
 

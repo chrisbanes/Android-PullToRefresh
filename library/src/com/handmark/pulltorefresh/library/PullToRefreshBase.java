@@ -523,7 +523,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	 * @return Either {@link #VERTICAL_SCROLL} or {@link #HORIZONTAL_SCROLL}
 	 *         depending on the scroll direction.
 	 */
-	abstract int getPullToRefreshScrollDirection();
+	public abstract int getPullToRefreshScrollDirection();
 
 	/**
 	 * Called when the UI has been to be updated to be in the

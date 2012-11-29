@@ -78,7 +78,7 @@ public class PullToRefreshWebView extends PullToRefreshBase<WebView> {
 	}
 	
 	@Override
-	final int getPullToRefreshScrollDirection() {
+	public final int getPullToRefreshScrollDirection() {
 		return VERTICAL_SCROLL;
 	}
 

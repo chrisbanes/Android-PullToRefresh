@@ -120,7 +120,7 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 	}
 
 	@Override
-	final int getPullToRefreshScrollDirection() {
+	public final int getPullToRefreshScrollDirection() {
 		return VERTICAL_SCROLL;
 	}
 
