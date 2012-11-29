@@ -518,6 +518,12 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	public final void setShowViewWhileRefreshing(boolean showView) {
 		mShowViewWhileRefreshing = showView;
 	}
+	
+	/**
+	 * @return Either {@link #VERTICAL_SCROLL} or {@link #HORIZONTAL_SCROLL}
+	 *         depending on the scroll direction.
+	 */
+	abstract int getPullToRefreshScrollDirection();
 
 	/**
 	 * Called when the UI has been to be updated to be in the
@@ -670,12 +676,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	protected FrameLayout getRefreshableViewWrapper() {
 		return mRefreshableViewWrapper;
 	}
-
-	/**
-	 * @return Either {@link #VERTICAL_SCROLL} or {@link #HORIZONTAL_SCROLL}
-	 *         depending on the scroll direction.
-	 */
-	protected abstract int getPullToRefreshScrollDirection();
 
 	/**
 	 * Allows Derivative classes to handle the XML Attrs without creating a

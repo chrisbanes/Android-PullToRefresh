@@ -17,6 +17,8 @@ package com.handmark.pulltorefresh.library;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.HorizontalScrollView;
@@ -28,24 +30,22 @@ public class PullToRefreshHorizontalScrollView extends PullToRefreshBase<Horizon
 	}
 
 	@Override
-	protected HorizontalScrollView createRefreshableView(Context context, AttributeSet attrs) {
-		HorizontalScrollView scrollView;
-
-		// FIXME Need to fix Overscroll for Horizontal
-
-		// if (VERSION.SDK_INT >= VERSION_CODES.GINGERBREAD) {
-		// scrollView = new InternalHorizontalScrollViewSDK9(context, attrs);
-		// } else {
-		scrollView = new HorizontalScrollView(context, attrs);
-		// }
-
-		scrollView.setId(R.id.scrollview);
-		return scrollView;
+	final int getPullToRefreshScrollDirection() {
+		return HORIZONTAL_SCROLL;
 	}
 
 	@Override
-	protected int getPullToRefreshScrollDirection() {
-		return HORIZONTAL_SCROLL;
+	protected HorizontalScrollView createRefreshableView(Context context, AttributeSet attrs) {
+		HorizontalScrollView scrollView;
+
+		if (VERSION.SDK_INT >= VERSION_CODES.GINGERBREAD) {
+			scrollView = new InternalHorizontalScrollViewSDK9(context, attrs);
+		} else {
+			scrollView = new HorizontalScrollView(context, attrs);
+		}
+
+		scrollView.setId(R.id.scrollview);
+		return scrollView;
 	}
 
 	@Override
@@ -77,8 +77,8 @@ public class PullToRefreshHorizontalScrollView extends PullToRefreshBase<Horizon
 					scrollRangeY, maxOverScrollX, maxOverScrollY, isTouchEvent);
 
 			// Does all of the hard work...
-			OverscrollHelper.overScrollBy(PullToRefreshHorizontalScrollView.this, deltaY, scrollY, getScrollRange(),
-					isTouchEvent);
+			OverscrollHelper.overScrollBy(PullToRefreshHorizontalScrollView.this, deltaX, scrollX, deltaY, scrollY,
+					getScrollRange(), isTouchEvent);
 
 			return returnValue;
 		}

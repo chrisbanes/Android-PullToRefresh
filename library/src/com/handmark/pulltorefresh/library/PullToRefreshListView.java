@@ -120,6 +120,11 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 	}
 
 	@Override
+	final int getPullToRefreshScrollDirection() {
+		return VERTICAL_SCROLL;
+	}
+
+	@Override
 	void onRefreshing(final boolean doScroll) {
 
 		// If we're not showing the Refreshing view, or the list is empty, then
@@ -268,11 +273,6 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		lv.setId(android.R.id.list);
 		return lv;
 	}
-	
-	@Override
-	protected int getPullToRefreshScrollDirection() {
-		return VERTICAL_SCROLL;
-	}
 
 	@TargetApi(9)
 	final class InternalListViewSDK9 extends InternalListView {
@@ -289,7 +289,7 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 					scrollRangeY, maxOverScrollX, maxOverScrollY, isTouchEvent);
 
 			// Does all of the hard work...
-			OverscrollHelper.overScrollBy(PullToRefreshListView.this, deltaY, scrollY, isTouchEvent);
+			OverscrollHelper.overScrollBy(PullToRefreshListView.this, deltaX, scrollX, deltaY, scrollY, isTouchEvent);
 
 			return returnValue;
 		}
