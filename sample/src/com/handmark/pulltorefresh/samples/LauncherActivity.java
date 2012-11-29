@@ -15,8 +15,6 @@
  *******************************************************************************/
 package com.handmark.pulltorefresh.samples;
 
-import com.handmark.pulltorefresh.library.PullToRefreshHorizontalScrollView;
-
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
