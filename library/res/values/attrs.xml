@@ -8,10 +8,13 @@
         <attr name="ptrHeaderSubTextColor" format="reference|color" />
         <attr name="ptrMode">
             <flag name="disabled" value="0x0" />
-            <flag name="pullDownFromTop" value="0x1" />
-            <flag name="pullUpFromBottom" value="0x2" />
+            <flag name="pullFromStart" value="0x1" />
+            <flag name="pullFromEnd" value="0x2" />
             <flag name="both" value="0x3" />
             <flag name="manualOnly" value="0x4" />
+            <!-- These last two are depreacted -->
+            <flag name="pullDownFromTop" value="0x1" />
+            <flag name="pullUpFromBottom" value="0x2" />
         </attr>
         <attr name="ptrShowIndicator" format="reference|boolean" />
         <attr name="ptrDrawable" format="reference" />

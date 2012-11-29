@@ -48,14 +48,14 @@ public class IndicatorLayout extends FrameLayout implements AnimationListener {
 
 		int inAnimResId, outAnimResId;
 		switch (mode) {
-			case PULL_UP_TO_REFRESH:
+			case PULL_FROM_END:
 				inAnimResId = R.anim.slide_in_from_bottom;
 				outAnimResId = R.anim.slide_out_to_bottom;
 				setBackgroundResource(R.drawable.indicator_bg_bottom);
 				mArrowImageView.setImageResource(R.drawable.arrow_up);
 				break;
 			default:
-			case PULL_DOWN_TO_REFRESH:
+			case PULL_FROM_START:
 				inAnimResId = R.anim.slide_in_from_top;
 				outAnimResId = R.anim.slide_out_to_top;
 				setBackgroundResource(R.drawable.indicator_bg_top);

@@ -35,8 +35,8 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
+import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.handmark.pulltorefresh.library.R;
 
 @SuppressLint("ViewConstructor")
@@ -88,14 +88,14 @@ public abstract class LoadingLayout extends LinearLayout {
 		mHeaderImage = (ImageView) findViewById(R.id.pull_to_refresh_image);
 
 		switch (mode) {
-			case PULL_UP_TO_REFRESH:
+			case PULL_FROM_END:
 				// Load in labels
 				mPullLabel = context.getString(R.string.pull_to_refresh_from_bottom_pull_label);
 				mRefreshingLabel = context.getString(R.string.pull_to_refresh_from_bottom_refreshing_label);
 				mReleaseLabel = context.getString(R.string.pull_to_refresh_from_bottom_release_label);
 				break;
 
-			case PULL_DOWN_TO_REFRESH:
+			case PULL_FROM_START:
 			default:
 				// Load in labels
 				mPullLabel = context.getString(R.string.pull_to_refresh_pull_label);
@@ -138,15 +138,15 @@ public abstract class LoadingLayout extends LinearLayout {
 
 		// Check Specific Drawable from Attrs, these overrite the generic
 		// drawable attr above
-		if (attrs.hasValue(R.styleable.PullToRefresh_ptrDrawableTop) && mode == Mode.PULL_DOWN_TO_REFRESH) {
+		if (attrs.hasValue(R.styleable.PullToRefresh_ptrDrawableTop) && mode == Mode.PULL_FROM_START) {
 			imageDrawable = attrs.getDrawable(R.styleable.PullToRefresh_ptrDrawableTop);
-		} else if (attrs.hasValue(R.styleable.PullToRefresh_ptrDrawableBottom) && mode == Mode.PULL_UP_TO_REFRESH) {
+		} else if (attrs.hasValue(R.styleable.PullToRefresh_ptrDrawableBottom) && mode == Mode.PULL_FROM_END) {
 			imageDrawable = attrs.getDrawable(R.styleable.PullToRefresh_ptrDrawableTop);
 		}
 
 		// If we don't have a user defined drawable, load the default
 		if (null == imageDrawable) {
-			if (mode == Mode.PULL_DOWN_TO_REFRESH) {
+			if (mode == Mode.PULL_FROM_START) {
 				imageDrawable = context.getResources().getDrawable(getDefaultTopDrawableResId());
 			} else {
 				imageDrawable = context.getResources().getDrawable(getDefaultBottomDrawableResId());

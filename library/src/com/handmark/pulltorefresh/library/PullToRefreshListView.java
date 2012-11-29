@@ -138,13 +138,13 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 
 		switch (getCurrentMode()) {
 			case MANUAL_REFRESH_ONLY:
-			case PULL_UP_TO_REFRESH:
+			case PULL_FROM_END:
 				originalLoadingLayout = getFooterLayout();
 				listViewLoadingLayout = mFooterLoadingView;
 				selection = mRefreshableView.getCount() - 1;
 				scrollToY = getScrollY() - getFooterHeight();
 				break;
-			case PULL_DOWN_TO_REFRESH:
+			case PULL_FROM_START:
 			default:
 				originalLoadingLayout = getHeaderLayout();
 				listViewLoadingLayout = mHeaderLoadingView;
@@ -188,14 +188,14 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 
 		switch (getCurrentMode()) {
 			case MANUAL_REFRESH_ONLY:
-			case PULL_UP_TO_REFRESH:
+			case PULL_FROM_END:
 				originalLoadingLayout = getFooterLayout();
 				listViewLoadingLayout = mFooterLoadingView;
 				selection = mRefreshableView.getCount() - 1;
 				scrollToHeight = getFooterHeight();
 				scrollLvToEdge = Math.abs(mRefreshableView.getLastVisiblePosition() - selection) <= 1;
 				break;
-			case PULL_DOWN_TO_REFRESH:
+			case PULL_FROM_START:
 			default:
 				originalLoadingLayout = getHeaderLayout();
 				listViewLoadingLayout = mHeaderLoadingView;
@@ -254,12 +254,12 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 
 		// Create Loading Views ready for use later
 		FrameLayout frame = new FrameLayout(context);
-		mHeaderLoadingView = createLoadingLayout(context, Mode.PULL_DOWN_TO_REFRESH, a);
+		mHeaderLoadingView = createLoadingLayout(context, Mode.PULL_FROM_START, a);
 		frame.addView(mHeaderLoadingView, lp);
 		lv.addHeaderView(frame, null, false);
 
 		mLvFooterLoadingFrame = new FrameLayout(context);
-		mFooterLoadingView = createLoadingLayout(context, Mode.PULL_UP_TO_REFRESH, a);
+		mFooterLoadingView = createLoadingLayout(context, Mode.PULL_FROM_END, a);
 		mLvFooterLoadingFrame.addView(mFooterLoadingView, lp);
 
 		a.recycle();

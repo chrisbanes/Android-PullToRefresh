@@ -232,10 +232,10 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 
 		if (getShowIndicatorInternal()) {
 			switch (getCurrentMode()) {
-				case PULL_UP_TO_REFRESH:
+				case PULL_FROM_END:
 					mIndicatorIvBottom.pullToRefresh();
 					break;
-				case PULL_DOWN_TO_REFRESH:
+				case PULL_FROM_START:
 					mIndicatorIvTop.pullToRefresh();
 					break;
 			}
@@ -256,10 +256,10 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 
 		if (getShowIndicatorInternal()) {
 			switch (getCurrentMode()) {
-				case PULL_UP_TO_REFRESH:
+				case PULL_FROM_END:
 					mIndicatorIvBottom.releaseToRefresh();
 					break;
-				case PULL_DOWN_TO_REFRESH:
+				case PULL_FROM_START:
 					mIndicatorIvTop.releaseToRefresh();
 					break;
 			}
@@ -315,7 +315,7 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 
 		if (mode.showHeaderLoadingLayout() && null == mIndicatorIvTop) {
 			// If the mode can pull down, and we don't have one set already
-			mIndicatorIvTop = new IndicatorLayout(getContext(), Mode.PULL_DOWN_TO_REFRESH);
+			mIndicatorIvTop = new IndicatorLayout(getContext(), Mode.PULL_FROM_START);
 			FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
 					ViewGroup.LayoutParams.WRAP_CONTENT);
 			params.rightMargin = getResources().getDimensionPixelSize(R.dimen.indicator_right_padding);
@@ -330,7 +330,7 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 
 		if (mode.showFooterLoadingLayout() && null == mIndicatorIvBottom) {
 			// If the mode can pull down, and we don't have one set already
-			mIndicatorIvBottom = new IndicatorLayout(getContext(), Mode.PULL_UP_TO_REFRESH);
+			mIndicatorIvBottom = new IndicatorLayout(getContext(), Mode.PULL_FROM_END);
 			FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
 					ViewGroup.LayoutParams.WRAP_CONTENT);
 			params.rightMargin = getResources().getDimensionPixelSize(R.dimen.indicator_right_padding);
