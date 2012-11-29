@@ -15,5 +15,6 @@
 	
 	<modules>
 		<module>PullToRefreshListFragment</module>
+		<module>PullToRefreshViewPager</module>
 	</modules>
 </project>
