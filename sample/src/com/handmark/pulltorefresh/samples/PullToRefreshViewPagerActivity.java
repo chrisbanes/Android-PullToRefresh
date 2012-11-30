@@ -36,10 +36,9 @@ public class PullToRefreshViewPagerActivity extends Activity implements OnRefres
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_ptr_viewpager);
 
-		mPullToRefreshViewPager = new PullToRefreshViewPager(this);
-		setContentView(mPullToRefreshViewPager);
-
+		mPullToRefreshViewPager = (PullToRefreshViewPager) findViewById(R.id.pull_refresh_viewpager);
 		mPullToRefreshViewPager.setOnRefreshListener(this);
 
 		ViewPager vp = mPullToRefreshViewPager.getRefreshableView();
@@ -82,7 +81,7 @@ public class PullToRefreshViewPagerActivity extends Activity implements OnRefres
 			return view == object;
 		}
 	}
-	
+
 	private class GetDataTask extends AsyncTask<Void, Void, Void> {
 
 		@Override
