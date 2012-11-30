@@ -10,7 +10,7 @@
         android:id="@+id/pull_refresh_viewpager"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        ptr:ptrAdapterViewBackground="@android:color/black"
+        ptr:ptrRefreshableViewBackground="@android:color/black"
         ptr:ptrAnimationStyle="flip"
         ptr:ptrHeaderBackground="@android:color/darker_gray"
         ptr:ptrMode="both" />
