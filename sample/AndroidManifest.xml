@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.handmark.pulltorefresh.samples"
-    android:versionCode="1420"
-    android:versionName="1.4.2" >
+    android:versionCode="2000"
+    android:versionName="2.0" >
 
     <uses-sdk
         android:minSdkVersion="4"
