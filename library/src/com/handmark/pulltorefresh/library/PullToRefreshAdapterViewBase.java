@@ -232,10 +232,10 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 
 		if (getShowIndicatorInternal()) {
 			switch (getCurrentMode()) {
-				case PULL_UP_TO_REFRESH:
+				case PULL_FROM_END:
 					mIndicatorIvBottom.pullToRefresh();
 					break;
-				case PULL_DOWN_TO_REFRESH:
+				case PULL_FROM_START:
 					mIndicatorIvTop.pullToRefresh();
 					break;
 			}
@@ -256,10 +256,10 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 
 		if (getShowIndicatorInternal()) {
 			switch (getCurrentMode()) {
-				case PULL_UP_TO_REFRESH:
+				case PULL_FROM_END:
 					mIndicatorIvBottom.releaseToRefresh();
 					break;
-				case PULL_DOWN_TO_REFRESH:
+				case PULL_FROM_START:
 					mIndicatorIvTop.releaseToRefresh();
 					break;
 			}
@@ -281,11 +281,11 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 		mShowIndicator = a.getBoolean(R.styleable.PullToRefresh_ptrShowIndicator, !isPullToRefreshOverScrollEnabled());
 	}
 
-	protected boolean isReadyForPullDown() {
+	protected boolean isReadyForPullStart() {
 		return isFirstItemVisible();
 	}
 
-	protected boolean isReadyForPullUp() {
+	protected boolean isReadyForPullEnd() {
 		return isLastItemVisible();
 	}
 
@@ -313,31 +313,31 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 		Mode mode = getMode();
 		FrameLayout refreshableViewWrapper = getRefreshableViewWrapper();
 
-		if (mode.canPullDown() && null == mIndicatorIvTop) {
+		if (mode.showHeaderLoadingLayout() && null == mIndicatorIvTop) {
 			// If the mode can pull down, and we don't have one set already
-			mIndicatorIvTop = new IndicatorLayout(getContext(), Mode.PULL_DOWN_TO_REFRESH);
+			mIndicatorIvTop = new IndicatorLayout(getContext(), Mode.PULL_FROM_START);
 			FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
 					ViewGroup.LayoutParams.WRAP_CONTENT);
 			params.rightMargin = getResources().getDimensionPixelSize(R.dimen.indicator_right_padding);
 			params.gravity = Gravity.TOP | Gravity.RIGHT;
 			refreshableViewWrapper.addView(mIndicatorIvTop, params);
 
-		} else if (!mode.canPullDown() && null != mIndicatorIvTop) {
+		} else if (!mode.showHeaderLoadingLayout() && null != mIndicatorIvTop) {
 			// If we can't pull down, but have a View then remove it
 			refreshableViewWrapper.removeView(mIndicatorIvTop);
 			mIndicatorIvTop = null;
 		}
 
-		if (mode.canPullUp() && null == mIndicatorIvBottom) {
+		if (mode.showFooterLoadingLayout() && null == mIndicatorIvBottom) {
 			// If the mode can pull down, and we don't have one set already
-			mIndicatorIvBottom = new IndicatorLayout(getContext(), Mode.PULL_UP_TO_REFRESH);
+			mIndicatorIvBottom = new IndicatorLayout(getContext(), Mode.PULL_FROM_END);
 			FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
 					ViewGroup.LayoutParams.WRAP_CONTENT);
 			params.rightMargin = getResources().getDimensionPixelSize(R.dimen.indicator_right_padding);
 			params.gravity = Gravity.BOTTOM | Gravity.RIGHT;
 			refreshableViewWrapper.addView(mIndicatorIvBottom, params);
 
-		} else if (!mode.canPullUp() && null != mIndicatorIvBottom) {
+		} else if (!mode.showFooterLoadingLayout() && null != mIndicatorIvBottom) {
 			// If we can't pull down, but have a View then remove it
 			refreshableViewWrapper.removeView(mIndicatorIvBottom);
 			mIndicatorIvBottom = null;
@@ -427,7 +427,7 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 
 	private void updateIndicatorViewsVisibility() {
 		if (null != mIndicatorIvTop) {
-			if (!isRefreshing() && isReadyForPullDown()) {
+			if (!isRefreshing() && isReadyForPullStart()) {
 				if (!mIndicatorIvTop.isVisible()) {
 					mIndicatorIvTop.show();
 				}
@@ -439,7 +439,7 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 		}
 
 		if (null != mIndicatorIvBottom) {
-			if (!isRefreshing() && isReadyForPullUp()) {
+			if (!isRefreshing() && isReadyForPullEnd()) {
 				if (!mIndicatorIvBottom.isVisible()) {
 					mIndicatorIvBottom.show();
 				}

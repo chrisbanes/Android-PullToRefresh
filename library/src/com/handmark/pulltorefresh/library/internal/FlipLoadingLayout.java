@@ -23,6 +23,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 
+import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.handmark.pulltorefresh.library.R;
 
@@ -32,13 +33,13 @@ public class FlipLoadingLayout extends LoadingLayout {
 
 	private final Animation mRotateAnimation, mResetRotateAnimation;
 
-	public FlipLoadingLayout(Context context, Mode mode, TypedArray attrs) {
-		super(context, mode, attrs);
-		
-		final int rotateAngle = mode == Mode.PULL_DOWN_TO_REFRESH ? 180 : -180;
+	public FlipLoadingLayout(Context context, Mode mode, int scrollDirection, TypedArray attrs) {
+		super(context, mode, scrollDirection, attrs);
 
-		mRotateAnimation = new RotateAnimation(0, rotateAngle, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
-				0.5f);
+		final int rotateAngle = mode == Mode.PULL_FROM_START ? -180 : 180;
+
+		mRotateAnimation = new RotateAnimation(0, rotateAngle, Animation.RELATIVE_TO_SELF, 0.5f,
+				Animation.RELATIVE_TO_SELF, 0.5f);
 		mRotateAnimation.setInterpolator(ANIMATION_INTERPOLATOR);
 		mRotateAnimation.setDuration(FLIP_ANIMATION_DURATION);
 		mRotateAnimation.setFillAfter(true);
@@ -65,7 +66,7 @@ public class FlipLoadingLayout extends LoadingLayout {
 	}
 
 	@Override
-	protected void onPullYImpl(float scaleOfHeight) {
+	protected void onPullImpl(float scaleOfLayout) {
 		// NO-OP
 	}
 
@@ -97,13 +98,25 @@ public class FlipLoadingLayout extends LoadingLayout {
 	}
 
 	@Override
-	protected int getDefaultTopDrawableResId() {
-		return R.drawable.default_ptr_flip_top;
+	protected int getDefaultStartDrawableResId(final int scrollDirection) {
+		switch (scrollDirection) {
+			case PullToRefreshBase.HORIZONTAL_SCROLL:
+				return R.drawable.default_ptr_flip_left;
+			case PullToRefreshBase.VERTICAL_SCROLL:
+			default:
+				return R.drawable.default_ptr_flip_top;
+		}
 	}
 
 	@Override
-	protected int getDefaultBottomDrawableResId() {
-		return R.drawable.default_ptr_flip_bottom;
+	protected int getDefaultEndDrawableResId(final int scrollDirection) {
+		switch (scrollDirection) {
+			case PullToRefreshBase.HORIZONTAL_SCROLL:
+				return R.drawable.default_ptr_flip_right;
+			case PullToRefreshBase.VERTICAL_SCROLL:
+			default:
+				return R.drawable.default_ptr_flip_bottom;
+		}
 	}
 
 }

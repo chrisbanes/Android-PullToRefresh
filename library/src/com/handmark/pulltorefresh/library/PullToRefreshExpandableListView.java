@@ -46,7 +46,12 @@ public class PullToRefreshExpandableListView extends PullToRefreshAdapterViewBas
 	}
 
 	@Override
-	protected final ExpandableListView createRefreshableView(Context context, AttributeSet attrs) {
+	public final int getPullToRefreshScrollDirection() {
+		return VERTICAL_SCROLL;
+	}
+	
+	@Override
+	protected ExpandableListView createRefreshableView(Context context, AttributeSet attrs) {
 		final ExpandableListView lv;
 		if (VERSION.SDK_INT >= VERSION_CODES.GINGERBREAD) {
 			lv = new InternalExpandableListViewSDK9(context, attrs);
@@ -95,7 +100,8 @@ public class PullToRefreshExpandableListView extends PullToRefreshAdapterViewBas
 					scrollRangeY, maxOverScrollX, maxOverScrollY, isTouchEvent);
 
 			// Does all of the hard work...
-			OverscrollHelper.overScrollBy(PullToRefreshExpandableListView.this, deltaY, scrollY, isTouchEvent);
+			OverscrollHelper.overScrollBy(PullToRefreshExpandableListView.this, deltaX, scrollX, deltaY, scrollY,
+					isTouchEvent);
 
 			return returnValue;
 		}

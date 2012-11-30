@@ -30,6 +30,11 @@ public class PullToRefreshScrollView extends PullToRefreshBase<ScrollView> {
 	}
 
 	@Override
+	public final int getPullToRefreshScrollDirection() {
+		return VERTICAL_SCROLL;
+	}
+
+	@Override
 	protected ScrollView createRefreshableView(Context context, AttributeSet attrs) {
 		ScrollView scrollView;
 		if (VERSION.SDK_INT >= VERSION_CODES.GINGERBREAD) {
@@ -43,12 +48,12 @@ public class PullToRefreshScrollView extends PullToRefreshBase<ScrollView> {
 	}
 
 	@Override
-	protected boolean isReadyForPullDown() {
+	protected boolean isReadyForPullStart() {
 		return mRefreshableView.getScrollY() == 0;
 	}
 
 	@Override
-	protected boolean isReadyForPullUp() {
+	protected boolean isReadyForPullEnd() {
 		View scrollViewChild = mRefreshableView.getChildAt(0);
 		if (null != scrollViewChild) {
 			return mRefreshableView.getScrollY() >= (scrollViewChild.getHeight() - getHeight());
@@ -71,8 +76,8 @@ public class PullToRefreshScrollView extends PullToRefreshBase<ScrollView> {
 					scrollRangeY, maxOverScrollX, maxOverScrollY, isTouchEvent);
 
 			// Does all of the hard work...
-			OverscrollHelper
-					.overScrollBy(PullToRefreshScrollView.this, deltaY, scrollY, getScrollRange(), isTouchEvent);
+			OverscrollHelper.overScrollBy(PullToRefreshScrollView.this, deltaX, scrollX, deltaY, scrollY,
+					getScrollRange(), isTouchEvent);
 
 			return returnValue;
 		}

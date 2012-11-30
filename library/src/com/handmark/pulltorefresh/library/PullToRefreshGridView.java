@@ -46,6 +46,11 @@ public class PullToRefreshGridView extends PullToRefreshAdapterViewBase<GridView
 	}
 
 	@Override
+	public final int getPullToRefreshScrollDirection() {
+		return VERTICAL_SCROLL;
+	}
+
+	@Override
 	protected final GridView createRefreshableView(Context context, AttributeSet attrs) {
 		final GridView gv;
 		if (VERSION.SDK_INT >= VERSION_CODES.GINGERBREAD) {
@@ -80,7 +85,7 @@ public class PullToRefreshGridView extends PullToRefreshAdapterViewBase<GridView
 			super.setEmptyView(emptyView);
 		}
 	}
-	
+
 	@TargetApi(9)
 	final class InternalGridViewSDK9 extends InternalGridView {
 
@@ -96,7 +101,7 @@ public class PullToRefreshGridView extends PullToRefreshAdapterViewBase<GridView
 					scrollRangeY, maxOverScrollX, maxOverScrollY, isTouchEvent);
 
 			// Does all of the hard work...
-			OverscrollHelper.overScrollBy(PullToRefreshGridView.this, deltaY, scrollY, isTouchEvent);
+			OverscrollHelper.overScrollBy(PullToRefreshGridView.this, deltaX, scrollX, deltaY, scrollY, isTouchEvent);
 
 			return returnValue;
 		}

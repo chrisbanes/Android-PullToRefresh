@@ -76,6 +76,11 @@ public class PullToRefreshWebView extends PullToRefreshBase<WebView> {
 		setOnRefreshListener(defaultOnRefreshListener);
 		mRefreshableView.setWebChromeClient(defaultWebChromeClient);
 	}
+	
+	@Override
+	public final int getPullToRefreshScrollDirection() {
+		return VERTICAL_SCROLL;
+	}
 
 	@Override
 	protected WebView createRefreshableView(Context context, AttributeSet attrs) {
@@ -91,12 +96,12 @@ public class PullToRefreshWebView extends PullToRefreshBase<WebView> {
 	}
 
 	@Override
-	protected boolean isReadyForPullDown() {
+	protected boolean isReadyForPullStart() {
 		return mRefreshableView.getScrollY() == 0;
 	}
 
 	@Override
-	protected boolean isReadyForPullUp() {
+	protected boolean isReadyForPullEnd() {
 		float exactContentHeight = FloatMath.floor(mRefreshableView.getContentHeight() * mRefreshableView.getScale());
 		return mRefreshableView.getScrollY() >= (exactContentHeight - mRefreshableView.getHeight());
 	}
@@ -136,8 +141,8 @@ public class PullToRefreshWebView extends PullToRefreshBase<WebView> {
 					scrollRangeY, maxOverScrollX, maxOverScrollY, isTouchEvent);
 
 			// Does all of the hard work...
-			OverscrollHelper.overScrollBy(PullToRefreshWebView.this, deltaY, scrollY, getScrollRange(),
-					OVERSCROLL_FUZZY_THRESHOLD, OVERSCROLL_SCALE_FACTOR, isTouchEvent);
+			OverscrollHelper.overScrollBy(PullToRefreshWebView.this, deltaX, scrollX, deltaY, scrollY,
+					getScrollRange(), OVERSCROLL_FUZZY_THRESHOLD, OVERSCROLL_SCALE_FACTOR, isTouchEvent);
 
 			return returnValue;
 		}

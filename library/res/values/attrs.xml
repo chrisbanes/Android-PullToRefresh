@@ -2,20 +2,25 @@
 <resources>
 
     <declare-styleable name="PullToRefresh">
-        <attr name="ptrAdapterViewBackground" format="reference|color" />
+        <attr name="ptrRefreshableViewBackground" format="reference|color" />
         <attr name="ptrHeaderBackground" format="reference|color" />
         <attr name="ptrHeaderTextColor" format="reference|color" />
         <attr name="ptrHeaderSubTextColor" format="reference|color" />
         <attr name="ptrMode">
             <flag name="disabled" value="0x0" />
+            <flag name="pullFromStart" value="0x1" />
+            <flag name="pullFromEnd" value="0x2" />
+            <flag name="both" value="0x3" />
+            <flag name="manualOnly" value="0x4" />
+
+            <!-- These last two are depreacted -->
             <flag name="pullDownFromTop" value="0x1" />
             <flag name="pullUpFromBottom" value="0x2" />
-            <flag name="both" value="0x3" />
         </attr>
         <attr name="ptrShowIndicator" format="reference|boolean" />
         <attr name="ptrDrawable" format="reference" />
-        <attr name="ptrDrawableTop" format="reference" />
-        <attr name="ptrDrawableBottom" format="reference" />
+        <attr name="ptrDrawableStart" format="reference" />
+        <attr name="ptrDrawableEnd" format="reference" />
         <attr name="ptrOverScroll" format="reference|boolean" />
         <attr name="ptrHeaderTextAppearance" format="reference" />
         <attr name="ptrSubHeaderTextAppearance" format="reference" />
@@ -23,6 +28,11 @@
             <flag name="rotate" value="0x0" />
             <flag name="flip" value="0x1" />
         </attr>
+
+        <!-- Deprecated -->
+        <attr name="ptrAdapterViewBackground" format="reference|color" />
+        <attr name="ptrDrawableTop" format="reference" />
+        <attr name="ptrDrawableBottom" format="reference" />
     </declare-styleable>
 
 </resources>
