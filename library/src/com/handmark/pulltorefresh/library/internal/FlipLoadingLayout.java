@@ -75,7 +75,7 @@ public class FlipLoadingLayout extends LoadingLayout {
 			mHeaderImage.setScaleType(ScaleType.MATRIX);
 			Matrix matrix = new Matrix();
 			matrix.postTranslate((lp.width - dWidth) / 2f, (lp.height - dHeight) / 2f);
-			matrix.postRotate(getDrawableRotationAngle(), dWidth / 2f, dHeight / 2f);
+			matrix.postRotate(getDrawableRotationAngle(), lp.width / 2f, lp.height / 2f);
 			mHeaderImage.setImageMatrix(matrix);
 		}
 	}
