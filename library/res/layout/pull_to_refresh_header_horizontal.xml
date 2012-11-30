@@ -3,8 +3,7 @@
 
     <FrameLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="@dimen/header_footer_internal_padding" >
+        android:layout_height="wrap_content">
 
         <ImageView
             android:id="@+id/pull_to_refresh_image"
