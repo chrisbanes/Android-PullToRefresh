@@ -15,6 +15,7 @@
  *******************************************************************************/
 package com.handmark.pulltorefresh.library.internal;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Matrix;
 import android.graphics.drawable.Drawable;
@@ -32,6 +33,7 @@ import android.widget.ImageView.ScaleType;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.R;
 
+@SuppressLint("ViewConstructor")
 public class IndicatorLayout extends FrameLayout implements AnimationListener {
 
 	static final int DEFAULT_ROTATION_ANIMATION_DURATION = 150;
@@ -45,7 +47,7 @@ public class IndicatorLayout extends FrameLayout implements AnimationListener {
 		super(context);
 		mArrowImageView = new ImageView(context);
 
-		Drawable arrowD = getResources().getDrawable(R.drawable.indicator);
+		Drawable arrowD = getResources().getDrawable(R.drawable.indicator_arrow);
 		mArrowImageView.setImageDrawable(arrowD);
 
 		final int padding = getResources().getDimensionPixelSize(R.dimen.indicator_internal_padding);
