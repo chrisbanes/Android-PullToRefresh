@@ -518,7 +518,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	public final void setShowViewWhileRefreshing(boolean showView) {
 		mShowViewWhileRefreshing = showView;
 	}
-	
+
 	/**
 	 * @return Either {@link #VERTICAL_SCROLL} or {@link #HORIZONTAL_SCROLL}
 	 *         depending on the scroll direction.
@@ -598,12 +598,9 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	void onReset() {
 		mIsBeingDragged = false;
 
-		if (mMode.showHeaderLoadingLayout()) {
-			mHeaderLayout.reset();
-		}
-		if (mMode.showFooterLoadingLayout()) {
-			mFooterLayout.reset();
-		}
+		// Always reset both layouts, just in case...
+		mHeaderLayout.reset();
+		mFooterLayout.reset();
 
 		smoothScrollTo(0);
 
