@@ -138,38 +138,44 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 
 		super.onRefreshing(false);
 
-		final LoadingLayout originalLoadingLayout, listViewLoadingLayout;
+		final LoadingLayout origLoadingView, listViewLoadingView, oppositeListViewLoadingView;
 		final int selection, scrollToY;
 
 		switch (getCurrentMode()) {
 			case MANUAL_REFRESH_ONLY:
 			case PULL_FROM_END:
-				originalLoadingLayout = getFooterLayout();
-				listViewLoadingLayout = mFooterLoadingView;
+				origLoadingView = getFooterLayout();
+				listViewLoadingView = mFooterLoadingView;
+				oppositeListViewLoadingView = mHeaderLoadingView;
 				selection = mRefreshableView.getCount() - 1;
 				scrollToY = getScrollY() - getFooterHeight();
 				break;
 			case PULL_FROM_START:
 			default:
-				originalLoadingLayout = getHeaderLayout();
-				listViewLoadingLayout = mHeaderLoadingView;
+				origLoadingView = getHeaderLayout();
+				listViewLoadingView = mHeaderLoadingView;
+				oppositeListViewLoadingView = mFooterLoadingView;
 				selection = 0;
 				scrollToY = getScrollY() + getHeaderHeight();
 				break;
 		}
 
 		// Hide our original Loading View
-		originalLoadingLayout.setVisibility(View.INVISIBLE);
+		origLoadingView.setVisibility(View.INVISIBLE);
+		
+		// Make sure the opposite end is hidden too
+		oppositeListViewLoadingView.setVisibility(View.GONE);
 
 		// Show the ListView Loading View and set it to refresh. If it has a 0
 		// height, then we need to set it to WRAP_CONTENT
-		if (listViewLoadingLayout.getHeight() == 0) {
-			ViewGroup.LayoutParams lp = listViewLoadingLayout.getLayoutParams();
+		if (listViewLoadingView.getHeight() == 0) {
+			ViewGroup.LayoutParams lp = listViewLoadingView.getLayoutParams();
 			lp.height = ViewGroup.LayoutParams.WRAP_CONTENT;
-			listViewLoadingLayout.setLayoutParams(lp);
+			listViewLoadingView.setLayoutParams(lp);
 		}
-		listViewLoadingLayout.setVisibility(View.VISIBLE);
-		listViewLoadingLayout.refreshing();
+		listViewLoadingView.setVisibility(View.VISIBLE);
+		
+		listViewLoadingView.refreshing();
 
 		if (doScroll) {
 			// We scroll slightly so that the ListView's header/footer is at the
@@ -253,7 +259,7 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.PullToRefresh);
 
 		// We use a 0 height (instead of View.GONE) for now so that it's still
-		// layed out
+		// measured and laid out
 		final FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, 0,
 				Gravity.CENTER_HORIZONTAL);
 
