@@ -10,9 +10,9 @@
         android:id="@+id/pull_refresh_viewpager"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        ptr:ptrRefreshableViewBackground="@android:color/black"
         ptr:ptrAnimationStyle="flip"
         ptr:ptrHeaderBackground="@android:color/darker_gray"
-        ptr:ptrMode="both" />
+        ptr:ptrMode="both"
+        ptr:ptrRefreshableViewBackground="?android:attr/windowBackground" />
 
 </FrameLayout>
