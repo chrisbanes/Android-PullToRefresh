@@ -17,11 +17,13 @@ package com.handmark.pulltorefresh.library.internal;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Matrix;
 import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
+import android.widget.ImageView.ScaleType;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
@@ -33,7 +35,7 @@ public class FlipLoadingLayout extends LoadingLayout {
 
 	private final Animation mRotateAnimation, mResetRotateAnimation;
 
-	public FlipLoadingLayout(Context context, Mode mode, int scrollDirection, TypedArray attrs) {
+	public FlipLoadingLayout(Context context, final Mode mode, final int scrollDirection, TypedArray attrs) {
 		super(context, mode, scrollDirection, attrs);
 
 		final int rotateAngle = mode == Mode.PULL_FROM_START ? -180 : 180;
@@ -53,15 +55,28 @@ public class FlipLoadingLayout extends LoadingLayout {
 
 	@Override
 	protected void onLoadingDrawableSet(Drawable imageDrawable) {
-		/**
-		 * We need to set the width/height of the ImageView so that it is square
-		 * with each side the size of the largest drawable dimension. This is so
-		 * that it doesn't clip when rotated.
-		 */
 		if (null != imageDrawable) {
+			final int dHeight = imageDrawable.getIntrinsicHeight();
+			final int dWidth = imageDrawable.getIntrinsicWidth();
+
+			/**
+			 * We need to set the width/height of the ImageView so that it is
+			 * square with each side the size of the largest drawable dimension.
+			 * This is so that it doesn't clip when rotated.
+			 */
 			ViewGroup.LayoutParams lp = mHeaderImage.getLayoutParams();
-			lp.width = lp.height = Math.max(imageDrawable.getIntrinsicWidth(), imageDrawable.getIntrinsicHeight());
+			lp.width = lp.height = Math.max(dHeight, dWidth);
 			mHeaderImage.requestLayout();
+
+			/**
+			 * We now rotate the Drawable so that is at the correct rotation,
+			 * and is centered.
+			 */
+			mHeaderImage.setScaleType(ScaleType.MATRIX);
+			Matrix matrix = new Matrix();
+			matrix.postTranslate((lp.width - dWidth) / 2f, (lp.height - dHeight) / 2f);
+			matrix.postRotate(getDrawableRotationAngle(), dWidth / 2f, dHeight / 2f);
+			mHeaderImage.setImageMatrix(matrix);
 		}
 	}
 
@@ -98,25 +113,29 @@ public class FlipLoadingLayout extends LoadingLayout {
 	}
 
 	@Override
-	protected int getDefaultStartDrawableResId(final int scrollDirection) {
-		switch (scrollDirection) {
-			case PullToRefreshBase.HORIZONTAL_SCROLL:
-				return R.drawable.default_ptr_flip_left;
-			case PullToRefreshBase.VERTICAL_SCROLL:
-			default:
-				return R.drawable.default_ptr_flip_top;
-		}
+	protected int getDefaultDrawableResId() {
+		return R.drawable.default_ptr_flip;
 	}
 
-	@Override
-	protected int getDefaultEndDrawableResId(final int scrollDirection) {
-		switch (scrollDirection) {
-			case PullToRefreshBase.HORIZONTAL_SCROLL:
-				return R.drawable.default_ptr_flip_right;
-			case PullToRefreshBase.VERTICAL_SCROLL:
-			default:
-				return R.drawable.default_ptr_flip_bottom;
+	private float getDrawableRotationAngle() {
+		float angle = 0f;
+		switch (mMode) {
+			case PULL_FROM_END:
+				if (mScrollDirection == PullToRefreshBase.HORIZONTAL_SCROLL) {
+					angle = 90f;
+				} else {
+					angle = 180f;
+				}
+				break;
+
+			case PULL_FROM_START:
+				if (mScrollDirection == PullToRefreshBase.HORIZONTAL_SCROLL) {
+					angle = 270f;
+				}
+				break;
 		}
+
+		return angle;
 	}
 
 }

@@ -91,12 +91,7 @@ public class RotateLoadingLayout extends LoadingLayout {
 	}
 
 	@Override
-	protected int getDefaultStartDrawableResId(final int scrollDirection) {
-		return R.drawable.default_ptr_rotate;
-	}
-
-	@Override
-	protected int getDefaultEndDrawableResId(final int scrollDirection) {
+	protected int getDefaultDrawableResId() {
 		return R.drawable.default_ptr_rotate;
 	}
 

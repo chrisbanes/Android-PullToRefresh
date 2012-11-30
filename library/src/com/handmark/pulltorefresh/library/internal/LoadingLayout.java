@@ -23,7 +23,6 @@ import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -42,7 +41,7 @@ import com.handmark.pulltorefresh.library.R;
 
 @SuppressLint("ViewConstructor")
 public abstract class LoadingLayout extends LinearLayout {
-	
+
 	static final String LOG_TAG = "PullToRefresh-LoadingLayout";
 
 	static final Interpolator ANIMATION_INTERPOLATOR = new LinearInterpolator();
@@ -55,6 +54,9 @@ public abstract class LoadingLayout extends LinearLayout {
 	private final TextView mHeaderText;
 	private final TextView mSubHeaderText;
 
+	protected final Mode mMode;
+	protected final int mScrollDirection;
+
 	private CharSequence mPullLabel;
 	private CharSequence mRefreshingLabel;
 	private CharSequence mReleaseLabel;
@@ -66,6 +68,9 @@ public abstract class LoadingLayout extends LinearLayout {
 		super(context);
 
 		setGravity(Gravity.CENTER_VERTICAL);
+
+		mMode = mode;
+		mScrollDirection = scrollDirection;
 
 		final int tbPadding = getResources().getDimensionPixelSize(R.dimen.header_footer_top_bottom_padding);
 		final int lrPadding = getResources().getDimensionPixelSize(R.dimen.header_footer_left_right_padding);
@@ -163,11 +168,7 @@ public abstract class LoadingLayout extends LinearLayout {
 
 		// If we don't have a user defined drawable, load the default
 		if (null == imageDrawable) {
-			if (mode == Mode.PULL_FROM_START) {
-				imageDrawable = context.getResources().getDrawable(getDefaultStartDrawableResId(scrollDirection));
-			} else {
-				imageDrawable = context.getResources().getDrawable(getDefaultEndDrawableResId(scrollDirection));
-			}
+			imageDrawable = context.getResources().getDrawable(getDefaultDrawableResId());
 		}
 
 		// Set Drawable, and save width/height
@@ -325,9 +326,7 @@ public abstract class LoadingLayout extends LinearLayout {
 	 * Callbacks for derivative Layouts
 	 */
 
-	protected abstract int getDefaultEndDrawableResId(int scrollDirection);
-
-	protected abstract int getDefaultStartDrawableResId(int scrollDirection);
+	protected abstract int getDefaultDrawableResId();
 
 	protected abstract void onLoadingDrawableSet(Drawable imageDrawable);
 
