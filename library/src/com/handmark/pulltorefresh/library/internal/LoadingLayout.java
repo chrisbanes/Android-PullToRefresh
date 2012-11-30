@@ -23,6 +23,7 @@ import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -41,6 +42,8 @@ import com.handmark.pulltorefresh.library.R;
 
 @SuppressLint("ViewConstructor")
 public abstract class LoadingLayout extends LinearLayout {
+	
+	static final String LOG_TAG = "PullToRefresh-LoadingLayout";
 
 	static final Interpolator ANIMATION_INTERPOLATOR = new LinearInterpolator();
 
@@ -138,10 +141,24 @@ public abstract class LoadingLayout extends LinearLayout {
 
 		// Check Specific Drawable from Attrs, these overrite the generic
 		// drawable attr above
-		if (attrs.hasValue(R.styleable.PullToRefresh_ptrDrawableTop) && mode == Mode.PULL_FROM_START) {
-			imageDrawable = attrs.getDrawable(R.styleable.PullToRefresh_ptrDrawableTop);
-		} else if (attrs.hasValue(R.styleable.PullToRefresh_ptrDrawableBottom) && mode == Mode.PULL_FROM_END) {
-			imageDrawable = attrs.getDrawable(R.styleable.PullToRefresh_ptrDrawableTop);
+		switch (mode) {
+			case PULL_FROM_START:
+				if (attrs.hasValue(R.styleable.PullToRefresh_ptrDrawableStart)) {
+					imageDrawable = attrs.getDrawable(R.styleable.PullToRefresh_ptrDrawableStart);
+				} else if (attrs.hasValue(R.styleable.PullToRefresh_ptrDrawableTop)) {
+					Utils.warnDeprecation("ptrDrawableTop", "ptrDrawableStart");
+					imageDrawable = attrs.getDrawable(R.styleable.PullToRefresh_ptrDrawableTop);
+				}
+				break;
+
+			case PULL_FROM_END:
+				if (attrs.hasValue(R.styleable.PullToRefresh_ptrDrawableEnd)) {
+					imageDrawable = attrs.getDrawable(R.styleable.PullToRefresh_ptrDrawableEnd);
+				} else if (attrs.hasValue(R.styleable.PullToRefresh_ptrDrawableBottom)) {
+					Utils.warnDeprecation("ptrDrawableBottom", "ptrDrawableEnd");
+					imageDrawable = attrs.getDrawable(R.styleable.PullToRefresh_ptrDrawableBottom);
+				}
+				break;
 		}
 
 		// If we don't have a user defined drawable, load the default

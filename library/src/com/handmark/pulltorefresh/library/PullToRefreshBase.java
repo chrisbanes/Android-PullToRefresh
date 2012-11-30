@@ -38,6 +38,7 @@ import com.handmark.pulltorefresh.library.internal.FlipLoadingLayout;
 import com.handmark.pulltorefresh.library.internal.LoadingLayout;
 import com.handmark.pulltorefresh.library.internal.RotateLoadingLayout;
 import com.handmark.pulltorefresh.library.internal.SDK16;
+import com.handmark.pulltorefresh.library.internal.Utils;
 
 public abstract class PullToRefreshBase<T extends View> extends LinearLayout implements IPullToRefresh<T> {
 
@@ -935,12 +936,20 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 				setBackgroundDrawable(background);
 			}
 		}
-		if (a.hasValue(R.styleable.PullToRefresh_ptrAdapterViewBackground)) {
+
+		if (a.hasValue(R.styleable.PullToRefresh_ptrRefreshableViewBackground)) {
+			Drawable background = a.getDrawable(R.styleable.PullToRefresh_ptrRefreshableViewBackground);
+			if (null != background) {
+				mRefreshableView.setBackgroundDrawable(background);
+			}
+		} else if (a.hasValue(R.styleable.PullToRefresh_ptrAdapterViewBackground)) {
+			Utils.warnDeprecation("ptrAdapterViewBackground", "ptrRefreshableViewBackground");
 			Drawable background = a.getDrawable(R.styleable.PullToRefresh_ptrAdapterViewBackground);
 			if (null != background) {
 				mRefreshableView.setBackgroundDrawable(background);
 			}
 		}
+
 		if (a.hasValue(R.styleable.PullToRefresh_ptrOverScroll)) {
 			mOverScrollEnabled = a.getBoolean(R.styleable.PullToRefresh_ptrOverScroll, true);
 		}
