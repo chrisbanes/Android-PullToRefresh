@@ -75,7 +75,7 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 	 * Gets whether an indicator graphic should be displayed when the View is in
 	 * a state where a Pull-to-Refresh can happen. An example of this state is
 	 * when the Adapter View is scrolled to the top and the mode is set to
-	 * {@link Mode#PULL_DOWN_TO_REFRESH}. The default value is <var>true</var>
+	 * {@link Mode#PULL_FROM_START}. The default value is <var>true</var>
 	 * if {@link PullToRefreshBase#isPullToRefreshOverScrollEnabled()
 	 * isPullToRefreshOverScrollEnabled()} returns false.
 	 * 
@@ -131,7 +131,7 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 
 	/**
 	 * Pass-through method for {@link PullToRefreshBase#getRefreshableView()
-	 * getRefreshableView()}.{@link AdapterView#setAdapter(ListAdapter)
+	 * getRefreshableView()}.{@link AdapterView#setAdapter(android.widget.Adapter)}
 	 * setAdapter(adapter)}. This is just for convenience!
 	 * 
 	 * @param adapter
@@ -214,7 +214,7 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 	 * Sets whether an indicator graphic should be displayed when the View is in
 	 * a state where a Pull-to-Refresh can happen. An example of this state is
 	 * when the Adapter View is scrolled to the top and the mode is set to
-	 * {@link Mode#PULL_DOWN_TO_REFRESH}
+	 * {@link Mode#PULL_FROM_START}
 	 * 
 	 * @param showIndicator
 	 *            - true if the indicators should be shown.

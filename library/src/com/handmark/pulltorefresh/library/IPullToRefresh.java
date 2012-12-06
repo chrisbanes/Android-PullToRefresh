@@ -224,7 +224,7 @@ public interface IPullToRefresh<T extends View> {
 	 * Set Text to show when the Widget is being Pulled
 	 * <code>setPullLabel(releaseLabel, Mode.BOTH)</code>
 	 * 
-	 * @param releaseLabel
+	 * @param pullLabel
 	 *            - CharSequence to display
 	 */
 	public void setPullLabel(CharSequence pullLabel);
@@ -260,7 +260,7 @@ public interface IPullToRefresh<T extends View> {
 	 * Set Text to show when the Widget is refreshing
 	 * <code>setRefreshingLabel(releaseLabel, Mode.BOTH)</code>
 	 * 
-	 * @param releaseLabel
+	 * @param refreshingLabel
 	 *            - CharSequence to display
 	 */
 	public void setRefreshingLabel(CharSequence refreshingLabel);
