@@ -57,10 +57,10 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		setDisableScrollingWhileRefreshing(false);
 	}
 
-    public PullToRefreshListView(Context context, Mode mode, AnimationStyle style) {
-        super(context, mode, style);
-        setDisableScrollingWhileRefreshing(false);
-    }
+	public PullToRefreshListView(Context context, Mode mode, AnimationStyle style) {
+		super(context, mode, style);
+		setDisableScrollingWhileRefreshing(false);
+	}
 
 	@Override
 	public ContextMenuInfo getContextMenuInfo() {
@@ -167,7 +167,7 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 
 		// Hide our original Loading View
 		origLoadingView.setVisibility(View.INVISIBLE);
-		
+
 		// Make sure the opposite end is hidden too
 		oppositeListViewLoadingView.setVisibility(View.GONE);
 
@@ -179,7 +179,7 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 			listViewLoadingView.setLayoutParams(lp);
 		}
 		listViewLoadingView.setVisibility(View.VISIBLE);
-		
+
 		listViewLoadingView.refreshing();
 
 		if (doScroll) {
@@ -296,8 +296,8 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		protected boolean overScrollBy(int deltaX, int deltaY, int scrollX, int scrollY, int scrollRangeX,
 				int scrollRangeY, int maxOverScrollX, int maxOverScrollY, boolean isTouchEvent) {
 
-			final boolean returnValue = super.overScrollBy(deltaX, deltaY, scrollX, scrollY, scrollRangeX,
-					scrollRangeY, maxOverScrollX, maxOverScrollY, isTouchEvent);
+			final boolean returnValue = super.overScrollBy(deltaX, deltaY, scrollX, scrollY, scrollRangeX, scrollRangeY,
+					maxOverScrollX, maxOverScrollY, isTouchEvent);
 
 			// Does all of the hard work...
 			OverscrollHelper.overScrollBy(PullToRefreshListView.this, deltaX, scrollX, deltaY, scrollY, isTouchEvent);

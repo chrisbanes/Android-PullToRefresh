@@ -40,9 +40,9 @@ public class PullToRefreshGridView extends PullToRefreshAdapterViewBase<GridView
 		super(context, mode);
 	}
 
-    public PullToRefreshGridView(Context context, Mode mode, AnimationStyle style) {
-        super(context, mode, style);
-    }
+	public PullToRefreshGridView(Context context, Mode mode, AnimationStyle style) {
+		super(context, mode, style);
+	}
 
 	@Override
 	public ContextMenuInfo getContextMenuInfo() {
@@ -101,8 +101,8 @@ public class PullToRefreshGridView extends PullToRefreshAdapterViewBase<GridView
 		protected boolean overScrollBy(int deltaX, int deltaY, int scrollX, int scrollY, int scrollRangeX,
 				int scrollRangeY, int maxOverScrollX, int maxOverScrollY, boolean isTouchEvent) {
 
-			final boolean returnValue = super.overScrollBy(deltaX, deltaY, scrollX, scrollY, scrollRangeX,
-					scrollRangeY, maxOverScrollX, maxOverScrollY, isTouchEvent);
+			final boolean returnValue = super.overScrollBy(deltaX, deltaY, scrollX, scrollY, scrollRangeX, scrollRangeY,
+					maxOverScrollX, maxOverScrollY, isTouchEvent);
 
 			// Does all of the hard work...
 			OverscrollHelper.overScrollBy(PullToRefreshGridView.this, deltaX, scrollX, deltaY, scrollY, isTouchEvent);

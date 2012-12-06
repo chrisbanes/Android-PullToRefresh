@@ -122,12 +122,12 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		init(context, null);
 	}
 
-    public PullToRefreshBase(Context context, Mode mode, AnimationStyle animStyle) {
-        super(context);
-        mMode = mode;
-        mLoadingAnimationStyle = animStyle;
-        init(context, null);
-    }
+	public PullToRefreshBase(Context context, Mode mode, AnimationStyle animStyle) {
+		super(context);
+		mMode = mode;
+		mLoadingAnimationStyle = animStyle;
+		init(context, null);
+	}
 
 	@Override
 	public void addView(View child, int index, ViewGroup.LayoutParams params) {
@@ -188,8 +188,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	}
 
 	/**
-	 * @deprecated Use the value from <code>getCurrentMode()</code> instead
 	 * @return true if the current mode is Mode.PULL_FROM_START
+	 * @deprecated Use the value from <code>getCurrentMode()</code> instead
 	 */
 	public final boolean hasPullFromTop() {
 		return mCurrentMode == Mode.PULL_FROM_START;
@@ -207,8 +207,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 
 	@Override
 	public final boolean isPullToRefreshOverScrollEnabled() {
-		return VERSION.SDK_INT >= VERSION_CODES.GINGERBREAD && mOverScrollEnabled
-				&& OverscrollHelper.isAndroidOverScrollEnabled(mRefreshableView);
+		return VERSION.SDK_INT >= VERSION_CODES.GINGERBREAD && mOverScrollEnabled &&
+				OverscrollHelper.isAndroidOverScrollEnabled(mRefreshableView);
 	}
 
 	@Override
@@ -461,11 +461,9 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	}
 
 	/**
+	 * @param enable Whether Pull-To-Refresh should be used
 	 * @deprecated This simple calls setMode with an appropriate mode based on
 	 *             the passed value.
-	 * 
-	 * @param enable
-	 *            Whether Pull-To-Refresh should be used
 	 */
 	public final void setPullToRefreshEnabled(boolean enable) {
 		setMode(enable ? Mode.getDefaultMode() : Mode.DISABLED);
@@ -551,9 +549,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	/**
 	 * Called when the UI has been to be updated to be in the
 	 * {@link State#REFRESHING} or {@link State#MANUAL_REFRESHING} state.
-	 * 
-	 * @param doScroll
-	 *            - Whether the UI should scroll for this event.
+	 *
+	 * @param doScroll - Whether the UI should scroll for this event.
 	 */
 	void onRefreshing(final boolean doScroll) {
 		if (mMode.showHeaderLoadingLayout()) {
@@ -640,16 +637,14 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	 * This is implemented by derived classes to return the created View. If you
 	 * need to use a custom View (such as a custom ListView), override this
 	 * method and return an instance of your custom class.
-	 * 
+	 * <p/>
 	 * Be sure to set the ID of the view in this method, especially if you're
 	 * using a ListActivity or ListFragment.
-	 * 
-	 * @param context
-	 *            Context to create view with
-	 * @param attrs
-	 *            AttributeSet from wrapped class. Means that anything you
-	 *            include in the XML layout declaration will be routed to the
-	 *            created View
+	 *
+	 * @param context Context to create view with
+	 * @param attrs   AttributeSet from wrapped class. Means that anything you
+	 *                include in the XML layout declaration will be routed to the
+	 *                created View
 	 * @return New instance of the Refreshable View
 	 */
 	protected abstract T createRefreshableView(Context context, AttributeSet attrs);
@@ -685,9 +680,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	/**
 	 * Allows Derivative classes to handle the XML Attrs without creating a
 	 * TypedArray themsevles
-	 * 
-	 * @param a
-	 *            - TypedArray of PullToRefresh Attributes
+	 *
+	 * @param a - TypedArray of PullToRefresh Attributes
 	 */
 	protected void handleStyledAttributes(TypedArray a) {
 	}
@@ -695,7 +689,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	/**
 	 * Implemented by derived class to return whether the View is in a state
 	 * where the user can Pull to Refresh by scrolling from the start.
-	 * 
+	 *
 	 * @return true if the View is currently the correct state (for example, top
 	 *         of a ListView)
 	 */
@@ -704,7 +698,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	/**
 	 * Implemented by derived class to return whether the View is in a state
 	 * where the user can Pull to Refresh by scrolling from the end.
-	 * 
+	 *
 	 * @return true if the View is currently in the correct state (for example,
 	 *         bottom of a ListView)
 	 */
@@ -713,9 +707,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	/**
 	 * Called by {@link #onRestoreInstanceState(Parcelable)} so that derivative
 	 * classes can handle their saved instance state.
-	 * 
-	 * @param savedInstanceState
-	 *            - Bundle which contains saved instance state.
+	 *
+	 * @param savedInstanceState - Bundle which contains saved instance state.
 	 */
 	protected void onPtrRestoreInstanceState(Bundle savedInstanceState) {
 	}
@@ -723,9 +716,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	/**
 	 * Called by {@link #onSaveInstanceState()} so that derivative classes can
 	 * save their instance state.
-	 * 
-	 * @param saveState
-	 *            - Bundle to be updated with saved state.
+	 *
+	 * @param saveState - Bundle to be updated with saved state.
 	 */
 	protected void onPtrSaveInstanceState(Bundle saveState) {
 	}
@@ -789,9 +781,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	/**
 	 * Helper method which just calls scrollTo() in the correct scrolling
 	 * direction.
-	 * 
-	 * @param value
-	 *            - New Scroll value
+	 *
+	 * @param value - New Scroll value
 	 */
 	protected final void setHeaderScroll(final int value) {
 		switch (getPullToRefreshScrollDirection()) {
@@ -819,9 +810,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	/**
 	 * Smooth Scroll to position using the default duration of
 	 * {@value #SMOOTH_SCROLL_DURATION_MS} ms.
-	 * 
-	 * @param scrollValue
-	 *            - Position to scroll to
+	 *
+	 * @param scrollValue - Position to scroll to
 	 */
 	protected final void smoothScrollTo(int scrollValue) {
 		smoothScrollTo(scrollValue, getPullToRefreshScrollDuration());
@@ -830,9 +820,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	/**
 	 * Smooth Scroll to position using the longer default duration of
 	 * {@value #SMOOTH_SCROLL_LONG_DURATION_MS} ms.
-	 * 
-	 * @param scrollValue
-	 *            - Position to scroll to
+	 *
+	 * @param scrollValue - Position to scroll to
 	 */
 	protected final void smoothScrollToLonger(int scrollValue) {
 		smoothScrollTo(scrollValue, getPullToRefreshScrollDurationLonger());
@@ -924,10 +913,10 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 			mMode = Mode.mapIntToValue(a.getInteger(R.styleable.PullToRefresh_ptrMode, 0));
 		}
 
-        if (a.hasValue(R.styleable.PullToRefresh_ptrAnimationStyle)) {
-		    mLoadingAnimationStyle = AnimationStyle.mapIntToValue(a.getInteger(R.styleable.PullToRefresh_ptrAnimationStyle,
-				    0));
-        }
+		if (a.hasValue(R.styleable.PullToRefresh_ptrAnimationStyle)) {
+			mLoadingAnimationStyle = AnimationStyle.mapIntToValue(a.getInteger(
+					R.styleable.PullToRefresh_ptrAnimationStyle, 0));
+		}
 
 		// Refreshable View
 		// By passing the attrs, we can add ListView/GridView params via XML
@@ -1003,7 +992,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 
 	/**
 	 * Actions a Pull Event
-	 * 
+	 *
 	 * @return true if the Event has been handled, false if there has been no
 	 *         change
 	 */
@@ -1131,11 +1120,9 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 
 	/**
 	 * Smooth Scroll to position using the specific duration
-	 * 
-	 * @param scrollValue
-	 *            - Position to scroll to
-	 * @param duration
-	 *            - Duration of animation in milliseconds
+	 *
+	 * @param scrollValue - Position to scroll to
+	 * @param duration    - Duration of animation in milliseconds
 	 */
 	private final void smoothScrollTo(int scrollValue, long duration) {
 		smoothScrollTo(scrollValue, duration, 0, null);
@@ -1200,9 +1187,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		 * Maps an int to a specific mode. This is needed when saving state, or
 		 * inflating the view from XML where the mode is given through a attr
 		 * int.
-		 * 
-		 * @param modeInt
-		 *            - int to map a Mode to
+		 *
+		 * @param modeInt - int to map a Mode to
 		 * @return Mode that modeInt maps to, or ROTATE by default.
 		 */
 		static AnimationStyle mapIntToValue(int modeInt) {
@@ -1273,9 +1259,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		 * Maps an int to a specific mode. This is needed when saving state, or
 		 * inflating the view from XML where the mode is given through a attr
 		 * int.
-		 * 
-		 * @param modeInt
-		 *            - int to map a Mode to
+		 *
+		 * @param modeInt - int to map a Mode to
 		 * @return Mode that modeInt maps to, or PULL_FROM_START by default.
 		 */
 		static Mode mapIntToValue(final int modeInt) {
@@ -1331,9 +1316,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	 * Simple Listener that allows you to be notified when the user has scrolled
 	 * to the end of the AdapterView. See (
 	 * {@link PullToRefreshAdapterViewBase#setOnLastItemVisibleListener}.
-	 * 
+	 *
 	 * @author Chris Banes
-	 * 
 	 */
 	public static interface OnLastItemVisibleListener {
 
@@ -1353,26 +1337,22 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	 * finished a touch event. Useful when you want to append extra UI events
 	 * (such as sounds). See (
 	 * {@link PullToRefreshAdapterViewBase#setOnPullEventListener}.
-	 * 
+	 *
 	 * @author Chris Banes
-	 * 
 	 */
 	public static interface OnPullEventListener<V extends View> {
 
 		/**
 		 * Called when the internal state has been changed, usually by the user
 		 * pulling.
-		 * 
-		 * @param refreshView
-		 *            - View which has had it's state change.
-		 * @param state
-		 *            - The new state of View.
-		 * @param direction
-		 *            - One of {@link Mode#PULL_FROM_START} or
-		 *            {@link Mode#PULL_FROM_END} depending on which direction
-		 *            the user is pulling. Only useful when <var>state</var> is
-		 *            {@link State#PULL_TO_REFRESH} or
-		 *            {@link State#RELEASE_TO_REFRESH}.
+		 *
+		 * @param refreshView - View which has had it's state change.
+		 * @param state       - The new state of View.
+		 * @param direction   - One of {@link Mode#PULL_FROM_START} or
+		 *                    {@link Mode#PULL_FROM_END} depending on which direction
+		 *                    the user is pulling. Only useful when <var>state</var> is
+		 *                    {@link State#PULL_TO_REFRESH} or
+		 *                    {@link State#RELEASE_TO_REFRESH}.
 		 */
 		public void onPullEvent(final PullToRefreshBase<V> refreshView, State state, Mode direction);
 
@@ -1380,7 +1360,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 
 	/**
 	 * Simple Listener to listen for any callbacks to Refresh.
-	 * 
+	 *
 	 * @author Chris Banes
 	 */
 	public static interface OnRefreshListener<V extends View> {
@@ -1397,7 +1377,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	 * An advanced version of the Listener to listen for callbacks to Refresh.
 	 * This listener is different as it allows you to differentiate between Pull
 	 * Ups, and Pull Downs.
-	 * 
+	 *
 	 * @author Chris Banes
 	 */
 	public static interface OnRefreshListener2<V extends View> {
@@ -1450,9 +1430,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 
 		/**
 		 * Maps an int to a specific state. This is needed when saving state.
-		 * 
-		 * @param stateInt
-		 *            - int to map a State to
+		 *
+		 * @param stateInt - int to map a State to
 		 * @return State that stateInt maps to
 		 */
 		static State mapIntToValue(final int stateInt) {
@@ -1518,8 +1497,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 				long normalizedTime = (1000 * (System.currentTimeMillis() - mStartTime)) / mDuration;
 				normalizedTime = Math.max(Math.min(normalizedTime, 1000), 0);
 
-				final int deltaY = Math.round((mScrollFromY - mScrollToY)
-						* mInterpolator.getInterpolation(normalizedTime / 1000f));
+				final int deltaY = Math.round((mScrollFromY - mScrollToY) * mInterpolator.getInterpolation(
+						normalizedTime / 1000f));
 				mCurrentY = mScrollFromY - deltaY;
 				setHeaderScroll(mCurrentY);
 			}
