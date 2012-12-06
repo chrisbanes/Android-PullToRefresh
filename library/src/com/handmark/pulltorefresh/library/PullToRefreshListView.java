@@ -57,6 +57,11 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		setDisableScrollingWhileRefreshing(false);
 	}
 
+    public PullToRefreshListView(Context context, Mode mode, AnimationStyle style) {
+        super(context, mode, style);
+        setDisableScrollingWhileRefreshing(false);
+    }
+
 	@Override
 	public ContextMenuInfo getContextMenuInfo() {
 		return ((InternalListView) getRefreshableView()).getContextMenuInfo();

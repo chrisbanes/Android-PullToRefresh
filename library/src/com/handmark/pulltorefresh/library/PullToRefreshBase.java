@@ -122,6 +122,13 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		init(context, null);
 	}
 
+    public PullToRefreshBase(Context context, Mode mode, AnimationStyle animStyle) {
+        super(context);
+        mMode = mode;
+        mLoadingAnimationStyle = animStyle;
+        init(context, null);
+    }
+
 	@Override
 	public void addView(View child, int index, ViewGroup.LayoutParams params) {
 		if (DEBUG) {
@@ -917,8 +924,10 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 			mMode = Mode.mapIntToValue(a.getInteger(R.styleable.PullToRefresh_ptrMode, 0));
 		}
 
-		mLoadingAnimationStyle = AnimationStyle.mapIntToValue(a.getInteger(R.styleable.PullToRefresh_ptrAnimationStyle,
-				0));
+        if (a.hasValue(R.styleable.PullToRefresh_ptrAnimationStyle)) {
+		    mLoadingAnimationStyle = AnimationStyle.mapIntToValue(a.getInteger(R.styleable.PullToRefresh_ptrAnimationStyle,
+				    0));
+        }
 
 		// Refreshable View
 		// By passing the attrs, we can add ListView/GridView params via XML
