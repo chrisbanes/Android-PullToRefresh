@@ -76,7 +76,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 
 	private boolean mIsBeingDragged = false;
 	private State mState = State.RESET;
-	private Mode mMode = Mode.getDefaultMode();
+	private Mode mMode = Mode.getDefault();
 
 	private Mode mCurrentMode;
 	T mRefreshableView;
@@ -88,7 +88,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	private boolean mOverScrollEnabled = true;
 
 	private Interpolator mScrollAnimationInterpolator;
-	private AnimationStyle mLoadingAnimationStyle;
+	private AnimationStyle mLoadingAnimationStyle = AnimationStyle.getDefault();
 
 	private LoadingLayout mHeaderLayout;
 	private LoadingLayout mFooterLayout;
@@ -466,7 +466,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	 *             the passed value.
 	 */
 	public final void setPullToRefreshEnabled(boolean enable) {
-		setMode(enable ? Mode.getDefaultMode() : Mode.DISABLED);
+		setMode(enable ? Mode.getDefault() : Mode.DISABLED);
 	}
 
 	@Override
@@ -1183,6 +1183,10 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		 */
 		FLIP;
 
+		static AnimationStyle getDefault() {
+			return ROTATE;
+		}
+
 		/**
 		 * Maps an int to a specific mode. This is needed when saving state, or
 		 * inflating the view from XML where the mode is given through a attr
@@ -1271,11 +1275,11 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 			}
 
 			// If not, return default
-			return getDefaultMode();
+			return getDefault();
 		}
 
-		static Mode getDefaultMode() {
-			return Mode.PULL_FROM_START;
+		static Mode getDefault() {
+			return PULL_FROM_START;
 		}
 
 		private int mIntValue;
