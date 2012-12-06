@@ -62,44 +62,20 @@ public abstract class LoadingLayout extends LinearLayout {
 
 	public LoadingLayout(Context context, final Mode mode, final int scrollDirection, TypedArray attrs) {
 		super(context);
-
 		mMode = mode;
 		mScrollDirection = scrollDirection;
 
-		final int tbPadding = getResources().getDimensionPixelSize(R.dimen.header_footer_top_bottom_padding);
-		final int lrPadding = getResources().getDimensionPixelSize(R.dimen.header_footer_left_right_padding);
-		setPadding(lrPadding, tbPadding, lrPadding, tbPadding);
+		setGravity(Gravity.CENTER);
+		resetPadding();
 
 		switch (scrollDirection) {
 			case PullToRefreshBase.HORIZONTAL_SCROLL:
 				LayoutInflater.from(context).inflate(R.layout.pull_to_refresh_header_horizontal, this);
-
-				switch (mMode) {
-					case PULL_FROM_END:
-						setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
-						break;
-					case PULL_FROM_START:
-					default:
-						setGravity(Gravity.CENTER_VERTICAL | Gravity.RIGHT);
-						break;
-				}
 				break;
-
 			case PullToRefreshBase.VERTICAL_SCROLL:
 			default:
 				LayoutInflater.from(context).inflate(R.layout.pull_to_refresh_header_vertical, this);
-
-				switch (mMode) {
-					case PULL_FROM_END:
-						setGravity(Gravity.CENTER_HORIZONTAL | Gravity.TOP);
-						break;
-					case PULL_FROM_START:
-					default:
-						setGravity(Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM);
-						break;
-				}
 				break;
-
 		}
 
 		mHeaderText = (TextView) findViewById(R.id.pull_to_refresh_text);
@@ -253,6 +229,10 @@ public abstract class LoadingLayout extends LinearLayout {
 		}
 	}
 
+	public void resetForMeasure() {
+		resetPadding();
+	}
+
 	public final void setLoadingDrawable(Drawable imageDrawable) {
 		// Set Drawable
 		mHeaderImage.setImageDrawable(imageDrawable);
@@ -341,16 +321,30 @@ public abstract class LoadingLayout extends LinearLayout {
 
 	protected abstract void resetImpl();
 
-	public void resetForMeasure() {
-		switch (mScrollDirection) {
-			case PullToRefreshBase.HORIZONTAL_SCROLL:
-				getLayoutParams().width = LayoutParams.WRAP_CONTENT;
-				break;
-			case PullToRefreshBase.VERTICAL_SCROLL:
-			default:
-				getLayoutParams().height = LayoutParams.WRAP_CONTENT;
-				break;
-		}
+	public void adjustHeightUsingTopPadding(final int height) {
+		setPadding(getPaddingLeft(), getPaddingTop() + height - getMeasuredHeight(), getPaddingRight(),
+				getPaddingBottom());
+	}
+
+	public void adjustHeightUsingBottomPadding(final int height) {
+		setPadding(getPaddingLeft(), getPaddingTop(), getPaddingRight(), getPaddingBottom() + height
+				- getMeasuredHeight());
+	}
+
+	public void adjustWidthUsingLeftPadding(final int width) {
+		setPadding(getPaddingLeft() + width - getMeasuredWidth(), getPaddingTop(), getPaddingRight(),
+				getPaddingBottom());
+	}
+
+	public void adjustWidthUsingRightPadding(final int width) {
+		setPadding(getPaddingLeft(), getPaddingTop(), getPaddingRight() + width - getMeasuredWidth(),
+				getPaddingBottom());
+	}
+
+	private void resetPadding() {
+		final int tbPadding = getResources().getDimensionPixelSize(R.dimen.header_footer_top_bottom_padding);
+		final int lrPadding = getResources().getDimensionPixelSize(R.dimen.header_footer_left_right_padding);
+		setPadding(lrPadding, tbPadding, lrPadding, tbPadding);
 	}
 
 }

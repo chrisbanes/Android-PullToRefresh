@@ -653,7 +653,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	 * @return New instance of the Refreshable View
 	 */
 	protected abstract T createRefreshableView(Context context, AttributeSet attrs);
-	
+
 	protected final void disableLoadingLayoutVisibilityChanges() {
 		mLayoutVisibilityChangesEnabled = false;
 	}
@@ -1097,16 +1097,15 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 				case HORIZONTAL_SCROLL:
 					mHeaderDimension = mHeaderLayout.getMeasuredWidth();
 					pLeft = -maximumPullScroll;
-					mHeaderLayout.getLayoutParams().width = maximumPullScroll;
+					mHeaderLayout.adjustWidthUsingLeftPadding(maximumPullScroll);
 					break;
 				case VERTICAL_SCROLL:
 				default:
 					mHeaderDimension = mHeaderLayout.getMeasuredHeight();
 					pTop = -maximumPullScroll;
-					mHeaderLayout.getLayoutParams().height = maximumPullScroll;
+					mHeaderLayout.adjustHeightUsingTopPadding(maximumPullScroll);
 					break;
 			}
-			mHeaderLayout.requestLayout();
 		}
 
 		if (mMode.showFooterLoadingLayout()) {
@@ -1117,16 +1116,15 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 				case HORIZONTAL_SCROLL:
 					mFooterDimension = mFooterLayout.getMeasuredWidth();
 					pRight = -maximumPullScroll;
-					mFooterLayout.getLayoutParams().width = maximumPullScroll;
+					mFooterLayout.adjustWidthUsingRightPadding(maximumPullScroll);
 					break;
 				case VERTICAL_SCROLL:
 				default:
 					mFooterDimension = mFooterLayout.getMeasuredHeight();
 					pBottom = -maximumPullScroll;
-					mFooterLayout.getLayoutParams().height = maximumPullScroll;
+					mFooterLayout.adjustHeightUsingBottomPadding(maximumPullScroll);
 					break;
 			}
-			mFooterLayout.requestLayout();
 		}
 
 		setPadding(pLeft, pTop, pRight, pBottom);
