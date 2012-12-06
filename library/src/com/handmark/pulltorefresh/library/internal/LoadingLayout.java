@@ -49,7 +49,7 @@ public abstract class LoadingLayout extends LinearLayout {
 	protected final ImageView mHeaderImage;
 	protected final ProgressBar mHeaderProgress;
 
-	private boolean mUseIntrinisicAnimation;
+	private boolean mUseIntrinsicAnimation;
 
 	private final TextView mHeaderText;
 	private final TextView mSubHeaderText;
@@ -178,7 +178,7 @@ public abstract class LoadingLayout extends LinearLayout {
 	}
 
 	public final void onPull(float scaleOfLayout) {
-		if (!mUseIntrinisicAnimation) {
+		if (!mUseIntrinsicAnimation) {
 			onPullImpl(scaleOfLayout);
 		}
 	}
@@ -197,7 +197,7 @@ public abstract class LoadingLayout extends LinearLayout {
 			mHeaderText.setText(mRefreshingLabel);
 		}
 
-		if (mUseIntrinisicAnimation) {
+		if (mUseIntrinsicAnimation) {
 			((AnimationDrawable) mHeaderImage.getDrawable()).start();
 		} else {
 			// Now call the callback
@@ -224,7 +224,7 @@ public abstract class LoadingLayout extends LinearLayout {
 		}
 		mHeaderImage.setVisibility(View.VISIBLE);
 
-		if (mUseIntrinisicAnimation) {
+		if (mUseIntrinsicAnimation) {
 			((AnimationDrawable) mHeaderImage.getDrawable()).stop();
 		} else {
 			// Now call the callback
@@ -255,7 +255,7 @@ public abstract class LoadingLayout extends LinearLayout {
 	public final void setLoadingDrawable(Drawable imageDrawable) {
 		// Set Drawable
 		mHeaderImage.setImageDrawable(imageDrawable);
-		mUseIntrinisicAnimation = (imageDrawable instanceof AnimationDrawable);
+		mUseIntrinsicAnimation = (imageDrawable instanceof AnimationDrawable);
 
 		// Now call the callback
 		onLoadingDrawableSet(imageDrawable);
