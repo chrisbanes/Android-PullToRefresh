@@ -86,6 +86,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	private boolean mDisableScrollingWhileRefreshing = true;
 	private boolean mFilterTouchEvents = true;
 	private boolean mOverScrollEnabled = true;
+	private boolean mLayoutVisibilityChangesEnabled = true;
 
 	private Interpolator mScrollAnimationInterpolator;
 	private AnimationStyle mLoadingAnimationStyle = AnimationStyle.getDefault();
@@ -602,6 +603,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	 */
 	void onReset() {
 		mIsBeingDragged = false;
+		mLayoutVisibilityChangesEnabled = true;
 
 		// Always reset both layouts, just in case...
 		mHeaderLayout.reset();
@@ -630,7 +632,10 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	}
 
 	protected LoadingLayout createLoadingLayout(Context context, Mode mode, TypedArray attrs) {
-		return mLoadingAnimationStyle.createLoadingLayout(context, mode, getPullToRefreshScrollDirection(), attrs);
+		LoadingLayout layout = mLoadingAnimationStyle.createLoadingLayout(context, mode,
+				getPullToRefreshScrollDirection(), attrs);
+		layout.setVisibility(View.INVISIBLE);
+		return layout;
 	}
 
 	/**
@@ -648,6 +653,10 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	 * @return New instance of the Refreshable View
 	 */
 	protected abstract T createRefreshableView(Context context, AttributeSet attrs);
+	
+	protected final void disableLoadingLayoutVisibilityChanges() {
+		mLayoutVisibilityChangesEnabled = false;
+	}
 
 	protected final int getFooterHeight() {
 		return mFooterDimension;
@@ -791,6 +800,17 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	 * @param value - New Scroll value
 	 */
 	protected final void setHeaderScroll(final int value) {
+		if (mLayoutVisibilityChangesEnabled) {
+			if (value < 0) {
+				mHeaderLayout.setVisibility(View.VISIBLE);
+			} else if (value > 0) {
+				mFooterLayout.setVisibility(View.VISIBLE);
+			} else {
+				mHeaderLayout.setVisibility(View.INVISIBLE);
+				mFooterLayout.setVisibility(View.INVISIBLE);
+			}
+		}
+
 		switch (getPullToRefreshScrollDirection()) {
 			case VERTICAL_SCROLL:
 				scrollTo(0, value);

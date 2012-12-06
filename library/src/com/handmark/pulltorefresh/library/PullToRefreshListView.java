@@ -175,6 +175,9 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		listViewLoadingView.refreshing();
 
 		if (doScroll) {
+			// We need to disable the automatic visibility changes for now
+			disableLoadingLayoutVisibilityChanges();
+
 			// We scroll slightly so that the ListView's header/footer is at the
 			// same Y position as our normal header/footer
 			setHeaderScroll(scrollToY);
