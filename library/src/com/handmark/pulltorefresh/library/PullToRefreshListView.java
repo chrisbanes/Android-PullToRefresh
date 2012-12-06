@@ -27,7 +27,6 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -171,15 +170,8 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		// Make sure the opposite end is hidden too
 		oppositeListViewLoadingView.setVisibility(View.GONE);
 
-		// Show the ListView Loading View and set it to refresh. If it has a 0
-		// height, then we need to set it to WRAP_CONTENT
-		if (listViewLoadingView.getHeight() == 0) {
-			ViewGroup.LayoutParams lp = listViewLoadingView.getLayoutParams();
-			lp.height = ViewGroup.LayoutParams.WRAP_CONTENT;
-			listViewLoadingView.setLayoutParams(lp);
-		}
+		// Show the ListView Loading View and set it to refresh.
 		listViewLoadingView.setVisibility(View.VISIBLE);
-
 		listViewLoadingView.refreshing();
 
 		if (doScroll) {
@@ -263,19 +255,19 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		// Get Styles from attrs
 		TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.PullToRefresh);
 
-		// We use a 0 height (instead of View.GONE) for now so that it's still
-		// measured and laid out
-		final FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, 0,
-				Gravity.CENTER_HORIZONTAL);
+		final FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,
+				FrameLayout.LayoutParams.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL);
 
 		// Create Loading Views ready for use later
 		FrameLayout frame = new FrameLayout(context);
 		mHeaderLoadingView = createLoadingLayout(context, Mode.PULL_FROM_START, a);
+		mHeaderLoadingView.setVisibility(View.GONE);
 		frame.addView(mHeaderLoadingView, lp);
 		lv.addHeaderView(frame, null, false);
 
 		mLvFooterLoadingFrame = new FrameLayout(context);
 		mFooterLoadingView = createLoadingLayout(context, Mode.PULL_FROM_END, a);
+		mFooterLoadingView.setVisibility(View.GONE);
 		mLvFooterLoadingFrame.addView(mFooterLoadingView, lp);
 
 		a.recycle();
@@ -296,8 +288,8 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		protected boolean overScrollBy(int deltaX, int deltaY, int scrollX, int scrollY, int scrollRangeX,
 				int scrollRangeY, int maxOverScrollX, int maxOverScrollY, boolean isTouchEvent) {
 
-			final boolean returnValue = super.overScrollBy(deltaX, deltaY, scrollX, scrollY, scrollRangeX, scrollRangeY,
-					maxOverScrollX, maxOverScrollY, isTouchEvent);
+			final boolean returnValue = super.overScrollBy(deltaX, deltaY, scrollX, scrollY, scrollRangeX,
+					scrollRangeY, maxOverScrollX, maxOverScrollY, isTouchEvent);
 
 			// Does all of the hard work...
 			OverscrollHelper.overScrollBy(PullToRefreshListView.this, deltaX, scrollX, deltaY, scrollY, isTouchEvent);

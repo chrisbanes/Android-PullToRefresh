@@ -27,7 +27,6 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
@@ -61,13 +60,8 @@ public abstract class LoadingLayout extends LinearLayout {
 	private CharSequence mRefreshingLabel;
 	private CharSequence mReleaseLabel;
 
-	// Max Width that this can be
-	private int mMaxWidth;
-
 	public LoadingLayout(Context context, final Mode mode, final int scrollDirection, TypedArray attrs) {
 		super(context);
-
-		setGravity(Gravity.CENTER_VERTICAL);
 
 		mMode = mode;
 		mScrollDirection = scrollDirection;
@@ -79,13 +73,31 @@ public abstract class LoadingLayout extends LinearLayout {
 		switch (scrollDirection) {
 			case PullToRefreshBase.HORIZONTAL_SCROLL:
 				LayoutInflater.from(context).inflate(R.layout.pull_to_refresh_header_horizontal, this);
-				mMaxWidth = getResources().getDimensionPixelSize(R.dimen.header_footer_max_width);
+
+				switch (mMode) {
+					case PULL_FROM_END:
+						setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
+						break;
+					case PULL_FROM_START:
+					default:
+						setGravity(Gravity.CENTER_VERTICAL | Gravity.RIGHT);
+						break;
+				}
 				break;
 
 			case PullToRefreshBase.VERTICAL_SCROLL:
 			default:
 				LayoutInflater.from(context).inflate(R.layout.pull_to_refresh_header_vertical, this);
-				mMaxWidth = getResources().getDimensionPixelSize(R.dimen.header_footer_max_width);
+
+				switch (mMode) {
+					case PULL_FROM_END:
+						setGravity(Gravity.CENTER_HORIZONTAL | Gravity.TOP);
+						break;
+					case PULL_FROM_START:
+					default:
+						setGravity(Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM);
+						break;
+				}
 				break;
 
 		}
@@ -148,6 +160,7 @@ public abstract class LoadingLayout extends LinearLayout {
 		// drawable attr above
 		switch (mode) {
 			case PULL_FROM_START:
+			default:
 				if (attrs.hasValue(R.styleable.PullToRefresh_ptrDrawableStart)) {
 					imageDrawable = attrs.getDrawable(R.styleable.PullToRefresh_ptrDrawableStart);
 				} else if (attrs.hasValue(R.styleable.PullToRefresh_ptrDrawableTop)) {
@@ -240,18 +253,6 @@ public abstract class LoadingLayout extends LinearLayout {
 		}
 	}
 
-	@Override
-	protected void onSizeChanged(final int w, int h, int oldw, int oldh) {
-		super.onSizeChanged(w, h, oldw, oldh);
-
-		// If we're bigger than the Max Width, resize us
-		if (w > mMaxWidth) {
-			ViewGroup.LayoutParams lp = getLayoutParams();
-			lp.width = mMaxWidth;
-			setLayoutParams(lp);
-		}
-	}
-
 	public final void setLoadingDrawable(Drawable imageDrawable) {
 		// Set Drawable
 		mHeaderImage.setImageDrawable(imageDrawable);
@@ -339,5 +340,17 @@ public abstract class LoadingLayout extends LinearLayout {
 	protected abstract void releaseToRefreshImpl();
 
 	protected abstract void resetImpl();
+
+	public void resetForMeasure() {
+		switch (mScrollDirection) {
+			case PullToRefreshBase.HORIZONTAL_SCROLL:
+				getLayoutParams().width = LayoutParams.WRAP_CONTENT;
+				break;
+			case PullToRefreshBase.VERTICAL_SCROLL:
+			default:
+				getLayoutParams().height = LayoutParams.WRAP_CONTENT;
+				break;
+		}
+	}
 
 }
