@@ -1082,7 +1082,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	 * necessary
 	 */
 	private void refreshLoadingViewsSize() {
-		final int maximumPullScroll = getMaximumPullScroll();
+		final int maximumPullScroll = (int) (getMaximumPullScroll() * 1.2f);
 
 		mHeaderDimension = mFooterDimension = 0;
 
