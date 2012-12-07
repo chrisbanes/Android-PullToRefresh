@@ -75,10 +75,10 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 	 * Gets whether an indicator graphic should be displayed when the View is in
 	 * a state where a Pull-to-Refresh can happen. An example of this state is
 	 * when the Adapter View is scrolled to the top and the mode is set to
-	 * {@link Mode#PULL_FROM_START}. The default value is <var>true</var>
-	 * if {@link PullToRefreshBase#isPullToRefreshOverScrollEnabled()
+	 * {@link Mode#PULL_FROM_START}. The default value is <var>true</var> if
+	 * {@link PullToRefreshBase#isPullToRefreshOverScrollEnabled()
 	 * isPullToRefreshOverScrollEnabled()} returns false.
-	 *
+	 * 
 	 * @return true if the indicators will be shown
 	 */
 	public boolean getShowIndicator() {
@@ -89,9 +89,8 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 			final int totalItemCount) {
 
 		if (DEBUG) {
-			Log.d(LOG_TAG,
-					"First Visible: " + firstVisibleItem + ". Visible Count: " + visibleItemCount + ". Total Items:" +
-							totalItemCount);
+			Log.d(LOG_TAG, "First Visible: " + firstVisibleItem + ". Visible Count: " + visibleItemCount
+					+ ". Total Items:" + totalItemCount);
 		}
 
 		// If we have a OnItemVisibleListener, do check...
@@ -132,9 +131,10 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 
 	/**
 	 * Pass-through method for {@link PullToRefreshBase#getRefreshableView()
-	 * getRefreshableView()}.{@link AdapterView#setAdapter(android.widget.Adapter)}
+	 * getRefreshableView()}.
+	 * {@link AdapterView#setAdapter(android.widget.Adapter)}
 	 * setAdapter(adapter)}. This is just for convenience!
-	 *
+	 * 
 	 * @param adapter - Adapter to set
 	 */
 	public void setAdapter(ListAdapter adapter) {
@@ -151,7 +151,7 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 	 * yourself. Calling setEmptyView on the AdapterView will automatically call
 	 * this method and set everything up. This includes when the Android
 	 * Framework automatically sets the Empty View based on it's ID.
-	 *
+	 * 
 	 * @param newEmptyView - Empty View to be used
 	 */
 	public final void setEmptyView(View newEmptyView) {
@@ -189,7 +189,7 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 	 * getRefreshableView()}.
 	 * {@link AdapterView#setOnItemClickListener(OnItemClickListener)
 	 * setOnItemClickListener(listener)}. This is just for convenience!
-	 *
+	 * 
 	 * @param listener - OnItemClickListener to use
 	 */
 	public void setOnItemClickListener(OnItemClickListener listener) {
@@ -213,7 +213,7 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 	 * a state where a Pull-to-Refresh can happen. An example of this state is
 	 * when the Adapter View is scrolled to the top and the mode is set to
 	 * {@link Mode#PULL_FROM_START}
-	 *
+	 * 
 	 * @param showIndicator - true if the indicators should be shown.
 	 */
 	public void setShowIndicator(boolean showIndicator) {
@@ -242,6 +242,9 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 				case PULL_FROM_START:
 					mIndicatorIvTop.pullToRefresh();
 					break;
+				default:
+					// NO-OP
+					break;
 			}
 		}
 	}
@@ -265,6 +268,9 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 					break;
 				case PULL_FROM_START:
 					mIndicatorIvTop.releaseToRefresh();
+					break;
+				default:
+					// NO-OP
 					break;
 			}
 		}
@@ -394,8 +400,8 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 			final int lastVisiblePosition = mRefreshableView.getLastVisiblePosition();
 
 			if (DEBUG) {
-				Log.d(LOG_TAG, "isLastItemVisible. Last Item Position: " + lastItemPosition + " Last Visible Pos: " +
-						lastVisiblePosition);
+				Log.d(LOG_TAG, "isLastItemVisible. Last Item Position: " + lastItemPosition + " Last Visible Pos: "
+						+ lastVisiblePosition);
 			}
 
 			/**

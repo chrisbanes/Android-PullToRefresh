@@ -111,7 +111,7 @@ public abstract class LoadingLayout extends LinearLayout {
 		if (attrs.hasValue(R.styleable.PullToRefresh_ptrHeaderBackground)) {
 			Drawable background = attrs.getDrawable(R.styleable.PullToRefresh_ptrHeaderBackground);
 			if (null != background) {
-				setBackgroundDrawable(background);
+				ViewCompat.setBackground(this, background);
 			}
 		}
 

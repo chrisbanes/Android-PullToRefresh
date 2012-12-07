@@ -37,8 +37,8 @@ import android.widget.LinearLayout;
 import com.handmark.pulltorefresh.library.internal.FlipLoadingLayout;
 import com.handmark.pulltorefresh.library.internal.LoadingLayout;
 import com.handmark.pulltorefresh.library.internal.RotateLoadingLayout;
-import com.handmark.pulltorefresh.library.internal.SDK16;
 import com.handmark.pulltorefresh.library.internal.Utils;
+import com.handmark.pulltorefresh.library.internal.ViewCompat;
 
 public abstract class PullToRefreshBase<T extends View> extends LinearLayout implements IPullToRefresh<T> {
 
@@ -544,6 +544,9 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 			case PULL_FROM_START:
 				mHeaderLayout.pullToRefresh();
 				break;
+			default:
+				// NO-OP
+				break;
 		}
 	}
 
@@ -593,6 +596,9 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 				break;
 			case PULL_FROM_START:
 				mHeaderLayout.releaseToRefresh();
+				break;
+			default:
+				// NO-OP
 				break;
 		}
 	}
@@ -1021,8 +1027,9 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 				return isReadyForPullEnd();
 			case BOTH:
 				return isReadyForPullEnd() || isReadyForPullStart();
+			default:
+				return false;
 		}
-		return false;
 	}
 
 	private void measureView(View child) {
@@ -1086,6 +1093,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 					mFooterLayout.onPull(scale);
 					break;
 				case PULL_FROM_START:
+				default:
 					mHeaderLayout.onPull(scale);
 					break;
 			}
@@ -1510,9 +1518,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	}
 
 	final class SmoothScrollRunnable implements Runnable {
-
-		static final int ANIMATION_DELAY = 10;
-
 		private final Interpolator mInterpolator;
 		private final int mScrollToY;
 		private final int mScrollFromY;
@@ -1558,11 +1563,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 
 			// If we're not at the target Y, keep going...
 			if (mContinueRunning && mScrollToY != mCurrentY) {
-				if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
-					SDK16.postOnAnimation(PullToRefreshBase.this, this);
-				} else {
-					postDelayed(this, ANIMATION_DELAY);
-				}
+				ViewCompat.postOnAnimation(PullToRefreshBase.this, this);
 			} else {
 				if (null != mListener) {
 					mListener.onSmoothScrollFinished();

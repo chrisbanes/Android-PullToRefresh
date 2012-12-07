@@ -15,6 +15,7 @@
  *******************************************************************************/
 package com.handmark.pulltorefresh.library.internal;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Matrix;
@@ -29,6 +30,7 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.handmark.pulltorefresh.library.R;
 
+@SuppressLint("ViewConstructor")
 public class FlipLoadingLayout extends LoadingLayout {
 
 	static final int FLIP_ANIMATION_DURATION = 150;
@@ -132,6 +134,9 @@ public class FlipLoadingLayout extends LoadingLayout {
 				if (mScrollDirection == PullToRefreshBase.HORIZONTAL_SCROLL) {
 					angle = 270f;
 				}
+				break;
+
+			default:
 				break;
 		}
 
