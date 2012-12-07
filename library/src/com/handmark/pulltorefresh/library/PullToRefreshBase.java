@@ -615,6 +615,37 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		resetHeader();
 	}
 
+	final void setState(State state, final boolean... params) {
+		mState = state;
+		if (DEBUG) {
+			Log.d(LOG_TAG, "State: " + mState.name());
+		}
+
+		switch (mState) {
+			case RESET:
+				onReset();
+				break;
+			case PULL_TO_REFRESH:
+				onPullToRefresh();
+				break;
+			case RELEASE_TO_REFRESH:
+				onReleaseToRefresh();
+				break;
+			case REFRESHING:
+			case MANUAL_REFRESHING:
+				onRefreshing(params[0]);
+				break;
+			case OVERSCROLLING:
+				// NO-OP
+				break;
+		}
+
+		// Call OnPullEventListener
+		if (null != mOnPullEventListener) {
+			mOnPullEventListener.onPullEvent(this, mState, mCurrentMode);
+		}
+	}
+
 	/**
 	 * Used internally for adding view. Need because we override addView to
 	 * pass-through to the Refreshable View
@@ -1130,34 +1161,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		setPadding(pLeft, pTop, pRight, pBottom);
 	}
 
-	private void setState(State state, final boolean... params) {
-		mState = state;
-		if (DEBUG) {
-			Log.d(LOG_TAG, "State: " + mState.name());
-		}
-
-		switch (mState) {
-			case RESET:
-				onReset();
-				break;
-			case PULL_TO_REFRESH:
-				onPullToRefresh();
-				break;
-			case RELEASE_TO_REFRESH:
-				onReleaseToRefresh();
-				break;
-			case REFRESHING:
-			case MANUAL_REFRESHING:
-				onRefreshing(params[0]);
-				break;
-		}
-
-		// Call OnPullEventListener
-		if (null != mOnPullEventListener) {
-			mOnPullEventListener.onPullEvent(this, mState, mCurrentMode);
-		}
-	}
-
 	/**
 	 * Smooth Scroll to position using the specific duration
 	 * 
@@ -1470,7 +1473,13 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		 * When the UI is currently refreshing, caused by a call to
 		 * {@link PullToRefreshBase#setRefreshing() setRefreshing()}.
 		 */
-		MANUAL_REFRESHING(0x9);
+		MANUAL_REFRESHING(0x9),
+
+		/**
+		 * When the UI is currently overscrolling, caused by a fling on the
+		 * Refreshable View.
+		 */
+		OVERSCROLLING(0x10);
 
 		/**
 		 * Maps an int to a specific state. This is needed when saving state.
