@@ -897,18 +897,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	protected void updateUIForMode() {
 		// We need to use the correct LayoutParam values, based on scroll
 		// direction
-		final LinearLayout.LayoutParams lp;
-		switch (getPullToRefreshScrollDirection()) {
-			case HORIZONTAL_SCROLL:
-				lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
-						LinearLayout.LayoutParams.MATCH_PARENT);
-				break;
-			case VERTICAL_SCROLL:
-			default:
-				lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-						LinearLayout.LayoutParams.WRAP_CONTENT);
-				break;
-		}
+		final LinearLayout.LayoutParams lp = getLoadingLayoutLayoutParams();
 
 		// Remove Header, and then add Header Loading View again if needed
 		if (this == mHeaderLayout.getParent()) {
@@ -1035,17 +1024,23 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	private void measureView(View child) {
 		ViewGroup.LayoutParams p = child.getLayoutParams();
 		if (p == null) {
-			p = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+			p = getLoadingLayoutLayoutParams();
 		}
 
-		int childWidthSpec = ViewGroup.getChildMeasureSpec(0, 0, p.width);
-		int lpHeight = p.height;
-		int childHeightSpec;
-		if (lpHeight > 0) {
-			childHeightSpec = MeasureSpec.makeMeasureSpec(lpHeight, MeasureSpec.EXACTLY);
+		int childWidthSpec, childHeightSpec;
+
+		if (p.width == ViewGroup.LayoutParams.MATCH_PARENT) {
+			childWidthSpec = MeasureSpec.makeMeasureSpec(getWidth(), MeasureSpec.EXACTLY);
+		} else {
+			childWidthSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED);
+		}
+		
+		if (p.height == ViewGroup.LayoutParams.MATCH_PARENT) {
+			childHeightSpec = MeasureSpec.makeMeasureSpec(getHeight(), MeasureSpec.EXACTLY);
 		} else {
 			childHeightSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED);
 		}
+
 		child.measure(childWidthSpec, childHeightSpec);
 	}
 
@@ -1103,6 +1098,18 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 			} else if (mState == State.PULL_TO_REFRESH && itemDimension < Math.abs(newScrollValue)) {
 				setState(State.RELEASE_TO_REFRESH);
 			}
+		}
+	}
+
+	private LinearLayout.LayoutParams getLoadingLayoutLayoutParams() {
+		switch (getPullToRefreshScrollDirection()) {
+			case HORIZONTAL_SCROLL:
+				return new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+						LinearLayout.LayoutParams.MATCH_PARENT);
+			case VERTICAL_SCROLL:
+			default:
+				return new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+						LinearLayout.LayoutParams.WRAP_CONTENT);
 		}
 	}
 
