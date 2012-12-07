@@ -1145,6 +1145,9 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 					mHeaderLayout.adjustHeightUsingTopPadding(maximumPullScroll);
 					break;
 			}
+
+			// We need to re-measure with the new padding...
+			measureView(mHeaderLayout);
 		}
 
 		if (mMode.showFooterLoadingLayout()) {
@@ -1164,6 +1167,9 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 					mFooterLayout.adjustHeightUsingBottomPadding(maximumPullScroll);
 					break;
 			}
+
+			// We need to re-measure with the new padding...
+			measureView(mFooterLayout);
 		}
 
 		setPadding(pLeft, pTop, pRight, pBottom);
