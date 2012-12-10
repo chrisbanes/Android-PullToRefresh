@@ -62,7 +62,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	static final String STATE_STATE = "ptr_state";
 	static final String STATE_MODE = "ptr_mode";
 	static final String STATE_CURRENT_MODE = "ptr_current_mode";
-	static final String STATE_DISABLE_SCROLLING_REFRESHING = "ptr_disable_scrolling";
+	static final String STATE_SCROLLING_REFRESHING_ENABLED = "ptr_disable_scrolling";
 	static final String STATE_SHOW_REFRESHING_VIEW = "ptr_show_refreshing_view";
 	static final String STATE_SUPER = "ptr_super";
 
@@ -83,7 +83,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	private FrameLayout mRefreshableViewWrapper;
 
 	private boolean mShowViewWhileRefreshing = true;
-	private boolean mDisableScrollingWhileRefreshing = true;
+	private boolean mScrollingWhileRefreshingEnabled = false;
 	private boolean mFilterTouchEvents = true;
 	private boolean mOverScrollEnabled = true;
 	private boolean mLayoutVisibilityChangesEnabled = true;
@@ -196,9 +196,11 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		return mCurrentMode == Mode.PULL_FROM_START;
 	}
 
-	@Override
+	/**
+	 * @deprecated See {@link #isScrollingWhileRefreshingEnabled()}.
+	 */
 	public final boolean isDisableScrollingWhileRefreshing() {
-		return mDisableScrollingWhileRefreshing;
+		return !isScrollingWhileRefreshingEnabled();
 	}
 
 	@Override
@@ -215,6 +217,11 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	@Override
 	public final boolean isRefreshing() {
 		return mState == State.REFRESHING || mState == State.MANUAL_REFRESHING;
+	}
+
+	@Override
+	public final boolean isScrollingWhileRefreshingEnabled() {
+		return mScrollingWhileRefreshingEnabled;
 	}
 
 	@Override
@@ -238,7 +245,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		switch (action) {
 			case MotionEvent.ACTION_MOVE: {
 				// If we're refreshing, and the flag is set. Eat all MOVE events
-				if (mDisableScrollingWhileRefreshing && isRefreshing()) {
+				if (!mScrollingWhileRefreshingEnabled && isRefreshing()) {
 					return true;
 				}
 
@@ -309,7 +316,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		}
 
 		// If we're refreshing, and the flag is set. Eat the event
-		if (mDisableScrollingWhileRefreshing && isRefreshing()) {
+		if (!mScrollingWhileRefreshingEnabled && isRefreshing()) {
 			return true;
 		}
 
@@ -373,9 +380,15 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		return false;
 	}
 
-	@Override
-	public final void setDisableScrollingWhileRefreshing(boolean disableScrollingWhileRefreshing) {
-		mDisableScrollingWhileRefreshing = disableScrollingWhileRefreshing;
+	public final void setScrollingWhileRefreshingEnabled(boolean allowScrollingWhileRefreshing) {
+		mScrollingWhileRefreshingEnabled = allowScrollingWhileRefreshing;
+	}
+
+	/**
+	 * @deprecated See {@link #setScrollingWhileRefreshingEnabled(boolean)}
+	 */
+	public void setDisableScrollingWhileRefreshing(boolean disableScrollingWhileRefreshing) {
+		setScrollingWhileRefreshingEnabled(!disableScrollingWhileRefreshing);
 	}
 
 	@Override
@@ -776,7 +789,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 			mMode = Mode.mapIntToValue(bundle.getInt(STATE_MODE, 0));
 			mCurrentMode = Mode.mapIntToValue(bundle.getInt(STATE_CURRENT_MODE, 0));
 
-			mDisableScrollingWhileRefreshing = bundle.getBoolean(STATE_DISABLE_SCROLLING_REFRESHING, true);
+			mScrollingWhileRefreshingEnabled = bundle.getBoolean(STATE_SCROLLING_REFRESHING_ENABLED, false);
 			mShowViewWhileRefreshing = bundle.getBoolean(STATE_SHOW_REFRESHING_VIEW, true);
 
 			// Let super Restore Itself
@@ -806,7 +819,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		bundle.putInt(STATE_STATE, mState.getIntValue());
 		bundle.putInt(STATE_MODE, mMode.getIntValue());
 		bundle.putInt(STATE_CURRENT_MODE, mCurrentMode.getIntValue());
-		bundle.putBoolean(STATE_DISABLE_SCROLLING_REFRESHING, mDisableScrollingWhileRefreshing);
+		bundle.putBoolean(STATE_SCROLLING_REFRESHING_ENABLED, mScrollingWhileRefreshingEnabled);
 		bundle.putBoolean(STATE_SHOW_REFRESHING_VIEW, mShowViewWhileRefreshing);
 		bundle.putParcelable(STATE_SUPER, super.onSaveInstanceState());
 
@@ -999,6 +1012,11 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 			mOverScrollEnabled = a.getBoolean(R.styleable.PullToRefresh_ptrOverScroll, true);
 		}
 
+		if (a.hasValue(R.styleable.PullToRefresh_ptrScrollingWhileRefreshingEnabled)) {
+			mScrollingWhileRefreshingEnabled = a.getBoolean(R.styleable.PullToRefresh_ptrScrollingWhileRefreshingEnabled,
+					false);
+		}
+
 		// Let the derivative classes have a go at handling attributes, then
 		// recycle them...
 		handleStyledAttributes(a);
@@ -1034,7 +1052,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		} else {
 			childWidthSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED);
 		}
-		
+
 		if (p.height == ViewGroup.LayoutParams.MATCH_PARENT) {
 			childHeightSpec = MeasureSpec.makeMeasureSpec(getHeight(), MeasureSpec.EXACTLY);
 		} else {

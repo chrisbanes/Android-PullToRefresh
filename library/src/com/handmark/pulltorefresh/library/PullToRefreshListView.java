@@ -43,22 +43,18 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 
 	public PullToRefreshListView(Context context) {
 		super(context);
-		setDisableScrollingWhileRefreshing(false);
 	}
 
 	public PullToRefreshListView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		setDisableScrollingWhileRefreshing(false);
 	}
 
 	public PullToRefreshListView(Context context, Mode mode) {
 		super(context, mode);
-		setDisableScrollingWhileRefreshing(false);
 	}
 
 	public PullToRefreshListView(Context context, Mode mode, AnimationStyle style) {
 		super(context, mode, style);
-		setDisableScrollingWhileRefreshing(false);
 	}
 
 	@Override
@@ -278,6 +274,17 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		// Set it to this so it can be used in ListActivity/ListFragment
 		lv.setId(android.R.id.list);
 		return lv;
+	}
+
+	@Override
+	protected void handleStyledAttributes(TypedArray a) {
+		super.handleStyledAttributes(a);
+
+		// If the value for Scrolling While Refreshing Enable hasn't been set
+		// via XML, enable it as the default for this view.
+		if (!a.hasValue(R.styleable.PullToRefresh_ptrScrollingWhileRefreshingEnabled)) {
+			setScrollingWhileRefreshingEnabled(true);
+		}
 	}
 
 	@TargetApi(9)
