@@ -100,14 +100,6 @@ public abstract class LoadingLayout extends LinearLayout {
 				break;
 		}
 
-		if (attrs.hasValue(R.styleable.PullToRefresh_ptrHeaderTextColor)) {
-			ColorStateList colors = attrs.getColorStateList(R.styleable.PullToRefresh_ptrHeaderTextColor);
-			setTextColor(null != colors ? colors : ColorStateList.valueOf(Color.BLACK));
-		}
-		if (attrs.hasValue(R.styleable.PullToRefresh_ptrHeaderSubTextColor)) {
-			ColorStateList colors = attrs.getColorStateList(R.styleable.PullToRefresh_ptrHeaderSubTextColor);
-			setSubTextColor(null != colors ? colors : ColorStateList.valueOf(Color.BLACK));
-		}
 		if (attrs.hasValue(R.styleable.PullToRefresh_ptrHeaderBackground)) {
 			Drawable background = attrs.getDrawable(R.styleable.PullToRefresh_ptrHeaderBackground);
 			if (null != background) {
@@ -124,6 +116,16 @@ public abstract class LoadingLayout extends LinearLayout {
 			TypedValue styleID = new TypedValue();
 			attrs.getValue(R.styleable.PullToRefresh_ptrSubHeaderTextAppearance, styleID);
 			setSubTextAppearance(styleID.data);
+		}
+
+		// Text Color attrs need to be set after TextAppearance attrs
+		if (attrs.hasValue(R.styleable.PullToRefresh_ptrHeaderTextColor)) {
+			ColorStateList colors = attrs.getColorStateList(R.styleable.PullToRefresh_ptrHeaderTextColor);
+			setTextColor(null != colors ? colors : ColorStateList.valueOf(Color.BLACK));
+		}
+		if (attrs.hasValue(R.styleable.PullToRefresh_ptrHeaderSubTextColor)) {
+			ColorStateList colors = attrs.getColorStateList(R.styleable.PullToRefresh_ptrHeaderSubTextColor);
+			setSubTextColor(null != colors ? colors : ColorStateList.valueOf(Color.BLACK));
 		}
 
 		// Try and get defined drawable from Attrs
