@@ -367,6 +367,12 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 						}
 					}
 
+					// If we're already refreshing, just scroll back to the top
+					if (isRefreshing()) {
+						smoothScrollTo(0);
+						return true;
+					}
+
 					// If we haven't returned by here, then we're not in a state
 					// to pull, so just reset
 					setState(State.RESET);
@@ -1013,8 +1019,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		}
 
 		if (a.hasValue(R.styleable.PullToRefresh_ptrScrollingWhileRefreshingEnabled)) {
-			mScrollingWhileRefreshingEnabled = a.getBoolean(R.styleable.PullToRefresh_ptrScrollingWhileRefreshingEnabled,
-					false);
+			mScrollingWhileRefreshingEnabled = a.getBoolean(
+					R.styleable.PullToRefresh_ptrScrollingWhileRefreshingEnabled, false);
 		}
 
 		// Let the derivative classes have a go at handling attributes, then
@@ -1099,7 +1105,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 
 		setHeaderScroll(newScrollValue);
 
-		if (newScrollValue != 0) {
+		if (newScrollValue != 0 && !isRefreshing()) {
 			float scale = Math.abs(newScrollValue) / (float) itemDimension;
 			switch (mCurrentMode) {
 				case PULL_FROM_END:
