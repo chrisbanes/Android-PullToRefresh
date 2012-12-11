@@ -121,11 +121,15 @@ public abstract class LoadingLayout extends LinearLayout {
 		// Text Color attrs need to be set after TextAppearance attrs
 		if (attrs.hasValue(R.styleable.PullToRefresh_ptrHeaderTextColor)) {
 			ColorStateList colors = attrs.getColorStateList(R.styleable.PullToRefresh_ptrHeaderTextColor);
-			setTextColor(null != colors ? colors : ColorStateList.valueOf(Color.BLACK));
+			if (null != colors) {
+				setTextColor(colors);
+			}
 		}
 		if (attrs.hasValue(R.styleable.PullToRefresh_ptrHeaderSubTextColor)) {
 			ColorStateList colors = attrs.getColorStateList(R.styleable.PullToRefresh_ptrHeaderSubTextColor);
-			setSubTextColor(null != colors ? colors : ColorStateList.valueOf(Color.BLACK));
+			if (null != colors) {
+				setSubTextColor(colors);
+			}
 		}
 
 		// Try and get defined drawable from Attrs
