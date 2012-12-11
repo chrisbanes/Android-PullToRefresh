@@ -41,6 +41,8 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 
 	private FrameLayout mLvFooterLoadingFrame;
 
+	private boolean mListViewExtrasEnabled;
+
 	public PullToRefreshListView(Context context) {
 		super(context);
 	}
@@ -126,12 +128,12 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 
 	@Override
 	void onRefreshing(final boolean doScroll) {
-
-		// If we're not showing the Refreshing view, or the list is empty, then
-		// the header/footer views won't show so we use the
-		// normal method
+		/**
+		 * If we're not showing the Refreshing view, or the list is empty, the
+		 * the header/footer views won't show so we use the normal method.
+		 */
 		ListAdapter adapter = mRefreshableView.getAdapter();
-		if (!getShowViewWhileRefreshing() || null == adapter || adapter.isEmpty()) {
+		if (!mListViewExtrasEnabled || !getShowViewWhileRefreshing() || null == adapter || adapter.isEmpty()) {
 			super.onRefreshing(doScroll);
 			return;
 		}
@@ -189,6 +191,14 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 
 	@Override
 	void onReset() {
+		/**
+		 * If the extras are not enabled, just call up to super and return.
+		 */
+		if (!mListViewExtrasEnabled) {
+			super.onReset();
+			return;
+		}
+
 		final LoadingLayout originalLoadingLayout, listViewLoadingLayout;
 		final int scrollToHeight, selection;
 		final boolean scrollLvToEdge;
@@ -251,26 +261,6 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 	protected ListView createRefreshableView(Context context, AttributeSet attrs) {
 		ListView lv = createListView(context, attrs);
 
-		// Get Styles from attrs
-		TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.PullToRefresh);
-
-		final FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,
-				FrameLayout.LayoutParams.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL);
-
-		// Create Loading Views ready for use later
-		FrameLayout frame = new FrameLayout(context);
-		mHeaderLoadingView = createLoadingLayout(context, Mode.PULL_FROM_START, a);
-		mHeaderLoadingView.setVisibility(View.GONE);
-		frame.addView(mHeaderLoadingView, lp);
-		lv.addHeaderView(frame, null, false);
-
-		mLvFooterLoadingFrame = new FrameLayout(context);
-		mFooterLoadingView = createLoadingLayout(context, Mode.PULL_FROM_END, a);
-		mFooterLoadingView.setVisibility(View.GONE);
-		mLvFooterLoadingFrame.addView(mFooterLoadingView, lp);
-
-		a.recycle();
-
 		// Set it to this so it can be used in ListActivity/ListFragment
 		lv.setId(android.R.id.list);
 		return lv;
@@ -280,10 +270,31 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 	protected void handleStyledAttributes(TypedArray a) {
 		super.handleStyledAttributes(a);
 
-		// If the value for Scrolling While Refreshing Enable hasn't been set
-		// via XML, enable it as the default for this view.
-		if (!a.hasValue(R.styleable.PullToRefresh_ptrScrollingWhileRefreshingEnabled)) {
-			setScrollingWhileRefreshingEnabled(true);
+		mListViewExtrasEnabled = a.getBoolean(R.styleable.PullToRefresh_ptrListViewExtrasEnabled, true);
+
+		if (mListViewExtrasEnabled) {
+			final FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,
+					FrameLayout.LayoutParams.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL);
+
+			// Create Loading Views ready for use later
+			FrameLayout frame = new FrameLayout(getContext());
+			mHeaderLoadingView = createLoadingLayout(getContext(), Mode.PULL_FROM_START, a);
+			mHeaderLoadingView.setVisibility(View.GONE);
+			frame.addView(mHeaderLoadingView, lp);
+			mRefreshableView.addHeaderView(frame, null, false);
+
+			mLvFooterLoadingFrame = new FrameLayout(getContext());
+			mFooterLoadingView = createLoadingLayout(getContext(), Mode.PULL_FROM_END, a);
+			mFooterLoadingView.setVisibility(View.GONE);
+			mLvFooterLoadingFrame.addView(mFooterLoadingView, lp);
+
+			/**
+			 * If the value for Scrolling While Refreshing hasn't been
+			 * explicitly set via XML, enable Scrolling While Refreshing.
+			 */
+			if (!a.hasValue(R.styleable.PullToRefresh_ptrScrollingWhileRefreshingEnabled)) {
+				setScrollingWhileRefreshingEnabled(true);
+			}
 		}
 	}
 
@@ -352,7 +363,7 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		@Override
 		public void setAdapter(ListAdapter adapter) {
 			// Add the Footer View at the last possible moment
-			if (!mAddedLvFooter) {
+			if (null != mLvFooterLoadingFrame && !mAddedLvFooter) {
 				addFooterView(mLvFooterLoadingFrame, null, false);
 				mAddedLvFooter = true;
 			}

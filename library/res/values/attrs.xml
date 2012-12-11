@@ -29,6 +29,7 @@
             <flag name="flip" value="0x1" />
         </attr>
         <attr name="ptrScrollingWhileRefreshingEnabled" format="reference|boolean" />
+        <attr name="ptrListViewExtrasEnabled" format="reference|boolean" />
 
         <!-- Deprecated -->
         <attr name="ptrAdapterViewBackground" format="reference|color" />
