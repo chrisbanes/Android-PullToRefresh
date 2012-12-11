@@ -118,8 +118,8 @@ public final class OverscrollHelper {
 				break;
 		}
 
-		// Check that OverScroll is enabled
-		if (view.isPullToRefreshOverScrollEnabled()) {
+		// Check that OverScroll is enabled and that we're not currently refreshing.
+		if (view.isPullToRefreshOverScrollEnabled() && !view.isRefreshing()) {
 			final Mode mode = view.getMode();
 
 			// Check that Pull-to-Refresh is enabled, and the event isn't from
