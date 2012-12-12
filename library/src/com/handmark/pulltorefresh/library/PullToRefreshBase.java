@@ -15,6 +15,8 @@
  *******************************************************************************/
 package com.handmark.pulltorefresh.library;
 
+import java.util.HashSet;
+
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
@@ -166,6 +168,16 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	@Override
 	public final boolean getFilterTouchEvents() {
 		return mFilterTouchEvents;
+	}
+
+	@Override
+	public ILoadingLayout getLoadingLayoutProxy() {
+		return getLoadingLayoutProxy(true, true);
+	}
+
+	@Override
+	public ILoadingLayout getLoadingLayoutProxy(boolean includeStart, boolean includeEnd) {
+		return createLoadingLayoutProxy(includeStart, includeEnd);
 	}
 
 	@Override
@@ -402,35 +414,29 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		mFilterTouchEvents = filterEvents;
 	}
 
-	@Override
+	/**
+	 * @deprecated You should now call this method on the result of
+	 *             {@link #getLoadingLayoutProxy()}.
+	 */
 	public void setLastUpdatedLabel(CharSequence label) {
-		if (null != mHeaderLayout) {
-			mHeaderLayout.setSubHeaderText(label);
-		}
-		if (null != mFooterLayout) {
-			mFooterLayout.setSubHeaderText(label);
-		}
-
-		// Refresh Height as it may have changed
-		refreshLoadingViewsSize();
+		getLoadingLayoutProxy().setLastUpdatedLabel(label);
 	}
 
-	@Override
+	/**
+	 * @deprecated You should now call this method on the result of
+	 *             {@link #getLoadingLayoutProxy()}.
+	 */
 	public void setLoadingDrawable(Drawable drawable) {
-		setLoadingDrawable(drawable, Mode.BOTH);
+		getLoadingLayoutProxy().setLoadingDrawable(drawable);
 	}
 
-	@Override
+	/**
+	 * @deprecated You should now call this method on the result of
+	 *             {@link #getLoadingLayoutProxy(boolean, boolean)}.
+	 */
 	public void setLoadingDrawable(Drawable drawable, Mode mode) {
-		if (null != mHeaderLayout && mode.showHeaderLoadingLayout()) {
-			mHeaderLayout.setLoadingDrawable(drawable);
-		}
-		if (null != mFooterLayout && mode.showFooterLoadingLayout()) {
-			mFooterLayout.setLoadingDrawable(drawable);
-		}
-
-		// The Loading Height may have changed, so refresh
-		refreshLoadingViewsSize();
+		getLoadingLayoutProxy(mode.showHeaderLoadingLayout(), mode.showFooterLoadingLayout()).setLoadingDrawable(
+				drawable);
 	}
 
 	@Override
@@ -465,19 +471,20 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		mOnRefreshListener = null;
 	}
 
-	@Override
+	/**
+	 * @deprecated You should now call this method on the result of
+	 *             {@link #getLoadingLayoutProxy()}.
+	 */
 	public void setPullLabel(CharSequence pullLabel) {
-		setPullLabel(pullLabel, Mode.BOTH);
+		getLoadingLayoutProxy().setPullLabel(pullLabel);
 	}
 
-	@Override
+	/**
+	 * @deprecated You should now call this method on the result of
+	 *             {@link #getLoadingLayoutProxy(boolean, boolean)}.
+	 */
 	public void setPullLabel(CharSequence pullLabel, Mode mode) {
-		if (null != mHeaderLayout && mode.showHeaderLoadingLayout()) {
-			mHeaderLayout.setPullLabel(pullLabel);
-		}
-		if (null != mFooterLayout && mode.showFooterLoadingLayout()) {
-			mFooterLayout.setPullLabel(pullLabel);
-		}
+		getLoadingLayoutProxy(mode.showHeaderLoadingLayout(), mode.showFooterLoadingLayout()).setPullLabel(pullLabel);
 	}
 
 	/**
@@ -506,34 +513,38 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		}
 	}
 
-	@Override
+	/**
+	 * @deprecated You should now call this method on the result of
+	 *             {@link #getLoadingLayoutProxy()}.
+	 */
 	public void setRefreshingLabel(CharSequence refreshingLabel) {
-		setRefreshingLabel(refreshingLabel, Mode.BOTH);
+		getLoadingLayoutProxy().setRefreshingLabel(refreshingLabel);
 	}
 
-	@Override
+	/**
+	 * @deprecated You should now call this method on the result of
+	 *             {@link #getLoadingLayoutProxy(boolean, boolean)}.
+	 */
 	public void setRefreshingLabel(CharSequence refreshingLabel, Mode mode) {
-		if (null != mHeaderLayout && mode.showHeaderLoadingLayout()) {
-			mHeaderLayout.setRefreshingLabel(refreshingLabel);
-		}
-		if (null != mFooterLayout && mode.showFooterLoadingLayout()) {
-			mFooterLayout.setRefreshingLabel(refreshingLabel);
-		}
+		getLoadingLayoutProxy(mode.showHeaderLoadingLayout(), mode.showFooterLoadingLayout()).setRefreshingLabel(
+				refreshingLabel);
 	}
 
-	@Override
+	/**
+	 * @deprecated You should now call this method on the result of
+	 *             {@link #getLoadingLayoutProxy()}.
+	 */
 	public void setReleaseLabel(CharSequence releaseLabel) {
 		setReleaseLabel(releaseLabel, Mode.BOTH);
 	}
 
-	@Override
+	/**
+	 * @deprecated You should now call this method on the result of
+	 *             {@link #getLoadingLayoutProxy(boolean, boolean)}.
+	 */
 	public void setReleaseLabel(CharSequence releaseLabel, Mode mode) {
-		if (null != mHeaderLayout && mode.showHeaderLoadingLayout()) {
-			mHeaderLayout.setReleaseLabel(releaseLabel);
-		}
-		if (null != mFooterLayout && mode.showFooterLoadingLayout()) {
-			mFooterLayout.setReleaseLabel(releaseLabel);
-		}
+		getLoadingLayoutProxy(mode.showHeaderLoadingLayout(), mode.showFooterLoadingLayout()).setReleaseLabel(
+				releaseLabel);
 	}
 
 	public void setScrollAnimationInterpolator(Interpolator interpolator) {
@@ -640,6 +651,65 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		resetHeader();
 	}
 
+	/**
+	 * Re-measure the Loading Views height, and adjust internal padding as
+	 * necessary
+	 */
+	final void refreshLoadingViewsSize() {
+		final int maximumPullScroll = (int) (getMaximumPullScroll() * 1.2f);
+
+		mHeaderDimension = mFooterDimension = 0;
+
+		int pLeft, pTop, pRight, pBottom;
+		pLeft = pTop = pRight = pBottom = 0;
+
+		if (mMode.showHeaderLoadingLayout()) {
+			mHeaderLayout.resetForMeasure();
+			measureView(mHeaderLayout);
+
+			switch (getPullToRefreshScrollDirection()) {
+				case HORIZONTAL_SCROLL:
+					mHeaderDimension = mHeaderLayout.getMeasuredWidth();
+					pLeft = -maximumPullScroll;
+					mHeaderLayout.adjustWidthUsingLeftPadding(maximumPullScroll);
+					break;
+				case VERTICAL_SCROLL:
+				default:
+					mHeaderDimension = mHeaderLayout.getMeasuredHeight();
+					pTop = -maximumPullScroll;
+					mHeaderLayout.adjustHeightUsingTopPadding(maximumPullScroll);
+					break;
+			}
+
+			// We need to re-measure with the new padding...
+			measureView(mHeaderLayout);
+		}
+
+		if (mMode.showFooterLoadingLayout()) {
+			mFooterLayout.resetForMeasure();
+			measureView(mFooterLayout);
+
+			switch (getPullToRefreshScrollDirection()) {
+				case HORIZONTAL_SCROLL:
+					mFooterDimension = mFooterLayout.getMeasuredWidth();
+					pRight = -maximumPullScroll;
+					mFooterLayout.adjustWidthUsingRightPadding(maximumPullScroll);
+					break;
+				case VERTICAL_SCROLL:
+				default:
+					mFooterDimension = mFooterLayout.getMeasuredHeight();
+					pBottom = -maximumPullScroll;
+					mFooterLayout.adjustHeightUsingBottomPadding(maximumPullScroll);
+					break;
+			}
+
+			// We need to re-measure with the new padding...
+			measureView(mFooterLayout);
+		}
+
+		setPadding(pLeft, pTop, pRight, pBottom);
+	}
+
 	final void setState(State state, final boolean... params) {
 		mState = state;
 		if (DEBUG) {
@@ -692,6 +762,23 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 				getPullToRefreshScrollDirection(), attrs);
 		layout.setVisibility(View.INVISIBLE);
 		return layout;
+	}
+
+	/**
+	 * Used internally for {@link #getLoadingLayoutProxy(boolean, boolean)}.
+	 * Allows derivative classes to include any extra LoadingLayouts.
+	 */
+	protected LoadingLayoutProxy createLoadingLayoutProxy(final boolean includeStart, final boolean includeEnd) {
+		LoadingLayoutProxy proxy = new LoadingLayoutProxy();
+
+		if (includeStart && mMode.showHeaderLoadingLayout()) {
+			proxy.addLayout(mHeaderLayout);
+		}
+		if (includeEnd && mMode.showFooterLoadingLayout()) {
+			proxy.addLayout(mFooterLayout);
+		}
+
+		return proxy;
 	}
 
 	/**
@@ -1148,65 +1235,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	}
 
 	/**
-	 * Re-measure the Loading Views height, and adjust internal padding as
-	 * necessary
-	 */
-	private void refreshLoadingViewsSize() {
-		final int maximumPullScroll = (int) (getMaximumPullScroll() * 1.2f);
-
-		mHeaderDimension = mFooterDimension = 0;
-
-		int pLeft, pTop, pRight, pBottom;
-		pLeft = pTop = pRight = pBottom = 0;
-
-		if (mMode.showHeaderLoadingLayout()) {
-			mHeaderLayout.resetForMeasure();
-			measureView(mHeaderLayout);
-
-			switch (getPullToRefreshScrollDirection()) {
-				case HORIZONTAL_SCROLL:
-					mHeaderDimension = mHeaderLayout.getMeasuredWidth();
-					pLeft = -maximumPullScroll;
-					mHeaderLayout.adjustWidthUsingLeftPadding(maximumPullScroll);
-					break;
-				case VERTICAL_SCROLL:
-				default:
-					mHeaderDimension = mHeaderLayout.getMeasuredHeight();
-					pTop = -maximumPullScroll;
-					mHeaderLayout.adjustHeightUsingTopPadding(maximumPullScroll);
-					break;
-			}
-
-			// We need to re-measure with the new padding...
-			measureView(mHeaderLayout);
-		}
-
-		if (mMode.showFooterLoadingLayout()) {
-			mFooterLayout.resetForMeasure();
-			measureView(mFooterLayout);
-
-			switch (getPullToRefreshScrollDirection()) {
-				case HORIZONTAL_SCROLL:
-					mFooterDimension = mFooterLayout.getMeasuredWidth();
-					pRight = -maximumPullScroll;
-					mFooterLayout.adjustWidthUsingRightPadding(maximumPullScroll);
-					break;
-				case VERTICAL_SCROLL:
-				default:
-					mFooterDimension = mFooterLayout.getMeasuredHeight();
-					pBottom = -maximumPullScroll;
-					mFooterLayout.adjustHeightUsingBottomPadding(maximumPullScroll);
-					break;
-			}
-
-			// We need to re-measure with the new padding...
-			measureView(mFooterLayout);
-		}
-
-		setPadding(pLeft, pTop, pRight, pBottom);
-	}
-
-	/**
 	 * Smooth Scroll to position using the specific duration
 	 * 
 	 * @param scrollValue - Position to scroll to
@@ -1616,6 +1644,61 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 
 	static interface OnSmoothScrollFinishedListener {
 		void onSmoothScrollFinished();
+	}
+
+	public class LoadingLayoutProxy implements ILoadingLayout {
+
+		private final HashSet<LoadingLayout> mLoadingLayouts;
+
+		LoadingLayoutProxy() {
+			mLoadingLayouts = new HashSet<LoadingLayout>();
+		}
+
+		void addLayout(LoadingLayout layout) {
+			if (null != layout) {
+				mLoadingLayouts.add(layout);
+			}
+		}
+
+		@Override
+		public void setRefreshingLabel(CharSequence refreshingLabel) {
+			for (LoadingLayout layout : mLoadingLayouts) {
+				layout.setRefreshingLabel(refreshingLabel);
+			}
+		}
+
+		@Override
+		public void setReleaseLabel(CharSequence label) {
+			for (LoadingLayout layout : mLoadingLayouts) {
+				layout.setRefreshingLabel(label);
+			}
+		}
+
+		@Override
+		public void setPullLabel(CharSequence label) {
+			for (LoadingLayout layout : mLoadingLayouts) {
+				layout.setPullLabel(label);
+			}
+		}
+
+		@Override
+		public void setLastUpdatedLabel(CharSequence label) {
+			for (LoadingLayout layout : mLoadingLayouts) {
+				layout.setSubHeaderText(label);
+			}
+
+			refreshLoadingViewsSize();
+		}
+
+		@Override
+		public void setLoadingDrawable(Drawable drawable) {
+			for (LoadingLayout layout : mLoadingLayouts) {
+				layout.setLoadingDrawable(drawable);
+			}
+
+			refreshLoadingViewsSize();
+		}
+
 	}
 
 }

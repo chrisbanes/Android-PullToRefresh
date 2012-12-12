@@ -19,7 +19,6 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
-import android.graphics.drawable.Drawable;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.util.AttributeSet;
@@ -62,63 +61,6 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 	@Override
 	public ContextMenuInfo getContextMenuInfo() {
 		return ((InternalListView) getRefreshableView()).getContextMenuInfo();
-	}
-
-	@Override
-	public void setLastUpdatedLabel(CharSequence label) {
-		super.setLastUpdatedLabel(label);
-
-		if (null != mHeaderLoadingView) {
-			mHeaderLoadingView.setSubHeaderText(label);
-		}
-		if (null != mFooterLoadingView) {
-			mFooterLoadingView.setSubHeaderText(label);
-		}
-	}
-
-	@Override
-	public void setLoadingDrawable(Drawable drawable, Mode mode) {
-		super.setLoadingDrawable(drawable, mode);
-
-		if (null != mHeaderLoadingView && mode.showHeaderLoadingLayout()) {
-			mHeaderLoadingView.setLoadingDrawable(drawable);
-		}
-		if (null != mFooterLoadingView && mode.showFooterLoadingLayout()) {
-			mFooterLoadingView.setLoadingDrawable(drawable);
-		}
-	}
-
-	public void setPullLabel(CharSequence pullLabel, Mode mode) {
-		super.setPullLabel(pullLabel, mode);
-
-		if (null != mHeaderLoadingView && mode.showHeaderLoadingLayout()) {
-			mHeaderLoadingView.setPullLabel(pullLabel);
-		}
-		if (null != mFooterLoadingView && mode.showFooterLoadingLayout()) {
-			mFooterLoadingView.setPullLabel(pullLabel);
-		}
-	}
-
-	public void setRefreshingLabel(CharSequence refreshingLabel, Mode mode) {
-		super.setRefreshingLabel(refreshingLabel, mode);
-
-		if (null != mHeaderLoadingView && mode.showHeaderLoadingLayout()) {
-			mHeaderLoadingView.setRefreshingLabel(refreshingLabel);
-		}
-		if (null != mFooterLoadingView && mode.showFooterLoadingLayout()) {
-			mFooterLoadingView.setRefreshingLabel(refreshingLabel);
-		}
-	}
-
-	public void setReleaseLabel(CharSequence releaseLabel, Mode mode) {
-		super.setReleaseLabel(releaseLabel, mode);
-
-		if (null != mHeaderLoadingView && mode.showHeaderLoadingLayout()) {
-			mHeaderLoadingView.setReleaseLabel(releaseLabel);
-		}
-		if (null != mFooterLoadingView && mode.showFooterLoadingLayout()) {
-			mFooterLoadingView.setReleaseLabel(releaseLabel);
-		}
 	}
 
 	@Override
@@ -245,6 +187,24 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 
 		// Finally, call up to super
 		super.onReset();
+	}
+
+	@Override
+	protected LoadingLayoutProxy createLoadingLayoutProxy(final boolean includeStart, final boolean includeEnd) {
+		LoadingLayoutProxy proxy = super.createLoadingLayoutProxy(includeStart, includeEnd);
+
+		if (mListViewExtrasEnabled) {
+			final Mode mode = getMode();
+
+			if (includeStart && mode.showHeaderLoadingLayout()) {
+				proxy.addLayout(mHeaderLoadingView);
+			}
+			if (includeEnd && mode.showFooterLoadingLayout()) {
+				proxy.addLayout(mFooterLoadingView);
+			}
+		}
+
+		return proxy;
 	}
 
 	protected ListView createListView(Context context, AttributeSet attrs) {
