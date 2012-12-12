@@ -19,7 +19,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
-import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
@@ -34,12 +33,13 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.handmark.pulltorefresh.library.ILoadingLayout;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.handmark.pulltorefresh.library.R;
 
 @SuppressLint("ViewConstructor")
-public abstract class LoadingLayout extends LinearLayout {
+public abstract class LoadingLayout extends LinearLayout implements ILoadingLayout {
 
 	static final String LOG_TAG = "PullToRefresh-LoadingLayout";
 
@@ -237,6 +237,11 @@ public abstract class LoadingLayout extends LinearLayout {
 
 	public void resetForMeasure() {
 		resetPadding();
+	}
+	
+	@Override
+	public void setLastUpdatedLabel(CharSequence label) {
+		setSubHeaderText(label);
 	}
 
 	public final void setLoadingDrawable(Drawable imageDrawable) {
