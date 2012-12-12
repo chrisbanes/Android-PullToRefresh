@@ -15,8 +15,6 @@
  *******************************************************************************/
 package com.handmark.pulltorefresh.library;
 
-import java.util.HashSet;
-
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
@@ -769,7 +767,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	 * Allows derivative classes to include any extra LoadingLayouts.
 	 */
 	protected LoadingLayoutProxy createLoadingLayoutProxy(final boolean includeStart, final boolean includeEnd) {
-		LoadingLayoutProxy proxy = new LoadingLayoutProxy();
+		LoadingLayoutProxy proxy = new LoadingLayoutProxy(this);
 
 		if (includeStart && mMode.showHeaderLoadingLayout()) {
 			proxy.addLayout(mHeaderLayout);
@@ -1644,61 +1642,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 
 	static interface OnSmoothScrollFinishedListener {
 		void onSmoothScrollFinished();
-	}
-
-	public class LoadingLayoutProxy implements ILoadingLayout {
-
-		private final HashSet<LoadingLayout> mLoadingLayouts;
-
-		LoadingLayoutProxy() {
-			mLoadingLayouts = new HashSet<LoadingLayout>();
-		}
-
-		void addLayout(LoadingLayout layout) {
-			if (null != layout) {
-				mLoadingLayouts.add(layout);
-			}
-		}
-
-		@Override
-		public void setRefreshingLabel(CharSequence refreshingLabel) {
-			for (LoadingLayout layout : mLoadingLayouts) {
-				layout.setRefreshingLabel(refreshingLabel);
-			}
-		}
-
-		@Override
-		public void setReleaseLabel(CharSequence label) {
-			for (LoadingLayout layout : mLoadingLayouts) {
-				layout.setRefreshingLabel(label);
-			}
-		}
-
-		@Override
-		public void setPullLabel(CharSequence label) {
-			for (LoadingLayout layout : mLoadingLayouts) {
-				layout.setPullLabel(label);
-			}
-		}
-
-		@Override
-		public void setLastUpdatedLabel(CharSequence label) {
-			for (LoadingLayout layout : mLoadingLayouts) {
-				layout.setSubHeaderText(label);
-			}
-
-			refreshLoadingViewsSize();
-		}
-
-		@Override
-		public void setLoadingDrawable(Drawable drawable) {
-			for (LoadingLayout layout : mLoadingLayouts) {
-				layout.setLoadingDrawable(drawable);
-			}
-
-			refreshLoadingViewsSize();
-		}
-
 	}
 
 }

@@ -19,6 +19,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
+import android.graphics.Typeface;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
@@ -172,6 +173,26 @@ public abstract class LoadingLayout extends LinearLayout implements ILoadingLayo
 		reset();
 	}
 
+	public final void adjustHeightUsingBottomPadding(final int height) {
+		setPadding(getPaddingLeft(), getPaddingTop(), getPaddingRight(), getPaddingBottom() + height
+				- getMeasuredHeight());
+	}
+
+	public final void adjustHeightUsingTopPadding(final int height) {
+		setPadding(getPaddingLeft(), getPaddingTop() + height - getMeasuredHeight(), getPaddingRight(),
+				getPaddingBottom());
+	}
+
+	public final void adjustWidthUsingLeftPadding(final int width) {
+		setPadding(getPaddingLeft() + width - getMeasuredWidth(), getPaddingTop(), getPaddingRight(),
+				getPaddingBottom());
+	}
+
+	public final void adjustWidthUsingRightPadding(final int width) {
+		setPadding(getPaddingLeft(), getPaddingTop(), getPaddingRight() + width - getMeasuredWidth(),
+				getPaddingBottom());
+	}
+
 	public final void onPull(float scaleOfLayout) {
 		if (!mUseIntrinsicAnimation) {
 			onPullImpl(scaleOfLayout);
@@ -235,10 +256,10 @@ public abstract class LoadingLayout extends LinearLayout implements ILoadingLayo
 		}
 	}
 
-	public void resetForMeasure() {
+	public final void resetForMeasure() {
 		resetPadding();
 	}
-	
+
 	@Override
 	public void setLastUpdatedLabel(CharSequence label) {
 		setSubHeaderText(label);
@@ -265,53 +286,9 @@ public abstract class LoadingLayout extends LinearLayout implements ILoadingLayo
 		mReleaseLabel = releaseLabel;
 	}
 
-	public void setSubHeaderText(CharSequence label) {
-		if (null != mSubHeaderText) {
-			if (TextUtils.isEmpty(label)) {
-				mSubHeaderText.setVisibility(View.GONE);
-			} else {
-				mSubHeaderText.setText(label);
-				mSubHeaderText.setVisibility(View.VISIBLE);
-			}
-		}
-	}
-
-	public void setSubTextAppearance(int value) {
-		if (null != mSubHeaderText) {
-			mSubHeaderText.setTextAppearance(getContext(), value);
-		}
-	}
-
-	public void setSubTextColor(ColorStateList color) {
-		if (null != mSubHeaderText) {
-			mSubHeaderText.setTextColor(color);
-		}
-	}
-
-	public void setSubTextColor(int color) {
-		setSubTextColor(ColorStateList.valueOf(color));
-	}
-
-	public void setTextAppearance(int value) {
-		if (null != mHeaderText) {
-			mHeaderText.setTextAppearance(getContext(), value);
-		}
-		if (null != mSubHeaderText) {
-			mSubHeaderText.setTextAppearance(getContext(), value);
-		}
-	}
-
-	public void setTextColor(ColorStateList color) {
-		if (null != mHeaderText) {
-			mHeaderText.setTextColor(color);
-		}
-		if (null != mSubHeaderText) {
-			mSubHeaderText.setTextColor(color);
-		}
-	}
-
-	public void setTextColor(int color) {
-		setTextColor(ColorStateList.valueOf(color));
+	@Override
+	public void setTextTypeface(Typeface tf) {
+		mHeaderText.setTypeface(tf);
 	}
 
 	/**
@@ -332,30 +309,51 @@ public abstract class LoadingLayout extends LinearLayout implements ILoadingLayo
 
 	protected abstract void resetImpl();
 
-	public void adjustHeightUsingTopPadding(final int height) {
-		setPadding(getPaddingLeft(), getPaddingTop() + height - getMeasuredHeight(), getPaddingRight(),
-				getPaddingBottom());
-	}
-
-	public void adjustHeightUsingBottomPadding(final int height) {
-		setPadding(getPaddingLeft(), getPaddingTop(), getPaddingRight(), getPaddingBottom() + height
-				- getMeasuredHeight());
-	}
-
-	public void adjustWidthUsingLeftPadding(final int width) {
-		setPadding(getPaddingLeft() + width - getMeasuredWidth(), getPaddingTop(), getPaddingRight(),
-				getPaddingBottom());
-	}
-
-	public void adjustWidthUsingRightPadding(final int width) {
-		setPadding(getPaddingLeft(), getPaddingTop(), getPaddingRight() + width - getMeasuredWidth(),
-				getPaddingBottom());
-	}
-
 	private void resetPadding() {
 		final int tbPadding = getResources().getDimensionPixelSize(R.dimen.header_footer_top_bottom_padding);
 		final int lrPadding = getResources().getDimensionPixelSize(R.dimen.header_footer_left_right_padding);
 		setPadding(lrPadding, tbPadding, lrPadding, tbPadding);
+	}
+
+	private void setSubHeaderText(CharSequence label) {
+		if (null != mSubHeaderText) {
+			if (TextUtils.isEmpty(label)) {
+				mSubHeaderText.setVisibility(View.GONE);
+			} else {
+				mSubHeaderText.setText(label);
+				mSubHeaderText.setVisibility(View.VISIBLE);
+			}
+		}
+	}
+
+	private void setSubTextAppearance(int value) {
+		if (null != mSubHeaderText) {
+			mSubHeaderText.setTextAppearance(getContext(), value);
+		}
+	}
+
+	private void setSubTextColor(ColorStateList color) {
+		if (null != mSubHeaderText) {
+			mSubHeaderText.setTextColor(color);
+		}
+	}
+
+	private void setTextAppearance(int value) {
+		if (null != mHeaderText) {
+			mHeaderText.setTextAppearance(getContext(), value);
+		}
+		if (null != mSubHeaderText) {
+			mSubHeaderText.setTextAppearance(getContext(), value);
+		}
+	}
+
+	private void setTextColor(ColorStateList color) {
+		if (null != mHeaderText) {
+			mHeaderText.setTextColor(color);
+		}
+		if (null != mSubHeaderText) {
+			mSubHeaderText.setTextColor(color);
+		}
 	}
 
 }
