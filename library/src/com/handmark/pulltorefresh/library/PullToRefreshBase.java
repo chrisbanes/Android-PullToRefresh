@@ -171,12 +171,12 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	}
 
 	@Override
-	public ILoadingLayout getLoadingLayoutProxy() {
+	public final ILoadingLayout getLoadingLayoutProxy() {
 		return getLoadingLayoutProxy(true, true);
 	}
 
 	@Override
-	public ILoadingLayout getLoadingLayoutProxy(boolean includeStart, boolean includeEnd) {
+	public final ILoadingLayout getLoadingLayoutProxy(boolean includeStart, boolean includeEnd) {
 		return createLoadingLayoutProxy(includeStart, includeEnd);
 	}
 
