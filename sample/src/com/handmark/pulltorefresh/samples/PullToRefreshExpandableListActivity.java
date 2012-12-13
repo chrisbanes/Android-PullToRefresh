@@ -32,7 +32,10 @@ import com.handmark.pulltorefresh.library.PullToRefreshExpandableListView;
 
 public final class PullToRefreshExpandableListActivity extends ExpandableListActivity {
 	private static final String KEY = "key";
+
 	private List<Map<String, String>> groupData = new ArrayList<Map<String, String>>();
+	private List<List<Map<String, String>>> childData = new ArrayList<List<Map<String, String>>>();
+
 	private PullToRefreshExpandableListView mPullRefreshListView;
 	private SimpleExpandableListAdapter mAdapter;
 
@@ -53,7 +56,6 @@ public final class PullToRefreshExpandableListActivity extends ExpandableListAct
 			}
 		});
 
-		List<List<Map<String, String>>> childData = new ArrayList<List<Map<String, String>>>();
 		for (String group : mGroupStrings) {
 			Map<String, String> groupMap1 = new HashMap<String, String>();
 			groupData.add(groupMap1);
@@ -91,6 +93,15 @@ public final class PullToRefreshExpandableListActivity extends ExpandableListAct
 			Map<String, String> newMap = new HashMap<String, String>();
 			newMap.put(KEY, "Added after refresh...");
 			groupData.add(newMap);
+
+			List<Map<String, String>> childList = new ArrayList<Map<String, String>>();
+			for (String string : mChildStrings) {
+				Map<String, String> childMap = new HashMap<String, String>();
+				childMap.put(KEY, string);
+				childList.add(childMap);
+			}
+			childData.add(childList);
+
 			mAdapter.notifyDataSetChanged();
 
 			// Call onRefreshComplete when the list has been refreshed.
