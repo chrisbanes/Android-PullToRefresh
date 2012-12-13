@@ -199,14 +199,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	}
 
 	/**
-	 * @return true if the current mode is Mode.PULL_FROM_START
-	 * @deprecated Use the value from <code>getCurrentMode()</code> instead
-	 */
-	public final boolean hasPullFromTop() {
-		return mCurrentMode == Mode.PULL_FROM_START;
-	}
-
-	/**
 	 * @deprecated See {@link #isScrollingWhileRefreshingEnabled()}.
 	 */
 	public final boolean isDisableScrollingWhileRefreshing() {
@@ -608,9 +600,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 				smoothScrollTo(0);
 			}
 		}
-
-		// Call the deprecated method
-		setRefreshingInternal(doScroll);
 	}
 
 	/**
@@ -644,9 +633,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		mFooterLayout.reset();
 
 		smoothScrollTo(0);
-
-		// Call the deprecated method
-		resetHeader();
 	}
 
 	/**
@@ -924,17 +910,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	}
 
 	/**
-	 * @deprecated This is a deprecated callback. If you're overriding this
-	 *             method then use
-	 *             {@link #setOnPullEventListener(OnPullEventListener)
-	 *             setOnPullEventListener()} instead to be notified when the
-	 *             state changes to {@link State#RESET RESET}. This deprecated
-	 *             method will be removed in the future.
-	 */
-	protected void resetHeader() {
-	}
-
-	/**
 	 * Helper method which just calls scrollTo() in the correct scrolling
 	 * direction.
 	 * 
@@ -960,18 +935,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 				scrollTo(value, 0);
 				break;
 		}
-	}
-
-	/**
-	 * @deprecated This is a deprecated callback. If you're overriding this
-	 *             method then use
-	 *             {@link #setOnPullEventListener(OnPullEventListener)
-	 *             setOnPullEventListener()} instead to be notified when the
-	 *             state changes to {@link State#REFRESHING REFRESHING} or
-	 *             {@link State#MANUAL_REFRESHING MANUAL_REFRESHING}. This
-	 *             deprecated method will be removed in the future.
-	 */
-	protected void setRefreshingInternal(final boolean doScroll) {
 	}
 
 	/**
