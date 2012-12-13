@@ -18,6 +18,7 @@ package com.handmark.pulltorefresh.library.internal;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Typeface;
 import android.graphics.drawable.AnimationDrawable;
@@ -308,10 +309,11 @@ public abstract class LoadingLayout extends FrameLayout implements ILoadingLayou
 	protected abstract void resetImpl();
 
 	private void resetPadding() {
-		final int padding = getResources().getDimensionPixelSize(
-				mScrollDirection == PullToRefreshBase.VERTICAL_SCROLL ? R.dimen.header_footer_padding_vertical
-						: R.dimen.header_footer_padding_horizontal);
-		setPadding(padding, padding, padding, padding);
+		Resources res = getResources();
+		final int tbPadding = res.getDimensionPixelSize(R.dimen.header_footer_top_bottom_padding);
+		final int lrPadding = res.getDimensionPixelSize(R.dimen.header_footer_left_right_padding);
+		setPadding(lrPadding, tbPadding, lrPadding, tbPadding);
+
 	}
 
 	private void setSubHeaderText(CharSequence label) {
