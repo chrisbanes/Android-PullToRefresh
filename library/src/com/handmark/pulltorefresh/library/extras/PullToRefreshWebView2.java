@@ -44,18 +44,19 @@ import com.handmark.pulltorefresh.library.PullToRefreshWebView;
  * can happen, and return the result via the callback mechanism. An example can
  * be seen below:
  * <p/>
+ * 
  * <pre>
  * function isReadyForPullDown() {
  *   var result = ...  // Probably using the .scrollTop DOM attribute
  *   ptr.isReadyForPullDownResponse(result);
  * }
- *
+ * 
  * function isReadyForPullUp() {
  *   var result = ...  // Probably using the .scrollBottom DOM attribute
  *   ptr.isReadyForPullUpResponse(result);
  * }
  * </pre>
- *
+ * 
  * @author Chris Banes
  */
 public class PullToRefreshWebView2 extends PullToRefreshWebView {
@@ -115,7 +116,7 @@ public class PullToRefreshWebView2 extends PullToRefreshWebView {
 
 	/**
 	 * Used for response from Javascript
-	 *
+	 * 
 	 * @author Chris Banes
 	 */
 	final class JsValueCallback {
