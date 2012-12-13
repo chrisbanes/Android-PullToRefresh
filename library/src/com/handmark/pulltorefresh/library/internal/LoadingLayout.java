@@ -24,13 +24,12 @@ import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -40,7 +39,7 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.handmark.pulltorefresh.library.R;
 
 @SuppressLint("ViewConstructor")
-public abstract class LoadingLayout extends LinearLayout implements ILoadingLayout {
+public abstract class LoadingLayout extends FrameLayout implements ILoadingLayout {
 
 	static final String LOG_TAG = "PullToRefresh-LoadingLayout";
 
@@ -66,7 +65,6 @@ public abstract class LoadingLayout extends LinearLayout implements ILoadingLayo
 		mMode = mode;
 		mScrollDirection = scrollDirection;
 
-		setGravity(Gravity.CENTER);
 		resetPadding();
 
 		switch (scrollDirection) {
@@ -310,9 +308,10 @@ public abstract class LoadingLayout extends LinearLayout implements ILoadingLayo
 	protected abstract void resetImpl();
 
 	private void resetPadding() {
-		final int tbPadding = getResources().getDimensionPixelSize(R.dimen.header_footer_top_bottom_padding);
-		final int lrPadding = getResources().getDimensionPixelSize(R.dimen.header_footer_left_right_padding);
-		setPadding(lrPadding, tbPadding, lrPadding, tbPadding);
+		final int padding = getResources().getDimensionPixelSize(
+				mScrollDirection == PullToRefreshBase.VERTICAL_SCROLL ? R.dimen.header_footer_padding_vertical
+						: R.dimen.header_footer_padding_horizontal);
+		setPadding(padding, padding, padding, padding);
 	}
 
 	private void setSubHeaderText(CharSequence label) {
