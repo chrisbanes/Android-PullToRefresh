@@ -105,12 +105,12 @@ public final class OverscrollHelper {
 
 		final int deltaValue, currentScrollValue, scrollValue;
 		switch (view.getPullToRefreshScrollDirection()) {
-			case PullToRefreshBase.HORIZONTAL_SCROLL:
+			case HORIZONTAL:
 				deltaValue = deltaX;
 				scrollValue = scrollX;
 				currentScrollValue = view.getScrollX();
 				break;
-			case PullToRefreshBase.VERTICAL_SCROLL:
+			case VERTICAL:
 			default:
 				deltaValue = deltaY;
 				scrollValue = scrollY;

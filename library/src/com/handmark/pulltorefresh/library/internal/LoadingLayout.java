@@ -35,8 +35,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.handmark.pulltorefresh.library.ILoadingLayout;
-import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
+import com.handmark.pulltorefresh.library.PullToRefreshBase.Orientation;
 import com.handmark.pulltorefresh.library.R;
 
 @SuppressLint("ViewConstructor")
@@ -55,13 +55,13 @@ public abstract class LoadingLayout extends FrameLayout implements ILoadingLayou
 	private final TextView mSubHeaderText;
 
 	protected final Mode mMode;
-	protected final int mScrollDirection;
+	protected final Orientation mScrollDirection;
 
 	private CharSequence mPullLabel;
 	private CharSequence mRefreshingLabel;
 	private CharSequence mReleaseLabel;
 
-	public LoadingLayout(Context context, final Mode mode, final int scrollDirection, TypedArray attrs) {
+	public LoadingLayout(Context context, final Mode mode, final Orientation scrollDirection, TypedArray attrs) {
 		super(context);
 		mMode = mode;
 		mScrollDirection = scrollDirection;
@@ -69,10 +69,10 @@ public abstract class LoadingLayout extends FrameLayout implements ILoadingLayou
 		resetPadding();
 
 		switch (scrollDirection) {
-			case PullToRefreshBase.HORIZONTAL_SCROLL:
+			case HORIZONTAL:
 				LayoutInflater.from(context).inflate(R.layout.pull_to_refresh_header_horizontal, this);
 				break;
-			case PullToRefreshBase.VERTICAL_SCROLL:
+			case VERTICAL:
 			default:
 				LayoutInflater.from(context).inflate(R.layout.pull_to_refresh_header_vertical, this);
 				break;
