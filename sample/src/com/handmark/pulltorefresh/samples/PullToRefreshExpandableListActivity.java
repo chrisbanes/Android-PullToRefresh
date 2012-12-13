@@ -53,7 +53,6 @@ public final class PullToRefreshExpandableListActivity extends ExpandableListAct
 			}
 		});
 
-
 		List<List<Map<String, String>>> childData = new ArrayList<List<Map<String, String>>>();
 		for (String group : mGroupStrings) {
 			Map<String, String> groupMap1 = new HashMap<String, String>();
@@ -90,7 +89,7 @@ public final class PullToRefreshExpandableListActivity extends ExpandableListAct
 		@Override
 		protected void onPostExecute(String[] result) {
 			Map<String, String> newMap = new HashMap<String, String>();
-		    newMap.put(KEY, "Added after refresh...");
+			newMap.put(KEY, "Added after refresh...");
 			groupData.add(newMap);
 			mAdapter.notifyDataSetChanged();
 
@@ -101,8 +100,7 @@ public final class PullToRefreshExpandableListActivity extends ExpandableListAct
 		}
 	}
 
-	private String[] mChildStrings = { "Child One", "Child Two", "Child Three", "Child Four", "Child Five",
-			"Child Six" };
+	private String[] mChildStrings = { "Child One", "Child Two", "Child Three", "Child Four", "Child Five", "Child Six" };
 
 	private String[] mGroupStrings = { "Group One", "Group Two", "Group Three" };
 }
