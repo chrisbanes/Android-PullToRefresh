@@ -36,8 +36,12 @@ public class RotateLoadingLayout extends LoadingLayout {
 
 	private float mRotationPivotX, mRotationPivotY;
 
+	private final boolean mRotateDrawableWhilePulling;
+
 	public RotateLoadingLayout(Context context, Mode mode, Orientation scrollDirection, TypedArray attrs) {
 		super(context, mode, scrollDirection, attrs);
+
+		mRotateDrawableWhilePulling = attrs.getBoolean(R.styleable.PullToRefresh_ptrRotateDrawableWhilePulling, true);
 
 		mHeaderImage.setScaleType(ScaleType.MATRIX);
 		mHeaderImageMatrix = new Matrix();
@@ -59,7 +63,14 @@ public class RotateLoadingLayout extends LoadingLayout {
 	}
 
 	protected void onPullImpl(float scaleOfLayout) {
-		mHeaderImageMatrix.setRotate(scaleOfLayout * 90, mRotationPivotX, mRotationPivotY);
+		float angle;
+		if (mRotateDrawableWhilePulling) {
+			angle = scaleOfLayout * 90f;
+		} else {
+			angle = Math.max(0f, Math.min(180f, scaleOfLayout * 360f - 180f));
+		}
+
+		mHeaderImageMatrix.setRotate(angle, mRotationPivotX, mRotationPivotY);
 		mHeaderImage.setImageMatrix(mHeaderImageMatrix);
 	}
 

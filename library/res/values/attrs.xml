@@ -65,6 +65,12 @@
         -->
         <attr name="ptrListViewExtrasEnabled" format="reference|boolean" />
 
+        <!--
+        	Whether the Drawable should be continually rotated as you pull. This only
+        	takes effect when using the 'Rotate' Animation Style.
+        -->
+        <attr name="ptrRotateDrawableWhilePulling" format="reference|boolean" />
+
         <!-- BELOW HERE ARE DEPRECEATED. DO NOT USE. -->
         <attr name="ptrAdapterViewBackground" format="reference|color" />
         <attr name="ptrDrawableTop" format="reference" />
