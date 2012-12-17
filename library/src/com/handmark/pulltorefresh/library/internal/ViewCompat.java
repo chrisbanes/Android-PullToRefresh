@@ -40,6 +40,20 @@ public class ViewCompat {
 		}
 	}
 
+	public static void setLayerType(View view, int layerType) {
+		if (VERSION.SDK_INT >= VERSION_CODES.HONEYCOMB) {
+			SDK11.setLayerType(view, layerType);
+		}
+	}
+
+	@TargetApi(11)
+	static class SDK11 {
+
+		public static void setLayerType(View view, int layerType) {
+			view.setLayerType(layerType, null);
+		}
+	}
+
 	@TargetApi(16)
 	static class SDK16 {
 
