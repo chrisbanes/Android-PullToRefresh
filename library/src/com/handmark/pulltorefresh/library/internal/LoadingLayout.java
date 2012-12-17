@@ -18,31 +18,30 @@ package com.handmark.pulltorefresh.library.internal;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
-import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.handmark.pulltorefresh.library.PullToRefreshBase;
+import com.handmark.pulltorefresh.library.ILoadingLayout;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
+import com.handmark.pulltorefresh.library.PullToRefreshBase.Orientation;
 import com.handmark.pulltorefresh.library.R;
 
 @SuppressLint("ViewConstructor")
-public abstract class LoadingLayout extends LinearLayout {
-	
+public abstract class LoadingLayout extends FrameLayout implements ILoadingLayout {
+
 	static final String LOG_TAG = "PullToRefresh-LoadingLayout";
 
 	static final Interpolator ANIMATION_INTERPOLATOR = new LinearInterpolator();
@@ -50,39 +49,33 @@ public abstract class LoadingLayout extends LinearLayout {
 	protected final ImageView mHeaderImage;
 	protected final ProgressBar mHeaderProgress;
 
-	private boolean mUseIntrinisicAnimation;
+	private boolean mUseIntrinsicAnimation;
 
 	private final TextView mHeaderText;
 	private final TextView mSubHeaderText;
+
+	protected final Mode mMode;
+	protected final Orientation mScrollDirection;
 
 	private CharSequence mPullLabel;
 	private CharSequence mRefreshingLabel;
 	private CharSequence mReleaseLabel;
 
-	// Max Width that this can be
-	private int mMaxWidth;
-
-	public LoadingLayout(Context context, final Mode mode, final int scrollDirection, TypedArray attrs) {
+	public LoadingLayout(Context context, final Mode mode, final Orientation scrollDirection, TypedArray attrs) {
 		super(context);
+		mMode = mode;
+		mScrollDirection = scrollDirection;
 
-		setGravity(Gravity.CENTER_VERTICAL);
-
-		final int tbPadding = getResources().getDimensionPixelSize(R.dimen.header_footer_top_bottom_padding);
-		final int lrPadding = getResources().getDimensionPixelSize(R.dimen.header_footer_left_right_padding);
-		setPadding(lrPadding, tbPadding, lrPadding, tbPadding);
+		resetPadding();
 
 		switch (scrollDirection) {
-			case PullToRefreshBase.HORIZONTAL_SCROLL:
+			case HORIZONTAL:
 				LayoutInflater.from(context).inflate(R.layout.pull_to_refresh_header_horizontal, this);
-				mMaxWidth = getResources().getDimensionPixelSize(R.dimen.header_footer_max_width);
 				break;
-
-			case PullToRefreshBase.VERTICAL_SCROLL:
+			case VERTICAL:
 			default:
 				LayoutInflater.from(context).inflate(R.layout.pull_to_refresh_header_vertical, this);
-				mMaxWidth = getResources().getDimensionPixelSize(R.dimen.header_footer_max_width);
 				break;
-
 		}
 
 		mHeaderText = (TextView) findViewById(R.id.pull_to_refresh_text);
@@ -107,18 +100,10 @@ public abstract class LoadingLayout extends LinearLayout {
 				break;
 		}
 
-		if (attrs.hasValue(R.styleable.PullToRefresh_ptrHeaderTextColor)) {
-			ColorStateList colors = attrs.getColorStateList(R.styleable.PullToRefresh_ptrHeaderTextColor);
-			setTextColor(null != colors ? colors : ColorStateList.valueOf(Color.BLACK));
-		}
-		if (attrs.hasValue(R.styleable.PullToRefresh_ptrHeaderSubTextColor)) {
-			ColorStateList colors = attrs.getColorStateList(R.styleable.PullToRefresh_ptrHeaderSubTextColor);
-			setSubTextColor(null != colors ? colors : ColorStateList.valueOf(Color.BLACK));
-		}
 		if (attrs.hasValue(R.styleable.PullToRefresh_ptrHeaderBackground)) {
 			Drawable background = attrs.getDrawable(R.styleable.PullToRefresh_ptrHeaderBackground);
 			if (null != background) {
-				setBackgroundDrawable(background);
+				ViewCompat.setBackground(this, background);
 			}
 		}
 
@@ -133,6 +118,20 @@ public abstract class LoadingLayout extends LinearLayout {
 			setSubTextAppearance(styleID.data);
 		}
 
+		// Text Color attrs need to be set after TextAppearance attrs
+		if (attrs.hasValue(R.styleable.PullToRefresh_ptrHeaderTextColor)) {
+			ColorStateList colors = attrs.getColorStateList(R.styleable.PullToRefresh_ptrHeaderTextColor);
+			if (null != colors) {
+				setTextColor(colors);
+			}
+		}
+		if (attrs.hasValue(R.styleable.PullToRefresh_ptrHeaderSubTextColor)) {
+			ColorStateList colors = attrs.getColorStateList(R.styleable.PullToRefresh_ptrHeaderSubTextColor);
+			if (null != colors) {
+				setSubTextColor(colors);
+			}
+		}
+
 		// Try and get defined drawable from Attrs
 		Drawable imageDrawable = null;
 		if (attrs.hasValue(R.styleable.PullToRefresh_ptrDrawable)) {
@@ -143,6 +142,7 @@ public abstract class LoadingLayout extends LinearLayout {
 		// drawable attr above
 		switch (mode) {
 			case PULL_FROM_START:
+			default:
 				if (attrs.hasValue(R.styleable.PullToRefresh_ptrDrawableStart)) {
 					imageDrawable = attrs.getDrawable(R.styleable.PullToRefresh_ptrDrawableStart);
 				} else if (attrs.hasValue(R.styleable.PullToRefresh_ptrDrawableTop)) {
@@ -163,11 +163,7 @@ public abstract class LoadingLayout extends LinearLayout {
 
 		// If we don't have a user defined drawable, load the default
 		if (null == imageDrawable) {
-			if (mode == Mode.PULL_FROM_START) {
-				imageDrawable = context.getResources().getDrawable(getDefaultStartDrawableResId(scrollDirection));
-			} else {
-				imageDrawable = context.getResources().getDrawable(getDefaultEndDrawableResId(scrollDirection));
-			}
+			imageDrawable = context.getResources().getDrawable(getDefaultDrawableResId());
 		}
 
 		// Set Drawable, and save width/height
@@ -176,8 +172,28 @@ public abstract class LoadingLayout extends LinearLayout {
 		reset();
 	}
 
+	public final void adjustHeightUsingBottomPadding(final int height) {
+		setPadding(getPaddingLeft(), getPaddingTop(), getPaddingRight(), getPaddingBottom() + height
+				- getMeasuredHeight());
+	}
+
+	public final void adjustHeightUsingTopPadding(final int height) {
+		setPadding(getPaddingLeft(), getPaddingTop() + height - getMeasuredHeight(), getPaddingRight(),
+				getPaddingBottom());
+	}
+
+	public final void adjustWidthUsingLeftPadding(final int width) {
+		setPadding(getPaddingLeft() + width - getMeasuredWidth(), getPaddingTop(), getPaddingRight(),
+				getPaddingBottom());
+	}
+
+	public final void adjustWidthUsingRightPadding(final int width) {
+		setPadding(getPaddingLeft(), getPaddingTop(), getPaddingRight() + width - getMeasuredWidth(),
+				getPaddingBottom());
+	}
+
 	public final void onPull(float scaleOfLayout) {
-		if (!mUseIntrinisicAnimation) {
+		if (!mUseIntrinsicAnimation) {
 			onPullImpl(scaleOfLayout);
 		}
 	}
@@ -196,7 +212,7 @@ public abstract class LoadingLayout extends LinearLayout {
 			mHeaderText.setText(mRefreshingLabel);
 		}
 
-		if (mUseIntrinisicAnimation) {
+		if (mUseIntrinsicAnimation) {
 			((AnimationDrawable) mHeaderImage.getDrawable()).start();
 		} else {
 			// Now call the callback
@@ -223,7 +239,7 @@ public abstract class LoadingLayout extends LinearLayout {
 		}
 		mHeaderImage.setVisibility(View.VISIBLE);
 
-		if (mUseIntrinisicAnimation) {
+		if (mUseIntrinsicAnimation) {
 			((AnimationDrawable) mHeaderImage.getDrawable()).stop();
 		} else {
 			// Now call the callback
@@ -239,22 +255,19 @@ public abstract class LoadingLayout extends LinearLayout {
 		}
 	}
 
-	@Override
-	protected void onSizeChanged(final int w, int h, int oldw, int oldh) {
-		super.onSizeChanged(w, h, oldw, oldh);
+	public final void resetForMeasure() {
+		resetPadding();
+	}
 
-		// If we're bigger than the Max Width, resize us
-		if (w > mMaxWidth) {
-			ViewGroup.LayoutParams lp = getLayoutParams();
-			lp.width = mMaxWidth;
-			setLayoutParams(lp);
-		}
+	@Override
+	public void setLastUpdatedLabel(CharSequence label) {
+		setSubHeaderText(label);
 	}
 
 	public final void setLoadingDrawable(Drawable imageDrawable) {
 		// Set Drawable
 		mHeaderImage.setImageDrawable(imageDrawable);
-		mUseIntrinisicAnimation = (imageDrawable instanceof AnimationDrawable);
+		mUseIntrinsicAnimation = (imageDrawable instanceof AnimationDrawable);
 
 		// Now call the callback
 		onLoadingDrawableSet(imageDrawable);
@@ -272,62 +285,16 @@ public abstract class LoadingLayout extends LinearLayout {
 		mReleaseLabel = releaseLabel;
 	}
 
-	public void setSubHeaderText(CharSequence label) {
-		if (null != mSubHeaderText) {
-			if (TextUtils.isEmpty(label)) {
-				mSubHeaderText.setVisibility(View.GONE);
-			} else {
-				mSubHeaderText.setText(label);
-				mSubHeaderText.setVisibility(View.VISIBLE);
-			}
-		}
-	}
-
-	public void setSubTextAppearance(int value) {
-		if (null != mSubHeaderText) {
-			mSubHeaderText.setTextAppearance(getContext(), value);
-		}
-	}
-
-	public void setSubTextColor(ColorStateList color) {
-		if (null != mSubHeaderText) {
-			mSubHeaderText.setTextColor(color);
-		}
-	}
-
-	public void setSubTextColor(int color) {
-		setSubTextColor(ColorStateList.valueOf(color));
-	}
-
-	public void setTextAppearance(int value) {
-		if (null != mHeaderText) {
-			mHeaderText.setTextAppearance(getContext(), value);
-		}
-		if (null != mSubHeaderText) {
-			mSubHeaderText.setTextAppearance(getContext(), value);
-		}
-	}
-
-	public void setTextColor(ColorStateList color) {
-		if (null != mHeaderText) {
-			mHeaderText.setTextColor(color);
-		}
-		if (null != mSubHeaderText) {
-			mSubHeaderText.setTextColor(color);
-		}
-	}
-
-	public void setTextColor(int color) {
-		setTextColor(ColorStateList.valueOf(color));
+	@Override
+	public void setTextTypeface(Typeface tf) {
+		mHeaderText.setTypeface(tf);
 	}
 
 	/**
 	 * Callbacks for derivative Layouts
 	 */
 
-	protected abstract int getDefaultEndDrawableResId(int scrollDirection);
-
-	protected abstract int getDefaultStartDrawableResId(int scrollDirection);
+	protected abstract int getDefaultDrawableResId();
 
 	protected abstract void onLoadingDrawableSet(Drawable imageDrawable);
 
@@ -340,5 +307,54 @@ public abstract class LoadingLayout extends LinearLayout {
 	protected abstract void releaseToRefreshImpl();
 
 	protected abstract void resetImpl();
+
+	private void resetPadding() {
+		Resources res = getResources();
+		final int tbPadding = res.getDimensionPixelSize(R.dimen.header_footer_top_bottom_padding);
+		final int lrPadding = res.getDimensionPixelSize(R.dimen.header_footer_left_right_padding);
+		setPadding(lrPadding, tbPadding, lrPadding, tbPadding);
+
+	}
+
+	private void setSubHeaderText(CharSequence label) {
+		if (null != mSubHeaderText) {
+			if (TextUtils.isEmpty(label)) {
+				mSubHeaderText.setVisibility(View.GONE);
+			} else {
+				mSubHeaderText.setText(label);
+				mSubHeaderText.setVisibility(View.VISIBLE);
+			}
+		}
+	}
+
+	private void setSubTextAppearance(int value) {
+		if (null != mSubHeaderText) {
+			mSubHeaderText.setTextAppearance(getContext(), value);
+		}
+	}
+
+	private void setSubTextColor(ColorStateList color) {
+		if (null != mSubHeaderText) {
+			mSubHeaderText.setTextColor(color);
+		}
+	}
+
+	private void setTextAppearance(int value) {
+		if (null != mHeaderText) {
+			mHeaderText.setTextAppearance(getContext(), value);
+		}
+		if (null != mSubHeaderText) {
+			mSubHeaderText.setTextAppearance(getContext(), value);
+		}
+	}
+
+	private void setTextColor(ColorStateList color) {
+		if (null != mHeaderText) {
+			mHeaderText.setTextColor(color);
+		}
+		if (null != mSubHeaderText) {
+			mSubHeaderText.setTextColor(color);
+		}
+	}
 
 }

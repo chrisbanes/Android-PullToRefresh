@@ -25,13 +25,25 @@ import android.widget.HorizontalScrollView;
 
 public class PullToRefreshHorizontalScrollView extends PullToRefreshBase<HorizontalScrollView> {
 
+	public PullToRefreshHorizontalScrollView(Context context) {
+		super(context);
+	}
+
 	public PullToRefreshHorizontalScrollView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 	}
 
+	public PullToRefreshHorizontalScrollView(Context context, Mode mode) {
+		super(context, mode);
+	}
+
+	public PullToRefreshHorizontalScrollView(Context context, Mode mode, AnimationStyle style) {
+		super(context, mode, style);
+	}
+
 	@Override
-	public final int getPullToRefreshScrollDirection() {
-		return HORIZONTAL_SCROLL;
+	public final Orientation getPullToRefreshScrollDirection() {
+		return Orientation.HORIZONTAL;
 	}
 
 	@Override

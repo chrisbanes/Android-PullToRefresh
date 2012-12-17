@@ -12,7 +12,6 @@
         android:layout_height="fill_parent"
         ptr:ptrAnimationStyle="flip"
         ptr:ptrHeaderBackground="@android:color/darker_gray"
-        ptr:ptrMode="both"
-        ptr:ptrRefreshableViewBackground="?android:attr/windowBackground" />
+        ptr:ptrMode="both" />
 
 </FrameLayout>

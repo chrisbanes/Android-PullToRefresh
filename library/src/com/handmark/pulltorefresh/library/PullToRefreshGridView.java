@@ -40,14 +40,18 @@ public class PullToRefreshGridView extends PullToRefreshAdapterViewBase<GridView
 		super(context, mode);
 	}
 
+	public PullToRefreshGridView(Context context, Mode mode, AnimationStyle style) {
+		super(context, mode, style);
+	}
+
 	@Override
 	public ContextMenuInfo getContextMenuInfo() {
 		return ((InternalGridView) getRefreshableView()).getContextMenuInfo();
 	}
 
 	@Override
-	public final int getPullToRefreshScrollDirection() {
-		return VERTICAL_SCROLL;
+	public final Orientation getPullToRefreshScrollDirection() {
+		return Orientation.VERTICAL;
 	}
 
 	@Override

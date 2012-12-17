@@ -24,6 +24,7 @@ import android.view.animation.RotateAnimation;
 import android.widget.ImageView.ScaleType;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
+import com.handmark.pulltorefresh.library.PullToRefreshBase.Orientation;
 import com.handmark.pulltorefresh.library.R;
 
 public class RotateLoadingLayout extends LoadingLayout {
@@ -35,8 +36,12 @@ public class RotateLoadingLayout extends LoadingLayout {
 
 	private float mRotationPivotX, mRotationPivotY;
 
-	public RotateLoadingLayout(Context context, Mode mode, int scrollDirection, TypedArray attrs) {
+	private final boolean mRotateDrawableWhilePulling;
+
+	public RotateLoadingLayout(Context context, Mode mode, Orientation scrollDirection, TypedArray attrs) {
 		super(context, mode, scrollDirection, attrs);
+
+		mRotateDrawableWhilePulling = attrs.getBoolean(R.styleable.PullToRefresh_ptrRotateDrawableWhilePulling, true);
 
 		mHeaderImage.setScaleType(ScaleType.MATRIX);
 		mHeaderImageMatrix = new Matrix();
@@ -58,7 +63,14 @@ public class RotateLoadingLayout extends LoadingLayout {
 	}
 
 	protected void onPullImpl(float scaleOfLayout) {
-		mHeaderImageMatrix.setRotate(scaleOfLayout * 90, mRotationPivotX, mRotationPivotY);
+		float angle;
+		if (mRotateDrawableWhilePulling) {
+			angle = scaleOfLayout * 90f;
+		} else {
+			angle = Math.max(0f, Math.min(180f, scaleOfLayout * 360f - 180f));
+		}
+
+		mHeaderImageMatrix.setRotate(angle, mRotationPivotX, mRotationPivotY);
 		mHeaderImage.setImageMatrix(mHeaderImageMatrix);
 	}
 
@@ -91,12 +103,7 @@ public class RotateLoadingLayout extends LoadingLayout {
 	}
 
 	@Override
-	protected int getDefaultStartDrawableResId(final int scrollDirection) {
-		return R.drawable.default_ptr_rotate;
-	}
-
-	@Override
-	protected int getDefaultEndDrawableResId(final int scrollDirection) {
+	protected int getDefaultDrawableResId() {
 		return R.drawable.default_ptr_rotate;
 	}
 

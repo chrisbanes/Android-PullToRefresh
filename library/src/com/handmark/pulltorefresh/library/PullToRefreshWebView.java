@@ -76,10 +76,20 @@ public class PullToRefreshWebView extends PullToRefreshBase<WebView> {
 		setOnRefreshListener(defaultOnRefreshListener);
 		mRefreshableView.setWebChromeClient(defaultWebChromeClient);
 	}
-	
+
+	public PullToRefreshWebView(Context context, Mode mode, AnimationStyle style) {
+		super(context, mode, style);
+
+		/**
+		 * Added so that by default, Pull-to-Refresh refreshes the page
+		 */
+		setOnRefreshListener(defaultOnRefreshListener);
+		mRefreshableView.setWebChromeClient(defaultWebChromeClient);
+	}
+
 	@Override
-	public final int getPullToRefreshScrollDirection() {
-		return VERTICAL_SCROLL;
+	public final Orientation getPullToRefreshScrollDirection() {
+		return Orientation.VERTICAL;
 	}
 
 	@Override
