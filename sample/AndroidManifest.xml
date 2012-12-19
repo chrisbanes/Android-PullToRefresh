@@ -30,6 +30,10 @@
             android:label="PtR ListView Fragment" >
         </activity>
         <activity
+            android:name=".PullToRefreshListInViewPagerActivity"
+            android:label="PtR ListView in ViewPager" >
+        </activity>
+        <activity
             android:name=".PullToRefreshGridActivity"
             android:label="PtR GridView" >
         </activity>
