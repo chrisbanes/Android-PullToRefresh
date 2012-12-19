@@ -105,7 +105,8 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		}
 
 		// Hide our original Loading View
-		origLoadingView.setVisibility(View.INVISIBLE);
+		origLoadingView.reset();
+		origLoadingView.hideAllViews();
 
 		// Make sure the opposite end is hidden too
 		oppositeListViewLoadingView.setVisibility(View.GONE);
@@ -169,7 +170,7 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		if (listViewLoadingLayout.getVisibility() == View.VISIBLE) {
 
 			// Set our Original View to Visible
-			originalLoadingLayout.setVisibility(View.VISIBLE);
+			originalLoadingLayout.showInvisibleViews();
 
 			// Hide the ListView Header/Footer
 			listViewLoadingLayout.setVisibility(View.GONE);

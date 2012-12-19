@@ -192,6 +192,36 @@ public abstract class LoadingLayout extends FrameLayout implements ILoadingLayou
 				getPaddingBottom());
 	}
 
+	public final void hideAllViews() {
+		if (View.VISIBLE == mHeaderText.getVisibility()) {
+			mHeaderText.setVisibility(View.INVISIBLE);
+		}
+		if (View.VISIBLE == mHeaderProgress.getVisibility()) {
+			mHeaderProgress.setVisibility(View.INVISIBLE);
+		}
+		if (View.VISIBLE == mHeaderImage.getVisibility()) {
+			mHeaderImage.setVisibility(View.INVISIBLE);
+		}
+		if (View.VISIBLE == mSubHeaderText.getVisibility()) {
+			mSubHeaderText.setVisibility(View.INVISIBLE);
+		}
+	}
+
+	public final void showInvisibleViews() {
+		if (View.INVISIBLE == mHeaderText.getVisibility()) {
+			mHeaderText.setVisibility(View.VISIBLE);
+		}
+		if (View.INVISIBLE == mHeaderProgress.getVisibility()) {
+			mHeaderProgress.setVisibility(View.VISIBLE);
+		}
+		if (View.INVISIBLE == mHeaderImage.getVisibility()) {
+			mHeaderImage.setVisibility(View.VISIBLE);
+		}
+		if (View.INVISIBLE == mSubHeaderText.getVisibility()) {
+			mSubHeaderText.setVisibility(View.VISIBLE);
+		}
+	}
+
 	public final void onPull(float scaleOfLayout) {
 		if (!mUseIntrinsicAnimation) {
 			onPullImpl(scaleOfLayout);
