@@ -691,6 +691,23 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		setPadding(pLeft, pTop, pRight, pBottom);
 	}
 
+	final void refreshRefreshableViewSize(int width, int height) {
+		// We need to set the Height of the Refreshable View to the same as
+		// this layout
+		LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) mRefreshableViewWrapper.getLayoutParams();
+
+		switch (getPullToRefreshScrollDirection()) {
+			case HORIZONTAL:
+				lp.width = width;
+				break;
+			case VERTICAL:
+			default:
+				lp.height = height;
+				break;
+		}
+		mRefreshableViewWrapper.requestLayout();
+	}
+
 	final void setState(State state, final boolean... params) {
 		mState = state;
 		if (DEBUG) {
@@ -902,6 +919,9 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 
 	@Override
 	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+		// Update the Refreshable View layout
+		refreshRefreshableViewSize(w, h);
+
 		// We need to update the header/footer when our size changes
 		refreshLoadingViewsSize();
 	}
@@ -999,17 +1019,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		mRefreshableViewWrapper.addView(refreshableView, ViewGroup.LayoutParams.MATCH_PARENT,
 				ViewGroup.LayoutParams.MATCH_PARENT);
 
-		switch (getPullToRefreshScrollDirection()) {
-			case HORIZONTAL:
-				addViewInternal(mRefreshableViewWrapper, new LinearLayout.LayoutParams(0, LayoutParams.MATCH_PARENT,
-						1.0f));
-				break;
-			case VERTICAL:
-			default:
-				addViewInternal(mRefreshableViewWrapper, new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, 0,
-						1.0f));
-				break;
-		}
+		addViewInternal(mRefreshableViewWrapper, new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,
+				LayoutParams.MATCH_PARENT));
 	}
 
 	@SuppressWarnings("deprecation")
