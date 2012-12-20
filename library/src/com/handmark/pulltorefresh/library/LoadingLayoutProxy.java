@@ -9,11 +9,9 @@ import com.handmark.pulltorefresh.library.internal.LoadingLayout;
 
 public class LoadingLayoutProxy implements ILoadingLayout {
 
-	private final PullToRefreshBase<?> mPullToRefreshView;
 	private final HashSet<LoadingLayout> mLoadingLayouts;
 
-	LoadingLayoutProxy(PullToRefreshBase<?> pullToRefreshView) {
-		mPullToRefreshView = pullToRefreshView;
+	LoadingLayoutProxy() {
 		mLoadingLayouts = new HashSet<LoadingLayout>();
 	}
 
@@ -28,8 +26,6 @@ public class LoadingLayoutProxy implements ILoadingLayout {
 		for (LoadingLayout layout : mLoadingLayouts) {
 			layout.setLastUpdatedLabel(label);
 		}
-
-		mPullToRefreshView.refreshLoadingViewsSize();
 	}
 
 	@Override
@@ -37,8 +33,6 @@ public class LoadingLayoutProxy implements ILoadingLayout {
 		for (LoadingLayout layout : mLoadingLayouts) {
 			layout.setLoadingDrawable(drawable);
 		}
-
-		mPullToRefreshView.refreshLoadingViewsSize();
 	}
 
 	@Override
@@ -66,7 +60,5 @@ public class LoadingLayoutProxy implements ILoadingLayout {
 		for (LoadingLayout layout : mLoadingLayouts) {
 			layout.setTextTypeface(tf);
 		}
-
-		mPullToRefreshView.refreshLoadingViewsSize();
 	}
 }
