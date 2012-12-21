@@ -34,7 +34,6 @@ import android.view.animation.Interpolator;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
-import com.handmark.pulltorefresh.library.internal.CallbackFrameLayout.OnSizeChangedListener;
 import com.handmark.pulltorefresh.library.internal.FlipLoadingLayout;
 import com.handmark.pulltorefresh.library.internal.LoadingLayout;
 import com.handmark.pulltorefresh.library.internal.RotateLoadingLayout;
@@ -92,9 +91,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	private LoadingLayout mHeaderLayout;
 	private LoadingLayout mFooterLayout;
 
-	private int mHeaderDimension;
-	private int mFooterDimension;
-
 	private OnRefreshListener<T> mOnRefreshListener;
 	private OnRefreshListener2<T> mOnRefreshListener2;
 	private OnPullEventListener<T> mOnPullEventListener;
@@ -146,10 +142,10 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	@Override
 	public final boolean demo() {
 		if (mMode.showHeaderLoadingLayout() && isReadyForPullStart()) {
-			smoothScrollToAndBack(-mHeaderDimension * 2);
+			smoothScrollToAndBack(-getHeaderSize() * 2);
 			return true;
 		} else if (mMode.showFooterLoadingLayout() && isReadyForPullEnd()) {
-			smoothScrollToAndBack(mFooterDimension * 2);
+			smoothScrollToAndBack(getFooterSize() * 2);
 			return true;
 		}
 
@@ -587,11 +583,11 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 				switch (mCurrentMode) {
 					case MANUAL_REFRESH_ONLY:
 					case PULL_FROM_END:
-						smoothScrollTo(mFooterDimension);
+						smoothScrollTo(getFooterSize());
 						break;
 					default:
 					case PULL_FROM_START:
-						smoothScrollTo(-mHeaderDimension);
+						smoothScrollTo(-getHeaderSize());
 						break;
 				}
 			} else {
@@ -724,20 +720,20 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		mLayoutVisibilityChangesEnabled = false;
 	}
 
-	protected final int getFooterHeight() {
-		return mFooterDimension;
-	}
-
 	protected final LoadingLayout getFooterLayout() {
 		return mFooterLayout;
 	}
 
-	protected final int getHeaderHeight() {
-		return mHeaderDimension;
+	protected final int getFooterSize() {
+		return mFooterLayout.getContentSize();
 	}
 
 	protected final LoadingLayout getHeaderLayout() {
 		return mHeaderLayout;
+	}
+
+	protected final int getHeaderSize() {
+		return mHeaderLayout.getContentSize();
 	}
 
 	protected int getPullToRefreshScrollDuration() {
@@ -860,8 +856,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	protected final void refreshLoadingViewsSize() {
 		final int maximumPullScroll = (int) (getMaximumPullScroll() * 1.2f);
 
-		mHeaderDimension = mFooterDimension = 0;
-
 		int pLeft = getPaddingLeft();
 		int pTop = getPaddingTop();
 		int pRight = getPaddingRight();
@@ -870,7 +864,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		switch (getPullToRefreshScrollDirection()) {
 			case HORIZONTAL:
 				if (mMode.showHeaderLoadingLayout()) {
-					mHeaderDimension = mHeaderLayout.getContentWidth();
 					mHeaderLayout.setWidth(maximumPullScroll);
 					pLeft = -maximumPullScroll;
 				} else {
@@ -878,7 +871,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 				}
 
 				if (mMode.showFooterLoadingLayout()) {
-					mFooterDimension = mFooterLayout.getContentWidth();
 					mFooterLayout.setWidth(maximumPullScroll);
 					pRight = -maximumPullScroll;
 				} else {
@@ -888,7 +880,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 
 			case VERTICAL:
 				if (mMode.showHeaderLoadingLayout()) {
-					mHeaderDimension = mHeaderLayout.getContentHeight();
 					mHeaderLayout.setHeight(maximumPullScroll);
 					pTop = -maximumPullScroll;
 				} else {
@@ -896,7 +887,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 				}
 
 				if (mMode.showFooterLoadingLayout()) {
-					mFooterDimension = mFooterLayout.getContentHeight();
 					mFooterLayout.setHeight(maximumPullScroll);
 					pBottom = -maximumPullScroll;
 				} else {
@@ -1075,11 +1065,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		mHeaderLayout = createLoadingLayout(context, Mode.PULL_FROM_START, a);
 		mFooterLayout = createLoadingLayout(context, Mode.PULL_FROM_END, a);
 
-		// LoadingLayout.OnSizeChangedListener listener = new
-		// OnLoadingLayoutSizeChangedListener();
-		// mHeaderLayout.setOnSizeChangedListener(listener);
-		// mFooterLayout.setOnSizeChangedListener(listener);
-
 		/**
 		 * Styleables from XML
 		 */
@@ -1153,12 +1138,12 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		switch (mCurrentMode) {
 			case PULL_FROM_END:
 				newScrollValue = Math.round(Math.max(initialMotionValue - lastMotionValue, 0) / FRICTION);
-				itemDimension = mFooterDimension;
+				itemDimension = getFooterSize();
 				break;
 			case PULL_FROM_START:
 			default:
 				newScrollValue = Math.round(Math.min(initialMotionValue - lastMotionValue, 0) / FRICTION);
-				itemDimension = mHeaderDimension;
+				itemDimension = getHeaderSize();
 				break;
 		}
 
@@ -1422,28 +1407,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		 */
 		public void onLastItemVisible();
 
-	}
-
-	final class OnLoadingLayoutSizeChangedListener implements OnSizeChangedListener {
-
-		@Override
-		public void onSizeChanged(View view, int newWidth, int newHeight) {
-			if (DEBUG) {
-				String viewString = view == mHeaderLayout ? "Header" : "Footer";
-				Log.d(LOG_TAG, "onSizeChanged. " + viewString + ": " + newWidth + " x " + newHeight);
-			}
-
-			/**
-			 * We're currently in a layout pass, so we need to post so it gets
-			 * called after the pass has finished.
-			 */
-			post(new Runnable() {
-				@Override
-				public void run() {
-					refreshLoadingViewsSize();
-				}
-			});
-		}
 	}
 
 	/**

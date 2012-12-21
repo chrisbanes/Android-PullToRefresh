@@ -41,7 +41,7 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase.Orientation;
 import com.handmark.pulltorefresh.library.R;
 
 @SuppressLint("ViewConstructor")
-public abstract class LoadingLayout extends CallbackFrameLayout implements ILoadingLayout {
+public abstract class LoadingLayout extends FrameLayout implements ILoadingLayout {
 
 	static final String LOG_TAG = "PullToRefresh-LoadingLayout";
 
@@ -192,12 +192,14 @@ public abstract class LoadingLayout extends CallbackFrameLayout implements ILoad
 		requestLayout();
 	}
 
-	public final int getContentHeight() {
-		return mInnerLayout.getHeight();
-	}
-
-	public final int getContentWidth() {
-		return mInnerLayout.getWidth();
+	public final int getContentSize() {
+		switch (mScrollDirection) {
+			case HORIZONTAL:
+				return mInnerLayout.getWidth();
+			case VERTICAL:
+			default:
+				return mInnerLayout.getHeight();
+		}
 	}
 
 	public final void hideAllViews() {
