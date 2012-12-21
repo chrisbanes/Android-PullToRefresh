@@ -843,10 +843,11 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	}
 
 	@Override
-	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+	protected final void onSizeChanged(int w, int h, int oldw, int oldh) {
 		super.onSizeChanged(w, h, oldw, oldh);
+
 		// We need to update the header/footer when our size changes
-		// refreshLoadingViewsSize();
+		refreshLoadingViewsSize();
 
 		// Update the Refreshable View layout
 		refreshRefreshableViewSize(w, h);
@@ -868,36 +869,36 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 
 		switch (getPullToRefreshScrollDirection()) {
 			case HORIZONTAL:
-				if (mMode.showHeaderLoadingLayout() && mHeaderLayout.getWidth() > 0) {
+				if (mMode.showHeaderLoadingLayout()) {
 					mHeaderDimension = mHeaderLayout.getContentWidth();
 					mHeaderLayout.setWidth(maximumPullScroll);
-					pLeft = -mHeaderLayout.getWidth();
+					pLeft = -maximumPullScroll;
 				} else {
 					pLeft = 0;
 				}
 
-				if (mMode.showFooterLoadingLayout() && mFooterLayout.getWidth() > 0) {
+				if (mMode.showFooterLoadingLayout()) {
 					mFooterDimension = mFooterLayout.getContentWidth();
 					mFooterLayout.setWidth(maximumPullScroll);
-					pRight = -mFooterLayout.getWidth();
+					pRight = -maximumPullScroll;
 				} else {
 					pRight = 0;
 				}
 				break;
 
 			case VERTICAL:
-				if (mMode.showHeaderLoadingLayout() && mHeaderLayout.getHeight() > 0) {
+				if (mMode.showHeaderLoadingLayout()) {
 					mHeaderDimension = mHeaderLayout.getContentHeight();
 					mHeaderLayout.setHeight(maximumPullScroll);
-					pTop = -mHeaderLayout.getHeight();
+					pTop = -maximumPullScroll;
 				} else {
 					pTop = 0;
 				}
 
-				if (mMode.showFooterLoadingLayout() && mFooterLayout.getHeight() > 0) {
+				if (mMode.showFooterLoadingLayout()) {
 					mFooterDimension = mFooterLayout.getContentHeight();
 					mFooterLayout.setHeight(maximumPullScroll);
-					pBottom = -mFooterLayout.getHeight();
+					pBottom = -maximumPullScroll;
 				} else {
 					pBottom = 0;
 				}
@@ -962,7 +963,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		 * all. We don't use them on the Header/Footer Views as they change
 		 * often, which would negate any HW layer performance boost.
 		 */
-		//ViewCompat.setLayerType(mRefreshableViewWrapper, value != 0 ? View.LAYER_TYPE_HARDWARE : View.LAYER_TYPE_NONE);
+		ViewCompat.setLayerType(mRefreshableViewWrapper, value != 0 ? View.LAYER_TYPE_HARDWARE : View.LAYER_TYPE_NONE);
 
 		switch (getPullToRefreshScrollDirection()) {
 			case VERTICAL:
@@ -1074,9 +1075,10 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		mHeaderLayout = createLoadingLayout(context, Mode.PULL_FROM_START, a);
 		mFooterLayout = createLoadingLayout(context, Mode.PULL_FROM_END, a);
 
-		LoadingLayout.OnSizeChangedListener listener = new OnLoadingLayoutSizeChangedListener();
-		mHeaderLayout.setOnSizeChangedListener(listener);
-		mFooterLayout.setOnSizeChangedListener(listener);
+		// LoadingLayout.OnSizeChangedListener listener = new
+		// OnLoadingLayoutSizeChangedListener();
+		// mHeaderLayout.setOnSizeChangedListener(listener);
+		// mFooterLayout.setOnSizeChangedListener(listener);
 
 		/**
 		 * Styleables from XML
