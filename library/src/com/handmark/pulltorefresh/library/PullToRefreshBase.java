@@ -34,9 +34,9 @@ import android.view.animation.Interpolator;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
+import com.handmark.pulltorefresh.library.internal.CallbackFrameLayout.OnSizeChangedListener;
 import com.handmark.pulltorefresh.library.internal.FlipLoadingLayout;
 import com.handmark.pulltorefresh.library.internal.LoadingLayout;
-import com.handmark.pulltorefresh.library.internal.LoadingLayout.OnSizeChangedListener;
 import com.handmark.pulltorefresh.library.internal.RotateLoadingLayout;
 import com.handmark.pulltorefresh.library.internal.Utils;
 import com.handmark.pulltorefresh.library.internal.ViewCompat;
@@ -910,20 +910,28 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	}
 
 	protected final void refreshRefreshableViewSize(int width, int height) {
+		if (DEBUG) {
+			Log.d(LOG_TAG, String.format("refreshRefreshableViewSize. W: %d, H: %d", width, height));
+		}
+		
 		// We need to set the Height of the Refreshable View to the same as
 		// this layout
 		LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) mRefreshableViewWrapper.getLayoutParams();
 
 		switch (getPullToRefreshScrollDirection()) {
 			case HORIZONTAL:
-				lp.width = width;
+				if (lp.weight != width) {
+					lp.width = width;
+					mRefreshableViewWrapper.requestLayout();
+				}
 				break;
 			case VERTICAL:
-			default:
-				lp.height = height;
+				if (lp.height != height) {
+					lp.height = height;
+					mRefreshableViewWrapper.requestLayout();
+				}
 				break;
 		}
-		mRefreshableViewWrapper.requestLayout();
 	}
 
 	/**

@@ -41,7 +41,7 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase.Orientation;
 import com.handmark.pulltorefresh.library.R;
 
 @SuppressLint("ViewConstructor")
-public abstract class LoadingLayout extends FrameLayout implements ILoadingLayout {
+public abstract class LoadingLayout extends CallbackFrameLayout implements ILoadingLayout {
 
 	static final String LOG_TAG = "PullToRefresh-LoadingLayout";
 
@@ -63,8 +63,6 @@ public abstract class LoadingLayout extends FrameLayout implements ILoadingLayou
 	private CharSequence mPullLabel;
 	private CharSequence mRefreshingLabel;
 	private CharSequence mReleaseLabel;
-
-	private OnSizeChangedListener mSizeChangedListener;
 
 	public LoadingLayout(Context context, final Mode mode, final Orientation scrollDirection, TypedArray attrs) {
 		super(context);
@@ -185,11 +183,13 @@ public abstract class LoadingLayout extends FrameLayout implements ILoadingLayou
 	public final void setHeight(int height) {
 		ViewGroup.LayoutParams lp = (ViewGroup.LayoutParams) getLayoutParams();
 		lp.height = height;
+		requestLayout();
 	}
 
 	public final void setWidth(int width) {
 		ViewGroup.LayoutParams lp = (ViewGroup.LayoutParams) getLayoutParams();
 		lp.width = width;
+		requestLayout();
 	}
 
 	public final int getContentHeight() {
@@ -218,15 +218,6 @@ public abstract class LoadingLayout extends FrameLayout implements ILoadingLayou
 	public final void onPull(float scaleOfLayout) {
 		if (!mUseIntrinsicAnimation) {
 			onPullImpl(scaleOfLayout);
-		}
-	}
-
-	@Override
-	public final void onSizeChanged(int w, int h, int oldw, int oldh) {
-		super.onSizeChanged(w, h, oldw, oldh);
-
-		if (null != mSizeChangedListener) {
-			mSizeChangedListener.onSizeChanged(this, w, h);
 		}
 	}
 
@@ -299,10 +290,6 @@ public abstract class LoadingLayout extends FrameLayout implements ILoadingLayou
 
 		// Now call the callback
 		onLoadingDrawableSet(imageDrawable);
-	}
-
-	public void setOnSizeChangedListener(OnSizeChangedListener sizeChangedListener) {
-		mSizeChangedListener = sizeChangedListener;
 	}
 
 	public void setPullLabel(CharSequence pullLabel) {
@@ -394,10 +381,6 @@ public abstract class LoadingLayout extends FrameLayout implements ILoadingLayou
 		if (null != mSubHeaderText) {
 			mSubHeaderText.setTextColor(color);
 		}
-	}
-
-	public static interface OnSizeChangedListener {
-		void onSizeChanged(View view, int newWidth, int newHeight);
 	}
 
 }
