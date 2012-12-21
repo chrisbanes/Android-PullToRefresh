@@ -844,6 +844,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 
 	@Override
 	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+		super.onSizeChanged(w, h, oldw, oldh);
 		// We need to update the header/footer when our size changes
 		// refreshLoadingViewsSize();
 
@@ -913,7 +914,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		if (DEBUG) {
 			Log.d(LOG_TAG, String.format("refreshRefreshableViewSize. W: %d, H: %d", width, height));
 		}
-		
+
 		// We need to set the Height of the Refreshable View to the same as
 		// this layout
 		LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) mRefreshableViewWrapper.getLayoutParams();
@@ -961,7 +962,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		 * all. We don't use them on the Header/Footer Views as they change
 		 * often, which would negate any HW layer performance boost.
 		 */
-		ViewCompat.setLayerType(mRefreshableViewWrapper, value != 0 ? View.LAYER_TYPE_HARDWARE : View.LAYER_TYPE_NONE);
+		//ViewCompat.setLayerType(mRefreshableViewWrapper, value != 0 ? View.LAYER_TYPE_HARDWARE : View.LAYER_TYPE_NONE);
 
 		switch (getPullToRefreshScrollDirection()) {
 			case VERTICAL:
@@ -1429,7 +1430,17 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 				String viewString = view == mHeaderLayout ? "Header" : "Footer";
 				Log.d(LOG_TAG, "onSizeChanged. " + viewString + ": " + newWidth + " x " + newHeight);
 			}
-			refreshLoadingViewsSize();
+
+			/**
+			 * We're currently in a layout pass, so we need to post so it gets
+			 * called after the pass has finished.
+			 */
+			post(new Runnable() {
+				@Override
+				public void run() {
+					refreshLoadingViewsSize();
+				}
+			});
 		}
 	}
 
