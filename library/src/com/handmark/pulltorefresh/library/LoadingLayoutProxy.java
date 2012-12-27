@@ -52,7 +52,7 @@ public class LoadingLayoutProxy implements ILoadingLayout {
 	@Override
 	public void setReleaseLabel(CharSequence label) {
 		for (LoadingLayout layout : mLoadingLayouts) {
-			layout.setRefreshingLabel(label);
+			layout.setReleaseLabel(label);
 		}
 	}
 
