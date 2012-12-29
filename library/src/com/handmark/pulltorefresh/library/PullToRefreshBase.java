@@ -840,6 +840,10 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 
 	@Override
 	protected final void onSizeChanged(int w, int h, int oldw, int oldh) {
+		if (DEBUG) {
+			Log.d(LOG_TAG, String.format("onSizeChanged. W: %d, H: %d", w, h));
+		}
+
 		super.onSizeChanged(w, h, oldw, oldh);
 
 		// We need to update the header/footer when our size changes
@@ -847,6 +851,17 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 
 		// Update the Refreshable View layout
 		refreshRefreshableViewSize(w, h);
+
+		/**
+		 * As we're currently in a Layout Pass, we need to schedule another one
+		 * to layout any changes we've made here
+		 */
+		post(new Runnable() {
+			@Override
+			public void run() {
+				requestLayout();
+			}
+		});
 	}
 
 	/**
@@ -902,10 +917,6 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	}
 
 	protected final void refreshRefreshableViewSize(int width, int height) {
-		if (DEBUG) {
-			Log.d(LOG_TAG, String.format("refreshRefreshableViewSize. W: %d, H: %d", width, height));
-		}
-
 		// We need to set the Height of the Refreshable View to the same as
 		// this layout
 		LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) mRefreshableViewWrapper.getLayoutParams();
