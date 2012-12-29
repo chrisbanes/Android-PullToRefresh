@@ -55,7 +55,7 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 		return newLp;
 	}
 
-	private int mSavedLastVisibleIndex = -1;
+	private boolean mLastItemVisible;
 	private OnScrollListener mOnScrollListener;
 	private OnLastItemVisibleListener mOnLastItemVisibleListener;
 	private View mEmptyView;
@@ -110,23 +110,12 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 					+ ". Total Items:" + totalItemCount);
 		}
 
-		// If we have a OnItemVisibleListener, do check...
+		/**
+		 * Set whether the Last Item is Visible. lastVisibleItemIndex is a
+		 * zero-based index, so we minus one totalItemCount to check
+		 */
 		if (null != mOnLastItemVisibleListener) {
-
-			// Detect whether the last visible item has changed
-			final int lastVisibleItemIndex = firstVisibleItem + visibleItemCount;
-
-			/**
-			 * Check that the last item has changed, we have any items, and that
-			 * the last item is visible. lastVisibleItemIndex is a zero-based
-			 * index, so we add one to it to check against totalItemCount.
-			 */
-			if (visibleItemCount > 0 && (lastVisibleItemIndex + 1) == totalItemCount) {
-				if (lastVisibleItemIndex != mSavedLastVisibleIndex) {
-					mSavedLastVisibleIndex = lastVisibleItemIndex;
-					mOnLastItemVisibleListener.onLastItemVisible();
-				}
-			}
+			mLastItemVisible = (totalItemCount > 0) && (firstVisibleItem + visibleItemCount >= totalItemCount - 1);
 		}
 
 		// If we're showing the indicator, check positions...
@@ -140,9 +129,17 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 		}
 	}
 
-	public final void onScrollStateChanged(final AbsListView view, final int scrollState) {
+	public final void onScrollStateChanged(final AbsListView view, final int state) {
+		/**
+		 * Check that the scrolling has stopped, and that the last item is
+		 * visible.
+		 */
+		if (state == OnScrollListener.SCROLL_STATE_IDLE && null != mOnLastItemVisibleListener && mLastItemVisible) {
+			mOnLastItemVisibleListener.onLastItemVisible();
+		}
+
 		if (null != mOnScrollListener) {
-			mOnScrollListener.onScrollStateChanged(view, scrollState);
+			mOnScrollListener.onScrollStateChanged(view, state);
 		}
 	}
 
