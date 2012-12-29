@@ -191,7 +191,12 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 
 			// We need to convert any LayoutParams so that it works in our
 			// FrameLayout
-			refreshableViewWrapper.addView(newEmptyView, convertEmptyViewLayoutParams(newEmptyView.getLayoutParams()));
+			FrameLayout.LayoutParams lp = convertEmptyViewLayoutParams(newEmptyView.getLayoutParams());
+			if (null != lp) {
+				refreshableViewWrapper.addView(newEmptyView, lp);
+			} else {
+				refreshableViewWrapper.addView(newEmptyView);
+			}
 		}
 
 		if (mRefreshableView instanceof EmptyViewMethodAccessor) {
