@@ -912,7 +912,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 
 		switch (getPullToRefreshScrollDirection()) {
 			case HORIZONTAL:
-				if (lp.weight != width) {
+				if (lp.width != width) {
 					lp.width = width;
 					mRefreshableViewWrapper.requestLayout();
 				}
