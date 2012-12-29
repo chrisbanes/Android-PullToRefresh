@@ -30,6 +30,7 @@ import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 
 import com.handmark.pulltorefresh.library.internal.EmptyViewMethodAccessor;
@@ -37,6 +38,22 @@ import com.handmark.pulltorefresh.library.internal.IndicatorLayout;
 
 public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extends PullToRefreshBase<T> implements
 		OnScrollListener {
+
+	private static FrameLayout.LayoutParams convertEmptyViewLayoutParams(ViewGroup.LayoutParams lp) {
+		FrameLayout.LayoutParams newLp = null;
+
+		if (null != lp) {
+			newLp = new FrameLayout.LayoutParams(lp);
+
+			if (lp instanceof LinearLayout.LayoutParams) {
+				newLp.gravity = ((LinearLayout.LayoutParams) lp).gravity;
+			} else {
+				newLp.gravity = Gravity.CENTER;
+			}
+		}
+
+		return newLp;
+	}
 
 	private int mSavedLastVisibleIndex = -1;
 	private OnScrollListener mOnScrollListener;
@@ -172,7 +189,9 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 				((ViewGroup) newEmptyViewParent).removeView(newEmptyView);
 			}
 
-			refreshableViewWrapper.addView(newEmptyView);
+			// We need to convert any LayoutParams so that it works in our
+			// FrameLayout
+			refreshableViewWrapper.addView(newEmptyView, convertEmptyViewLayoutParams(newEmptyView.getLayoutParams()));
 		}
 
 		if (mRefreshableView instanceof EmptyViewMethodAccessor) {
