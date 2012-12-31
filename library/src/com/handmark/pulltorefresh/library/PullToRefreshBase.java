@@ -550,7 +550,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	 * Called when the UI has been to be updated to be in the
 	 * {@link State#PULL_TO_REFRESH} state.
 	 */
-	void onPullToRefresh() {
+	protected void onPullToRefresh() {
 		switch (mCurrentMode) {
 			case PULL_FROM_END:
 				mFooterLayout.pullToRefresh();
@@ -570,7 +570,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	 * 
 	 * @param doScroll - Whether the UI should scroll for this event.
 	 */
-	void onRefreshing(final boolean doScroll) {
+	protected void onRefreshing(final boolean doScroll) {
 		if (mMode.showHeaderLoadingLayout()) {
 			mHeaderLayout.refreshing();
 		}
@@ -600,7 +600,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	 * Called when the UI has been to be updated to be in the
 	 * {@link State#RELEASE_TO_REFRESH} state.
 	 */
-	void onReleaseToRefresh() {
+	protected void onReleaseToRefresh() {
 		switch (mCurrentMode) {
 			case PULL_FROM_END:
 				mFooterLayout.releaseToRefresh();
@@ -618,7 +618,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	 * Called when the UI has been to be updated to be in the
 	 * {@link State#RESET} state.
 	 */
-	void onReset() {
+	protected void onReset() {
 		mIsBeingDragged = false;
 		mLayoutVisibilityChangesEnabled = true;
 
