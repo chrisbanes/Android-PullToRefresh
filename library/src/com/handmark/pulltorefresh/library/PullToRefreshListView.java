@@ -22,7 +22,6 @@ import android.graphics.Canvas;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.util.AttributeSet;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -56,11 +55,6 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 
 	public PullToRefreshListView(Context context, Mode mode, AnimationStyle style) {
 		super(context, mode, style);
-	}
-
-	@Override
-	public ContextMenuInfo getContextMenuInfo() {
-		return ((InternalListView) getRefreshableView()).getContextMenuInfo();
 	}
 
 	@Override
@@ -315,10 +309,6 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 				e.printStackTrace();
 				return false;
 			}
-		}
-
-		public ContextMenuInfo getContextMenuInfo() {
-			return super.getContextMenuInfo();
 		}
 
 		@Override

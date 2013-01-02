@@ -22,8 +22,12 @@ import android.app.ListActivity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.format.DateUtils;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -81,6 +85,9 @@ public final class PullToRefreshListActivity extends ListActivity {
 
 		ListView actualListView = mPullRefreshListView.getRefreshableView();
 
+		// Need to use the Actual ListView when registering for Context Menu
+		registerForContextMenu(actualListView);
+
 		mListItems = new LinkedList<String>();
 		mListItems.addAll(Arrays.asList(mStrings));
 
@@ -134,6 +141,19 @@ public final class PullToRefreshListActivity extends ListActivity {
 				: "Change to MODE_PULL_BOTH");
 		menu.add(0, MENU_DEMO, 0, "Demo");
 		return super.onCreateOptionsMenu(menu);
+	}
+
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+		AdapterContextMenuInfo info = (AdapterContextMenuInfo) menuInfo;
+
+		menu.setHeaderTitle("Item: " + getListView().getItemAtPosition(info.position));
+		menu.add("Item 1");
+		menu.add("Item 2");
+		menu.add("Item 3");
+		menu.add("Item 4");
+
+		super.onCreateContextMenu(menu, v, menuInfo);
 	}
 
 	@Override
