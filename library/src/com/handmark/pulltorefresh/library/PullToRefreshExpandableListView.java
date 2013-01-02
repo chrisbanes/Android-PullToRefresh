@@ -20,7 +20,6 @@ import android.content.Context;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.util.AttributeSet;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View;
 import android.widget.ExpandableListView;
 
@@ -42,11 +41,6 @@ public class PullToRefreshExpandableListView extends PullToRefreshAdapterViewBas
 
 	public PullToRefreshExpandableListView(Context context, Mode mode, AnimationStyle style) {
 		super(context, mode, style);
-	}
-
-	@Override
-	public ContextMenuInfo getContextMenuInfo() {
-		return ((InternalExpandableListView) getRefreshableView()).getContextMenuInfo();
 	}
 
 	@Override
@@ -72,10 +66,6 @@ public class PullToRefreshExpandableListView extends PullToRefreshAdapterViewBas
 
 		public InternalExpandableListView(Context context, AttributeSet attrs) {
 			super(context, attrs);
-		}
-
-		public ContextMenuInfo getContextMenuInfo() {
-			return super.getContextMenuInfo();
 		}
 
 		@Override

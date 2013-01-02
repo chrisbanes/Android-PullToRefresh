@@ -22,7 +22,6 @@ import android.graphics.Canvas;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.util.AttributeSet;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -59,17 +58,12 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 	}
 
 	@Override
-	public ContextMenuInfo getContextMenuInfo() {
-		return ((InternalListView) getRefreshableView()).getContextMenuInfo();
-	}
-
-	@Override
 	public final Orientation getPullToRefreshScrollDirection() {
 		return Orientation.VERTICAL;
 	}
 
 	@Override
-	void onRefreshing(final boolean doScroll) {
+	protected void onRefreshing(final boolean doScroll) {
 		/**
 		 * If we're not showing the Refreshing view, or the list is empty, the
 		 * the header/footer views won't show so we use the normal method.
@@ -92,7 +86,7 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 				listViewLoadingView = mFooterLoadingView;
 				oppositeListViewLoadingView = mHeaderLoadingView;
 				selection = mRefreshableView.getCount() - 1;
-				scrollToY = getScrollY() - getFooterHeight();
+				scrollToY = getScrollY() - getFooterSize();
 				break;
 			case PULL_FROM_START:
 			default:
@@ -100,12 +94,13 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 				listViewLoadingView = mHeaderLoadingView;
 				oppositeListViewLoadingView = mFooterLoadingView;
 				selection = 0;
-				scrollToY = getScrollY() + getHeaderHeight();
+				scrollToY = getScrollY() + getHeaderSize();
 				break;
 		}
 
 		// Hide our original Loading View
-		origLoadingView.setVisibility(View.INVISIBLE);
+		origLoadingView.reset();
+		origLoadingView.hideAllViews();
 
 		// Make sure the opposite end is hidden too
 		oppositeListViewLoadingView.setVisibility(View.GONE);
@@ -132,7 +127,7 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 	}
 
 	@Override
-	void onReset() {
+	protected void onReset() {
 		/**
 		 * If the extras are not enabled, just call up to super and return.
 		 */
@@ -151,14 +146,14 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 				originalLoadingLayout = getFooterLayout();
 				listViewLoadingLayout = mFooterLoadingView;
 				selection = mRefreshableView.getCount() - 1;
-				scrollToHeight = getFooterHeight();
+				scrollToHeight = getFooterSize();
 				scrollLvToEdge = Math.abs(mRefreshableView.getLastVisiblePosition() - selection) <= 1;
 				break;
 			case PULL_FROM_START:
 			default:
 				originalLoadingLayout = getHeaderLayout();
 				listViewLoadingLayout = mHeaderLoadingView;
-				scrollToHeight = -getHeaderHeight();
+				scrollToHeight = -getHeaderSize();
 				selection = 0;
 				scrollLvToEdge = Math.abs(mRefreshableView.getFirstVisiblePosition() - selection) <= 1;
 				break;
@@ -169,7 +164,7 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		if (listViewLoadingLayout.getVisibility() == View.VISIBLE) {
 
 			// Set our Original View to Visible
-			originalLoadingLayout.setVisibility(View.VISIBLE);
+			originalLoadingLayout.showInvisibleViews();
 
 			// Hide the ListView Header/Footer
 			listViewLoadingLayout.setVisibility(View.GONE);
@@ -314,10 +309,6 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 				e.printStackTrace();
 				return false;
 			}
-		}
-
-		public ContextMenuInfo getContextMenuInfo() {
-			return super.getContextMenuInfo();
 		}
 
 		@Override

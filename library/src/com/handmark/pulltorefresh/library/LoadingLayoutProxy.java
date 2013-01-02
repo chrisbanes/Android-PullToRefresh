@@ -9,15 +9,22 @@ import com.handmark.pulltorefresh.library.internal.LoadingLayout;
 
 public class LoadingLayoutProxy implements ILoadingLayout {
 
-	private final PullToRefreshBase<?> mPullToRefreshView;
 	private final HashSet<LoadingLayout> mLoadingLayouts;
 
-	LoadingLayoutProxy(PullToRefreshBase<?> pullToRefreshView) {
-		mPullToRefreshView = pullToRefreshView;
+	LoadingLayoutProxy() {
 		mLoadingLayouts = new HashSet<LoadingLayout>();
 	}
 
-	void addLayout(LoadingLayout layout) {
+	/**
+	 * This allows you to add extra LoadingLayout instances to this proxy. This
+	 * is only necessary if you keep your own instances, and want to have them
+	 * included in any
+	 * {@link PullToRefreshBase#createLoadingLayoutProxy(boolean, boolean)
+	 * createLoadingLayoutProxy(...)} calls.
+	 * 
+	 * @param layout - LoadingLayout to have included.
+	 */
+	public void addLayout(LoadingLayout layout) {
 		if (null != layout) {
 			mLoadingLayouts.add(layout);
 		}
@@ -28,8 +35,6 @@ public class LoadingLayoutProxy implements ILoadingLayout {
 		for (LoadingLayout layout : mLoadingLayouts) {
 			layout.setLastUpdatedLabel(label);
 		}
-
-		mPullToRefreshView.refreshLoadingViewsSize();
 	}
 
 	@Override
@@ -37,8 +42,6 @@ public class LoadingLayoutProxy implements ILoadingLayout {
 		for (LoadingLayout layout : mLoadingLayouts) {
 			layout.setLoadingDrawable(drawable);
 		}
-
-		mPullToRefreshView.refreshLoadingViewsSize();
 	}
 
 	@Override
@@ -58,7 +61,7 @@ public class LoadingLayoutProxy implements ILoadingLayout {
 	@Override
 	public void setReleaseLabel(CharSequence label) {
 		for (LoadingLayout layout : mLoadingLayouts) {
-			layout.setRefreshingLabel(label);
+			layout.setReleaseLabel(label);
 		}
 	}
 
@@ -66,7 +69,5 @@ public class LoadingLayoutProxy implements ILoadingLayout {
 		for (LoadingLayout layout : mLoadingLayouts) {
 			layout.setTextTypeface(tf);
 		}
-
-		mPullToRefreshView.refreshLoadingViewsSize();
 	}
 }

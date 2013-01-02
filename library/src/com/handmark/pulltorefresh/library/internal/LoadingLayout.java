@@ -18,15 +18,16 @@ package com.handmark.pulltorefresh.library.internal;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.ColorStateList;
-import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Typeface;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.FrameLayout;
@@ -45,6 +46,8 @@ public abstract class LoadingLayout extends FrameLayout implements ILoadingLayou
 	static final String LOG_TAG = "PullToRefresh-LoadingLayout";
 
 	static final Interpolator ANIMATION_INTERPOLATOR = new LinearInterpolator();
+
+	private FrameLayout mInnerLayout;
 
 	protected final ImageView mHeaderImage;
 	protected final ProgressBar mHeaderProgress;
@@ -66,8 +69,6 @@ public abstract class LoadingLayout extends FrameLayout implements ILoadingLayou
 		mMode = mode;
 		mScrollDirection = scrollDirection;
 
-		resetPadding();
-
 		switch (scrollDirection) {
 			case HORIZONTAL:
 				LayoutInflater.from(context).inflate(R.layout.pull_to_refresh_header_horizontal, this);
@@ -78,13 +79,18 @@ public abstract class LoadingLayout extends FrameLayout implements ILoadingLayou
 				break;
 		}
 
-		mHeaderText = (TextView) findViewById(R.id.pull_to_refresh_text);
-		mHeaderProgress = (ProgressBar) findViewById(R.id.pull_to_refresh_progress);
-		mSubHeaderText = (TextView) findViewById(R.id.pull_to_refresh_sub_text);
-		mHeaderImage = (ImageView) findViewById(R.id.pull_to_refresh_image);
+		mInnerLayout = (FrameLayout) findViewById(R.id.fl_inner);
+		mHeaderText = (TextView) mInnerLayout.findViewById(R.id.pull_to_refresh_text);
+		mHeaderProgress = (ProgressBar) mInnerLayout.findViewById(R.id.pull_to_refresh_progress);
+		mSubHeaderText = (TextView) mInnerLayout.findViewById(R.id.pull_to_refresh_sub_text);
+		mHeaderImage = (ImageView) mInnerLayout.findViewById(R.id.pull_to_refresh_image);
+
+		FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) mInnerLayout.getLayoutParams();
 
 		switch (mode) {
 			case PULL_FROM_END:
+				lp.gravity = scrollDirection == Orientation.VERTICAL ? Gravity.TOP : Gravity.LEFT;
+
 				// Load in labels
 				mPullLabel = context.getString(R.string.pull_to_refresh_from_bottom_pull_label);
 				mRefreshingLabel = context.getString(R.string.pull_to_refresh_from_bottom_refreshing_label);
@@ -93,6 +99,8 @@ public abstract class LoadingLayout extends FrameLayout implements ILoadingLayou
 
 			case PULL_FROM_START:
 			default:
+				lp.gravity = scrollDirection == Orientation.VERTICAL ? Gravity.BOTTOM : Gravity.RIGHT;
+
 				// Load in labels
 				mPullLabel = context.getString(R.string.pull_to_refresh_pull_label);
 				mRefreshingLabel = context.getString(R.string.pull_to_refresh_refreshing_label);
@@ -172,24 +180,41 @@ public abstract class LoadingLayout extends FrameLayout implements ILoadingLayou
 		reset();
 	}
 
-	public final void adjustHeightUsingBottomPadding(final int height) {
-		setPadding(getPaddingLeft(), getPaddingTop(), getPaddingRight(), getPaddingBottom() + height
-				- getMeasuredHeight());
+	public final void setHeight(int height) {
+		ViewGroup.LayoutParams lp = (ViewGroup.LayoutParams) getLayoutParams();
+		lp.height = height;
+		requestLayout();
 	}
 
-	public final void adjustHeightUsingTopPadding(final int height) {
-		setPadding(getPaddingLeft(), getPaddingTop() + height - getMeasuredHeight(), getPaddingRight(),
-				getPaddingBottom());
+	public final void setWidth(int width) {
+		ViewGroup.LayoutParams lp = (ViewGroup.LayoutParams) getLayoutParams();
+		lp.width = width;
+		requestLayout();
 	}
 
-	public final void adjustWidthUsingLeftPadding(final int width) {
-		setPadding(getPaddingLeft() + width - getMeasuredWidth(), getPaddingTop(), getPaddingRight(),
-				getPaddingBottom());
+	public final int getContentSize() {
+		switch (mScrollDirection) {
+			case HORIZONTAL:
+				return mInnerLayout.getWidth();
+			case VERTICAL:
+			default:
+				return mInnerLayout.getHeight();
+		}
 	}
 
-	public final void adjustWidthUsingRightPadding(final int width) {
-		setPadding(getPaddingLeft(), getPaddingTop(), getPaddingRight() + width - getMeasuredWidth(),
-				getPaddingBottom());
+	public final void hideAllViews() {
+		if (View.VISIBLE == mHeaderText.getVisibility()) {
+			mHeaderText.setVisibility(View.INVISIBLE);
+		}
+		if (View.VISIBLE == mHeaderProgress.getVisibility()) {
+			mHeaderProgress.setVisibility(View.INVISIBLE);
+		}
+		if (View.VISIBLE == mHeaderImage.getVisibility()) {
+			mHeaderImage.setVisibility(View.INVISIBLE);
+		}
+		if (View.VISIBLE == mSubHeaderText.getVisibility()) {
+			mSubHeaderText.setVisibility(View.INVISIBLE);
+		}
 	}
 
 	public final void onPull(float scaleOfLayout) {
@@ -255,10 +280,6 @@ public abstract class LoadingLayout extends FrameLayout implements ILoadingLayou
 		}
 	}
 
-	public final void resetForMeasure() {
-		resetPadding();
-	}
-
 	@Override
 	public void setLastUpdatedLabel(CharSequence label) {
 		setSubHeaderText(label);
@@ -290,6 +311,21 @@ public abstract class LoadingLayout extends FrameLayout implements ILoadingLayou
 		mHeaderText.setTypeface(tf);
 	}
 
+	public final void showInvisibleViews() {
+		if (View.INVISIBLE == mHeaderText.getVisibility()) {
+			mHeaderText.setVisibility(View.VISIBLE);
+		}
+		if (View.INVISIBLE == mHeaderProgress.getVisibility()) {
+			mHeaderProgress.setVisibility(View.VISIBLE);
+		}
+		if (View.INVISIBLE == mHeaderImage.getVisibility()) {
+			mHeaderImage.setVisibility(View.VISIBLE);
+		}
+		if (View.INVISIBLE == mSubHeaderText.getVisibility()) {
+			mSubHeaderText.setVisibility(View.VISIBLE);
+		}
+	}
+
 	/**
 	 * Callbacks for derivative Layouts
 	 */
@@ -307,14 +343,6 @@ public abstract class LoadingLayout extends FrameLayout implements ILoadingLayou
 	protected abstract void releaseToRefreshImpl();
 
 	protected abstract void resetImpl();
-
-	private void resetPadding() {
-		Resources res = getResources();
-		final int tbPadding = res.getDimensionPixelSize(R.dimen.header_footer_top_bottom_padding);
-		final int lrPadding = res.getDimensionPixelSize(R.dimen.header_footer_left_right_padding);
-		setPadding(lrPadding, tbPadding, lrPadding, tbPadding);
-
-	}
 
 	private void setSubHeaderText(CharSequence label) {
 		if (null != mSubHeaderText) {

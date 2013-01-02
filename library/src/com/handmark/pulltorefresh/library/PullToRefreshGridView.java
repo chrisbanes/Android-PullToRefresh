@@ -20,7 +20,6 @@ import android.content.Context;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.util.AttributeSet;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View;
 import android.widget.GridView;
 
@@ -42,11 +41,6 @@ public class PullToRefreshGridView extends PullToRefreshAdapterViewBase<GridView
 
 	public PullToRefreshGridView(Context context, Mode mode, AnimationStyle style) {
 		super(context, mode, style);
-	}
-
-	@Override
-	public ContextMenuInfo getContextMenuInfo() {
-		return ((InternalGridView) getRefreshableView()).getContextMenuInfo();
 	}
 
 	@Override
@@ -72,11 +66,6 @@ public class PullToRefreshGridView extends PullToRefreshAdapterViewBase<GridView
 
 		public InternalGridView(Context context, AttributeSet attrs) {
 			super(context, attrs);
-		}
-
-		@Override
-		public ContextMenuInfo getContextMenuInfo() {
-			return super.getContextMenuInfo();
 		}
 
 		@Override
