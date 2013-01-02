@@ -4,40 +4,30 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <title>Android-PullToRefresh by chrisbanes</title>
+
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-    <script src="javascripts/respond.js"></script>
-    <!--[if lt IE 9]>
-      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <!--[if lt IE 8]>
-    <link rel="stylesheet" href="stylesheets/ie.css">
-    <![endif]-->
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
   </head>
   <body>
-      <div id="header">
-        <nav>
-          <li class="fork"><a href="https://github.com/chrisbanes/Android-PullToRefresh">View On GitHub</a></li>
-          <li class="downloads"><a href="https://github.com/chrisbanes/Android-PullToRefresh/zipball/master">ZIP</a></li>
-          <li class="downloads"><a href="https://github.com/chrisbanes/Android-PullToRefresh/tarball/master">TAR</a></li>
-          <li class="title">DOWNLOADS</li>
-        </nav>
-      </div><!-- end header -->
-
     <div class="wrapper">
+      <header>
+        <h1>Android-PullToRefresh</h1>
+        <p>Implementation of the Pull-to-Refresh UI Pattern for Android</p>
 
+        <p class="view"><a href="https://github.com/chrisbanes/Android-PullToRefresh">View the Project on GitHub <small>chrisbanes/Android-PullToRefresh</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/chrisbanes/Android-PullToRefresh/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/chrisbanes/Android-PullToRefresh/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/chrisbanes/Android-PullToRefresh">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
       <section>
-        <div id="title">
-          <h1>Android-PullToRefresh</h1>
-          <p>Implementation of the Pull-to-Refresh UI Pattern for Android</p>
-          <hr>
-          <span class="credits left">Project maintained by <a href="https://github.com/chrisbanes">chrisbanes</a></span>
-          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="http://twitter.com/#!/michigangraham">mattgraham</a></span>
-        </div>
-
         <h1>Pull To Refresh Views for Android</h1>
 
 <p><img src="https://github.com/chrisbanes/Android-PullToRefresh/raw/master/header_graphic.png" alt="Screenshot"></p>
@@ -48,12 +38,24 @@
 
 <ul>
 <li>Supports both Pulling Down from the top, and Pulling Up from the bottom (or even both).</li>
-<li>Animated Scrolling for all devices (Tested on 1.6+)</li>
-<li>Works for all AbsListView derived classes. ListView, ExpandableListView &amp; GridView have been implemented.</li>
-<li>Also Works with WebView!</li>
+<li>Animated Scrolling for all devices.</li>
+<li>Over Scroll supports for devices on Android v2.3+.</li>
+<li>Currently works with:
+
+<ul>
+<li><strong>ListView</strong></li>
+<li><strong>ExpandableListView</strong></li>
+<li><strong>GridView</strong></li>
+<li><strong>WebView</strong></li>
+<li><strong>ScrollView</strong></li>
+<li><strong>HorizontalScrollView</strong></li>
+<li><strong>ViewPager</strong></li>
+</ul>
+</li>
 <li>Integrated End of List Listener for use of detecting when the user has scrolled to the bottom.</li>
-<li>Maven Support (thanks to Stefano Dacchille)</li>
-<li>Indicators to show the user when a Pull-to-Refresh is available</li>
+<li>Maven Support.</li>
+<li>Indicators to show the user when a Pull-to-Refresh is available.</li>
+<li>Support for <strong>ListFragment</strong>!</li>
 <li>Lots of <a href="https://github.com/chrisbanes/Android-PullToRefresh/wiki/Customisation">Customisation</a> options!</li>
 </ul><p>Repository at <a href="https://github.com/chrisbanes/Android-PullToRefresh">https://github.com/chrisbanes/Android-PullToRefresh</a>.</p>
 
@@ -65,7 +67,7 @@
 
 <h2>Usage</h2>
 
-<p>To begin using the libary, please see the <a href="https://github.com/chrisbanes/Android-PullToRefresh/wiki/Quick-Start-Guide">Quick Start Guide</a> page.</p>
+<p>To begin using the library, please see the <a href="https://github.com/chrisbanes/Android-PullToRefresh/wiki/Quick-Start-Guide">Quick Start Guide</a> page.</p>
 
 <h3>Customisation</h3>
 
@@ -93,6 +95,7 @@
 <li><a href="https://github.com/stefanodacchille">Stefano Dacchille</a></li>
 <li><a href="https://github.com/robUx4">Steve Lhomme</a></li>
 <li><a href="https://github.com/mgalkin">Maxim Galkin</a></li>
+<li><a href="https://github.com/Scorcher">Scorcher</a></li>
 </ul><h2>License</h2>
 
 <pre><code>Copyright 2011, 2012 Chris Banes
@@ -110,9 +113,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 </code></pre>
       </section>
-
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/chrisbanes">chrisbanes</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
     </div>
-    <!--[if !IE]><script>fixScale(document);</script><!--<![endif]-->
+    <script src="javascripts/scale.fix.js"></script>
     
   </body>
 </html>
