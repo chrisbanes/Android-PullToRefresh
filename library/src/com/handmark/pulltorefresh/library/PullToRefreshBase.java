@@ -47,6 +47,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	// ===========================================================
 
 	static final boolean DEBUG = true;
+	
+	static final boolean USE_HW_LAYERS = false;
 
 	static final String LOG_TAG = "PullToRefresh";
 
@@ -959,12 +961,15 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 			}
 		}
 
-		/**
-		 * Use a Hardware Layer on the Refreshable View if we've scrolled at
-		 * all. We don't use them on the Header/Footer Views as they change
-		 * often, which would negate any HW layer performance boost.
-		 */
-		ViewCompat.setLayerType(mRefreshableViewWrapper, value != 0 ? View.LAYER_TYPE_HARDWARE : View.LAYER_TYPE_NONE);
+		if (USE_HW_LAYERS) {
+			/**
+			 * Use a Hardware Layer on the Refreshable View if we've scrolled at
+			 * all. We don't use them on the Header/Footer Views as they change
+			 * often, which would negate any HW layer performance boost.
+			 */
+			ViewCompat.setLayerType(mRefreshableViewWrapper, value != 0 ? View.LAYER_TYPE_HARDWARE
+					: View.LAYER_TYPE_NONE);
+		}
 
 		switch (getPullToRefreshScrollDirection()) {
 			case VERTICAL:
