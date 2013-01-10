@@ -103,7 +103,7 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 			final int totalItemCount) {
 
 		if (DEBUG) {
-			Log.d(LOG_TAG, "First Visible: " + firstVisibleItem + ". Visible Count: " + visibleItemCount
+			LogManager.logger.d(LOG_TAG, "First Visible: " + firstVisibleItem + ". Visible Count: " + visibleItemCount
 					+ ". Total Items:" + totalItemCount);
 		}
 
@@ -380,7 +380,7 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 
 		if (null == adapter || adapter.isEmpty()) {
 			if (DEBUG) {
-				Log.d(LOG_TAG, "isFirstItemVisible. Empty View.");
+				LogManager.logger.d(LOG_TAG, "isFirstItemVisible. Empty View.");
 			}
 			return true;
 
