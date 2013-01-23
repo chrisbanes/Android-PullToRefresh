@@ -948,6 +948,9 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 			Log.d(LOG_TAG, "setHeaderScroll: " + value);
 		}
 
+		if (value < -128)
+			return;
+
 		if (mLayoutVisibilityChangesEnabled) {
 			if (value < 0) {
 				mHeaderLayout.setVisibility(View.VISIBLE);
