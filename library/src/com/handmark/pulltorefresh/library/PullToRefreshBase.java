@@ -47,7 +47,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	// ===========================================================
 
 	static final boolean DEBUG = true;
-	
+
 	static final boolean USE_HW_LAYERS = false;
 
 	static final String LOG_TAG = "PullToRefresh";
@@ -945,10 +945,14 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	 * 
 	 * @param value - New Scroll value
 	 */
-	protected final void setHeaderScroll(final int value) {
+	protected final void setHeaderScroll(int value) {
 		if (DEBUG) {
 			Log.d(LOG_TAG, "setHeaderScroll: " + value);
 		}
+
+		// Clamp value to with pull scroll range
+		final int maximumPullScroll = getMaximumPullScroll();
+		value = Math.min(maximumPullScroll, Math.max(-maximumPullScroll, value));
 
 		if (mLayoutVisibilityChangesEnabled) {
 			if (value < 0) {
