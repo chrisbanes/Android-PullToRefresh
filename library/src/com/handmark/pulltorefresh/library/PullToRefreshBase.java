@@ -347,22 +347,10 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 				if (mIsBeingDragged) {
 					mIsBeingDragged = false;
 
-					if (mState == State.RELEASE_TO_REFRESH) {
-
-						if (null != mOnRefreshListener) {
-							setState(State.REFRESHING, true);
-							mOnRefreshListener.onRefresh(this);
-							return true;
-
-						} else if (null != mOnRefreshListener2) {
-							setState(State.REFRESHING, true);
-							if (mCurrentMode == Mode.PULL_FROM_START) {
-								mOnRefreshListener2.onPullDownToRefresh(this);
-							} else if (mCurrentMode == Mode.PULL_FROM_END) {
-								mOnRefreshListener2.onPullUpToRefresh(this);
-							}
-							return true;
-						}
+					if (mState == State.RELEASE_TO_REFRESH
+							&& (null != mOnRefreshListener || null != mOnRefreshListener2)) {
+						setState(State.REFRESHING, true);
+						return true;
 					}
 
 					// If we're already refreshing, just scroll back to the top
@@ -746,19 +734,31 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 
 		if (doScroll) {
 			if (mShowViewWhileRefreshing) {
+
+				// Call Refresh Listener when the Scroll has finished
+				OnSmoothScrollFinishedListener listener = new OnSmoothScrollFinishedListener() {
+					@Override
+					public void onSmoothScrollFinished() {
+						callRefreshListener();
+					}
+				};
+
 				switch (mCurrentMode) {
 					case MANUAL_REFRESH_ONLY:
 					case PULL_FROM_END:
-						smoothScrollTo(getFooterSize());
+						smoothScrollTo(getFooterSize(), listener);
 						break;
 					default:
 					case PULL_FROM_START:
-						smoothScrollTo(-getHeaderSize());
+						smoothScrollTo(-getHeaderSize(), listener);
 						break;
 				}
 			} else {
 				smoothScrollTo(0);
 			}
+		} else {
+			// We're not scrolling, so just call Refresh Listener now
+			callRefreshListener();
 		}
 	}
 
@@ -996,6 +996,17 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	}
 
 	/**
+	 * Smooth Scroll to position using the default duration of
+	 * {@value #SMOOTH_SCROLL_DURATION_MS} ms.
+	 * 
+	 * @param scrollValue - Position to scroll to
+	 * @param listener - Listener for scroll
+	 */
+	protected final void smoothScrollTo(int scrollValue, OnSmoothScrollFinishedListener listener) {
+		smoothScrollTo(scrollValue, getPullToRefreshScrollDuration(), 0, listener);
+	}
+
+	/**
 	 * Smooth Scroll to position using the longer default duration of
 	 * {@value #SMOOTH_SCROLL_LONG_DURATION_MS} ms.
 	 * 
@@ -1045,6 +1056,18 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 
 		addViewInternal(mRefreshableViewWrapper, new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT,
 				LayoutParams.MATCH_PARENT));
+	}
+
+	private void callRefreshListener() {
+		if (null != mOnRefreshListener) {
+			mOnRefreshListener.onRefresh(this);
+		} else if (null != mOnRefreshListener2) {
+			if (mCurrentMode == Mode.PULL_FROM_START) {
+				mOnRefreshListener2.onPullDownToRefresh(this);
+			} else if (mCurrentMode == Mode.PULL_FROM_END) {
+				mOnRefreshListener2.onPullUpToRefresh(this);
+			}
+		}
 	}
 
 	@SuppressWarnings("deprecation")
