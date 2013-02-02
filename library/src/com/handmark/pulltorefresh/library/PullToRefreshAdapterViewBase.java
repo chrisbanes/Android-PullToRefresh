@@ -168,11 +168,6 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 	public final void setEmptyView(View newEmptyView) {
 		FrameLayout refreshableViewWrapper = getRefreshableViewWrapper();
 
-		// If we already have an Empty View, remove it
-		if (null != mEmptyView) {
-			refreshableViewWrapper.removeView(mEmptyView);
-		}
-
 		if (null != newEmptyView) {
 			// New view needs to be clickable so that Android recognizes it as a
 			// target for Touch Events
