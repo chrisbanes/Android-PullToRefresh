@@ -15,6 +15,8 @@
  *******************************************************************************/
 package com.handmark.pulltorefresh.library;
 
+import java.util.ArrayList;
+
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -26,6 +28,7 @@ import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.HeaderViewListAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
@@ -37,6 +40,7 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 	private LoadingLayout mHeaderLoadingView;
 	private LoadingLayout mFooterLoadingView;
 
+	private FrameLayout mLvHeaderLoadingFrame;
 	private FrameLayout mLvFooterLoadingFrame;
 
 	private boolean mListViewExtrasEnabled;
@@ -232,11 +236,10 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 					FrameLayout.LayoutParams.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL);
 
 			// Create Loading Views ready for use later
-			FrameLayout frame = new FrameLayout(getContext());
+			mLvHeaderLoadingFrame = new FrameLayout(getContext());
 			mHeaderLoadingView = createLoadingLayout(getContext(), Mode.PULL_FROM_START, a);
 			mHeaderLoadingView.setVisibility(View.GONE);
-			frame.addView(mHeaderLoadingView, lp);
-			mRefreshableView.addHeaderView(frame, null, false);
+			mLvHeaderLoadingFrame.addView(mHeaderLoadingView, lp);
 
 			mLvFooterLoadingFrame = new FrameLayout(getContext());
 			mFooterLoadingView = createLoadingLayout(getContext(), Mode.PULL_FROM_END, a);
@@ -311,15 +314,40 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 			}
 		}
 
+		@SuppressWarnings({ "unchecked", "rawtypes" })
 		@Override
-		public void setAdapter(ListAdapter adapter) {
+		public void setAdapter(final ListAdapter adapter) {
+
+			// create adapter wrapper to listview divider disappear as described here
+			// http://blog.uncommons.org/2013/01/24/android-listview-fixing-missingblank-dividers/
+			ListView.FixedViewInfo headerInfo = mRefreshableView.new FixedViewInfo();
+    		headerInfo.view = mLvHeaderLoadingFrame;
+    		headerInfo.isSelectable = false;
+    		//HeaderViewListAdapter insists on concrete ArrayLists.
+    		ArrayList headers = new ArrayList(1);
+    		headers.add(headerInfo);
+    		ArrayList footers = new ArrayList(1);
+
 			// Add the Footer View at the last possible moment
 			if (null != mLvFooterLoadingFrame && !mAddedLvFooter) {
-				addFooterView(mLvFooterLoadingFrame, null, false);
+				ListView.FixedViewInfo footerInfo = mRefreshableView.new FixedViewInfo();
+				footerInfo.view = mLvFooterLoadingFrame;
+				footerInfo.isSelectable = false;				
+				footers.add(footerInfo);
+				//addFooterView(mLvFooterLoadingFrame, null, false);
 				mAddedLvFooter = true;
 			}
 
-			super.setAdapter(adapter);
+
+    		HeaderViewListAdapter wrapper = new HeaderViewListAdapter(headers, footers, adapter)
+    		{
+    		    @Override
+    		    public boolean areAllItemsEnabled()
+    		    {
+    		    	return adapter.areAllItemsEnabled();
+    		    }
+    		};
+    		super.setAdapter(wrapper);
 		}
 
 		@Override
