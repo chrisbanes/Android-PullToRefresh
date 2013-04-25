@@ -26,7 +26,7 @@ This project aims to provide a reusable Pull to Refresh widget for Android. It w
  * Support for **ListFragment**!
  * Lots of [Customisation](https://github.com/chrisbanes/Android-PullToRefresh/wiki/Customisation) options!
 
-Repository at <https://github.com/chrisbanes/Android-PullToRefresh>.
+Originally forked from the repository at <https://github.com/chrisbanes/Android-PullToRefresh>.
 
 ## Sample Application
 The sample application (the source is in the repository) has been published onto Google Play for easy access:
