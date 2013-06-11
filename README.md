@@ -1,5 +1,3 @@
-# PLEASE NOTE, THIS PROJECT IS NO LONGER BEING MAINTAINED
-
 * * *
 
 # Pull To Refresh Views for Android
@@ -21,13 +19,14 @@ This project aims to provide a reusable Pull to Refresh widget for Android. It w
  	* **ScrollView**
  	* **HorizontalScrollView**
  	* **ViewPager**
+    * **StaggeredGridView**
  * Integrated End of List Listener for use of detecting when the user has scrolled to the bottom.
  * Maven Support.
  * Indicators to show the user when a Pull-to-Refresh is available.
  * Support for **ListFragment**!
  * Lots of [Customisation](https://github.com/chrisbanes/Android-PullToRefresh/wiki/Customisation) options!
 
-Repository at <https://github.com/chrisbanes/Android-PullToRefresh>.
+Originally forked from the repository at <https://github.com/chrisbanes/Android-PullToRefresh>.
 
 ## Sample Application
 The sample application (the source is in the repository) has been published onto Google Play for easy access:
@@ -59,6 +58,7 @@ I will gladly accept pull requests for fixes and feature enhancements but please
 * [Steve Lhomme](https://github.com/robUx4)
 * [Maxim Galkin](https://github.com/mgalkin)
 * [Scorcher](https://github.com/Scorcher)
+* [Gomino](https://github.com/Gomino)
 
 
 ## License
