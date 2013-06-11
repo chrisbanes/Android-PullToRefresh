@@ -235,7 +235,7 @@ public class StaggeredGridView extends ViewGroup
         mTouchSlop = vc.getScaledTouchSlop();
         mMaximumVelocity = vc.getScaledMaximumFlingVelocity();
         mFlingVelocity = vc.getScaledMinimumFlingVelocity();
-        mScroller = ScrollerCompat.from(context);
+        mScroller = ScrollerCompat.create(context);
 
         mTopEdge = new EdgeEffectCompat(context);
         mBottomEdge = new EdgeEffectCompat(context);
