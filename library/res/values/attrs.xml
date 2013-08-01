@@ -9,6 +9,24 @@
         <!-- A drawable to use as the background of the Header and Footer Loading Views -->
         <attr name="ptrHeaderBackground" format="reference|color" />
 
+        <!-- Text for the Top Pull layout -->
+        <attr name="ptrTopPullText" format="reference|string" />
+        
+        <!-- Text for the Top Pull layout to release -->
+        <attr name="ptrTopPullReleaseText" format="reference|string" />
+        
+        <!-- Text for the Top Pull layout while refreshing -->
+        <attr name="ptrTopPullRefreshingText" format="reference|string" />
+        
+        <!-- Text for the Bottom Pull layout -->
+        <attr name="ptrBottomPullText" format="reference|string" />
+        
+        <!-- Text for the Bottom Pull layout to release -->
+        <attr name="ptrBottomPullReleaseText" format="reference|string" />
+        
+        <!-- Text for the Bottom Pull layout while refreshing -->
+        <attr name="ptrBottomPullRefreshingText" format="reference|string" />
+        
         <!-- Text Color of the Header and Footer Loading Views -->
         <attr name="ptrHeaderTextColor" format="reference|color" />
 
@@ -75,6 +93,7 @@
         <attr name="ptrAdapterViewBackground" format="reference|color" />
         <attr name="ptrDrawableTop" format="reference" />
         <attr name="ptrDrawableBottom" format="reference" />
+        
     </declare-styleable>
 
 </resources>

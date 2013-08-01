@@ -32,6 +32,7 @@ import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -90,21 +91,49 @@ public abstract class LoadingLayout extends FrameLayout implements ILoadingLayou
 		switch (mode) {
 			case PULL_FROM_END:
 				lp.gravity = scrollDirection == Orientation.VERTICAL ? Gravity.TOP : Gravity.LEFT;
-
-				// Load in labels
-				mPullLabel = context.getString(R.string.pull_to_refresh_from_bottom_pull_label);
-				mRefreshingLabel = context.getString(R.string.pull_to_refresh_from_bottom_refreshing_label);
-				mReleaseLabel = context.getString(R.string.pull_to_refresh_from_bottom_release_label);
+				
+				if (attrs.hasValue(R.styleable.PullToRefresh_ptrBottomPullText)) {
+					mPullLabel = attrs.getString(R.styleable.PullToRefresh_ptrBottomPullText);
+				} else {
+					mPullLabel = context.getString(R.string.pull_to_refresh_from_bottom_pull_label);
+				}
+				
+				if (attrs.hasValue(R.styleable.PullToRefresh_ptrBottomPullRefreshingText)) {
+					mRefreshingLabel = attrs.getString(R.styleable.PullToRefresh_ptrBottomPullRefreshingText);
+				} else {
+					mRefreshingLabel = context.getString(R.string.pull_to_refresh_from_bottom_refreshing_label);
+				}
+				
+				if (attrs.hasValue(R.styleable.PullToRefresh_ptrBottomPullReleaseText)) {
+					mReleaseLabel = attrs.getString(R.styleable.PullToRefresh_ptrBottomPullReleaseText);
+				} else {
+					mReleaseLabel = context.getString(R.string.pull_to_refresh_from_bottom_release_label);
+				}
+				
 				break;
 
 			case PULL_FROM_START:
 			default:
 				lp.gravity = scrollDirection == Orientation.VERTICAL ? Gravity.BOTTOM : Gravity.RIGHT;
 
-				// Load in labels
-				mPullLabel = context.getString(R.string.pull_to_refresh_pull_label);
-				mRefreshingLabel = context.getString(R.string.pull_to_refresh_refreshing_label);
-				mReleaseLabel = context.getString(R.string.pull_to_refresh_release_label);
+				if (attrs.hasValue(R.styleable.PullToRefresh_ptrTopPullText)) {
+					mPullLabel = attrs.getString(R.styleable.PullToRefresh_ptrBottomPullText);
+				} else {
+					mPullLabel = context.getString(R.string.pull_to_refresh_pull_label);
+				}
+				
+				if (attrs.hasValue(R.styleable.PullToRefresh_ptrTopPullRefreshingText)) {
+					mRefreshingLabel = attrs.getString(R.styleable.PullToRefresh_ptrBottomPullRefreshingText);
+				} else {
+					mRefreshingLabel = context.getString(R.string.pull_to_refresh_refreshing_label);
+				}
+				
+				if (attrs.hasValue(R.styleable.PullToRefresh_ptrTopPullReleaseText)) {
+					mReleaseLabel = attrs.getString(R.styleable.PullToRefresh_ptrBottomPullReleaseText);
+				} else {
+					mReleaseLabel = context.getString(R.string.pull_to_refresh_release_label);
+				}
+				
 				break;
 		}
 
