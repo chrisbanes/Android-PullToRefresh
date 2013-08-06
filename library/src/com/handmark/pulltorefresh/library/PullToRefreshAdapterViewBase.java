@@ -388,9 +388,10 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 			 * now we'll just add one to account for it and rely on the inner
 			 * condition which checks getTop().
 			 */
-			if (mRefreshableView.getFirstVisiblePosition() <= 1) {
+			if ((null == mIndicatorIvTop && mRefreshableView.getFirstVisiblePosition() == 0) || 
+					(null != mIndicatorIvTop && mRefreshableView.getFirstVisiblePosition() <= 1)) {
 				final View firstVisibleChild = mRefreshableView.getChildAt(0);
-				if (firstVisibleChild != null) {
+				if (firstVisibleChild != null && firstVisibleChild != mIndicatorIvTop) {
 					return firstVisibleChild.getTop() >= mRefreshableView.getTop();
 				}
 			}
@@ -423,10 +424,11 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 			 * account for it and rely on the inner condition which checks
 			 * getBottom().
 			 */
-			if (lastVisiblePosition >= lastItemPosition - 1) {
+			if ((null == mIndicatorIvBottom && lastVisiblePosition == lastItemPosition) || 
+					(null != mIndicatorIvBottom && lastVisiblePosition >= lastItemPosition - 1)) {
 				final int childIndex = lastVisiblePosition - mRefreshableView.getFirstVisiblePosition();
 				final View lastVisibleChild = mRefreshableView.getChildAt(childIndex);
-				if (lastVisibleChild != null) {
+				if (lastVisibleChild != null && lastVisibleChild != mIndicatorIvBottom) {
 					return lastVisibleChild.getBottom() <= mRefreshableView.getBottom();
 				}
 			}
