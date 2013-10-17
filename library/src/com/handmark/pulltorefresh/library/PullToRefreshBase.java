@@ -99,6 +99,10 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 
 	private SmoothScrollRunnable mCurrentSmoothScrollRunnable;
 
+	// At what ratio should we start considering the release-to-refresh state
+    private float mReleaseRatio = 1;
+    
+
 	// ===========================================================
 	// Constructors
 	// ===========================================================
@@ -152,6 +156,11 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		}
 
 		return false;
+	}
+	
+	@Override
+	public void setReleaseRatio(float ratio) {
+	    mReleaseRatio = ratio;
 	}
 
 	@Override
@@ -1206,7 +1215,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 
 			if (mState != State.PULL_TO_REFRESH && itemDimension >= Math.abs(newScrollValue)) {
 				setState(State.PULL_TO_REFRESH);
-			} else if (mState == State.PULL_TO_REFRESH && itemDimension < Math.abs(newScrollValue)) {
+			} else if (mState == State.PULL_TO_REFRESH && (itemDimension * mReleaseRatio) < Math.abs(newScrollValue)) {
 				setState(State.RELEASE_TO_REFRESH);
 			}
 		}
