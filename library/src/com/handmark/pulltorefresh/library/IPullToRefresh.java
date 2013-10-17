@@ -242,5 +242,13 @@ public interface IPullToRefresh<T extends View> {
 	 * @param showView
 	 */
 	public void setShowViewWhileRefreshing(boolean showView);
+	
+	
+	/**
+	 * Sets the ratio in which we start the release-to-refresh state (e.g. if ratio = 2, only when the
+	 * user pulls the list twice as much, then we'll enter the release-to-refresh state).
+	 * @param ratio the ratio
+	 */
+	public void setReleaseRatio(float ratio);
 
 }
