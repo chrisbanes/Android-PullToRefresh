@@ -313,8 +313,10 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 
 		@Override
 		public void setAdapter(ListAdapter adapter) {
-			// Add the Footer View at the last possible moment
-			if (null != mLvFooterLoadingFrame && !mAddedLvFooter) {
+            final Mode mode = getMode();
+            // Add the Footer View at the last possible moment
+			if (null != mLvFooterLoadingFrame && !mAddedLvFooter
+                    && mode.showFooterLoadingLayout()) {
 				addFooterView(mLvFooterLoadingFrame, null, false);
 				mAddedLvFooter = true;
 			}
