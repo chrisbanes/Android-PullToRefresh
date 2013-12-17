@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- From: file:/Users/user/stuff/projects/wobo.droid/submodules/Android-PullToRefresh/library/res/values-nl/pull_refresh_strings.xml -->
+    <eat-comment />
+
+    <string name="pull_to_refresh_pull_label">Sleep om te vernieuwen…</string>
+    <string name="pull_to_refresh_refreshing_label">Laden…</string>
+    <string name="pull_to_refresh_release_label">Loslaten om te vernieuwen…</string>
+
+</resources>

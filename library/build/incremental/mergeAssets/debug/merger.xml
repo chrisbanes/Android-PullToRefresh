@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger>
+
+    <dataSet config="main" >
+        <source path="/Users/user/stuff/projects/wobo.droid/submodules/Android-PullToRefresh/library/src/main/assets" />
+    </dataSet>
+    <dataSet config="debug" >
+        <source path="/Users/user/stuff/projects/wobo.droid/submodules/Android-PullToRefresh/library/src/debug/assets" />
+    </dataSet>
+
+</merger>

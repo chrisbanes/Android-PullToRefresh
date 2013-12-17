@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- From: file:/Users/user/stuff/projects/wobo.droid/submodules/Android-PullToRefresh/library/res/values-ko/pull_refresh_strings.xml -->
+    <eat-comment />
+
+    <string name="pull_to_refresh_pull_label">당겨서 새로 고침…</string>
+    <string name="pull_to_refresh_refreshing_label">로드 중…</string>
+    <string name="pull_to_refresh_release_label">놓아서 새로 고침…</string>
+
+</resources>
