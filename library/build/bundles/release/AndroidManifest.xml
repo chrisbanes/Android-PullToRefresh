@@ -1,11 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.handmark.pulltorefresh.library"
-    android:versionCode="2110"
-    android:versionName="2.1.1" >
+<!-- From: file:/Users/user/stuff/projects/wobo.droid/submodules/Android-PullToRefresh/library/AndroidManifest.xml -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="2110" android:versionName="2.1.1" package="com.handmark.pulltorefresh.library">
 
-    <uses-sdk android:minSdkVersion="4" />
+    <uses-sdk android:minSdkVersion="4"/>
 
-    <application />
+    <application/>
 
 </manifest>
