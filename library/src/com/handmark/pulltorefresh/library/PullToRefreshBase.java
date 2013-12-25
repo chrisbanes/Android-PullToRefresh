@@ -46,7 +46,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	// Constants
 	// ===========================================================
 
-	static final boolean DEBUG = true;
+	static final boolean DEBUG = false;
 
 	static final boolean USE_HW_LAYERS = false;
 
@@ -82,7 +82,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	private FrameLayout mRefreshableViewWrapper;
 
 	private boolean mShowViewWhileRefreshing = true;
-	private boolean mScrollingWhileRefreshingEnabled = false;
+	private boolean mScrollingWhileRefreshingEnabled = true;
 	private boolean mFilterTouchEvents = true;
 	private boolean mOverScrollEnabled = true;
 	private boolean mLayoutVisibilityChangesEnabled = true;
@@ -1130,7 +1130,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 
 		if (a.hasValue(R.styleable.PullToRefresh_ptrScrollingWhileRefreshingEnabled)) {
 			mScrollingWhileRefreshingEnabled = a.getBoolean(
-					R.styleable.PullToRefresh_ptrScrollingWhileRefreshingEnabled, false);
+					R.styleable.PullToRefresh_ptrScrollingWhileRefreshingEnabled, true);
 		}
 
 		// Let the derivative classes have a go at handling attributes, then
@@ -1143,6 +1143,9 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	}
 
 	private boolean isReadyForPull() {
+        if (isRefreshing()) {
+            return false;
+        }
 		switch (mMode) {
 			case PULL_FROM_START:
 				return isReadyForPullStart();
