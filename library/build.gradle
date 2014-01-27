@@ -12,8 +12,13 @@ apply plugin: 'android-library'
 archivesBaseName = 'pull-to-refresh'
 
 android {
-  compileSdkVersion 17
-  buildToolsVersion '17'
+
+    lintOptions {
+        abortOnError false
+    }
+
+    compileSdkVersion 17
+    buildToolsVersion '17'
 
     sourceSets {
         main {
