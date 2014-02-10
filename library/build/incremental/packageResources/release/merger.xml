@@ -450,6 +450,7 @@
             </file>
         </source>
         <source path="/Users/user/stuff/projects/wobo.droid/submodules/Android-PullToRefresh/library/build/res/rs/release" />
+        <source path="/Users/user/stuff/projects/wobo.droid/submodules/Android-PullToRefresh/library/build/res/generated/release" />
     </dataSet>
     <dataSet config="release" >
         <source path="/Users/user/stuff/projects/wobo.droid/submodules/Android-PullToRefresh/library/src/release/res" />
