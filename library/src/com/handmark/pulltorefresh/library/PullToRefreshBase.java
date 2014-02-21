@@ -1206,7 +1206,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 
 			if (mState != State.PULL_TO_REFRESH && itemDimension >= Math.abs(newScrollValue)) {
 				setState(State.PULL_TO_REFRESH);
-			} else if (mState == State.PULL_TO_REFRESH && itemDimension < Math.abs(newScrollValue)) {
+			} else if (mState != State.RELEASE_TO_REFRESH && itemDimension < Math.abs(newScrollValue)) {
 				setState(State.RELEASE_TO_REFRESH);
 			}
 		}
