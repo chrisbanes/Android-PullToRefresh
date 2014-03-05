@@ -63,6 +63,36 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 	}
 
 	@Override
+	protected boolean isFirstItemVisible() {
+		final Adapter adapter = mRefreshableView.getAdapter();
+
+		if ((null == adapter || adapter.isEmpty()) && !(getRefreshableView().getHeaderViewsCount() > 1)) {
+			if (DEBUG) {
+				Log.d(LOG_TAG, "isFirstItemVisible. Empty View.");
+			}
+			return true;
+
+		} else {
+
+			/**
+			 * This check should really just be:
+			 * mRefreshableView.getFirstVisiblePosition() == 0, but PtRListView
+			 * internally use a HeaderView which messes the positions up. For
+			 * now we'll just add one to account for it and rely on the inner
+			 * condition which checks getTop().
+			 */
+			if (mRefreshableView.getFirstVisiblePosition() <= 1) {
+				final View firstVisibleChild = mRefreshableView.getChildAt(0);
+				if (firstVisibleChild != null) {
+					return firstVisibleChild.getTop() >= mRefreshableView.getTop();
+				}
+			}
+		}
+
+		return false;
+	}
+
+	@Override
 	protected void onRefreshing(final boolean doScroll) {
 		/**
 		 * If we're not showing the Refreshing view, or the list is empty, the
