@@ -236,8 +236,10 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 			mHeaderLoadingView = createLoadingLayout(getContext(), Mode.PULL_FROM_START, a);
 			mHeaderLoadingView.setVisibility(View.GONE);
 			frame.addView(mHeaderLoadingView, lp);
+			//set dividerHeight property , between the head and body item , also can appear the divider , 
+			//
 			mRefreshableView.addHeaderView(frame, null, false);
-
+			
 			mLvFooterLoadingFrame = new FrameLayout(getContext());
 			mFooterLoadingView = createLoadingLayout(getContext(), Mode.PULL_FROM_END, a);
 			mFooterLoadingView.setVisibility(View.GONE);
