@@ -194,11 +194,11 @@ public abstract class LoadingLayout extends FrameLayout implements ILoadingLayou
 
 	public final int getContentSize() {
 		switch (mScrollDirection) {
-			case HORIZONTAL:
-				return mInnerLayout.getWidth();
-			case VERTICAL:
-			default:
-				return mInnerLayout.getHeight();
+		case HORIZONTAL:
+			return getMeasureWidth(mInnerLayout);
+		case VERTICAL:
+		default:
+			return getMeasureHight(mInnerLayout);
 		}
 	}
 
@@ -388,6 +388,49 @@ public abstract class LoadingLayout extends FrameLayout implements ILoadingLayou
 		if (null != mSubHeaderText) {
 			mSubHeaderText.setTextColor(color);
 		}
+	}
+
+	
+	/**
+	 * 获取某个控件的宽高 调用方法后用View.getMeasuredWidth(),View.getMeasuredHeight() 来获取宽高
+	 * 
+	 * @param child
+	 */
+	public static void measureView(View child) {
+		ViewGroup.LayoutParams p = child.getLayoutParams();
+		if (p == null) {
+			p = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,
+					ViewGroup.LayoutParams.WRAP_CONTENT);
+		}
+		int childWidthSpec = ViewGroup.getChildMeasureSpec(0, 0 + 0, p.width);
+		int lpHeight = p.height;
+		int childHeightSpec;
+		if (lpHeight > 0) {
+			childHeightSpec = MeasureSpec.makeMeasureSpec(lpHeight,
+					MeasureSpec.EXACTLY);
+		} else {
+			childHeightSpec = MeasureSpec.makeMeasureSpec(0,
+					MeasureSpec.UNSPECIFIED);
+		}
+		child.measure(childWidthSpec, childHeightSpec);
+	}
+	
+	private int getMeasureHight(View child) {
+		int result = child.getHeight();
+		if (result == 0) {
+			measureView(child);
+			result = child.getMeasuredHeight();
+		}
+		return result;
+	}
+
+	private int getMeasureWidth(View child) {
+		int result = child.getWidth();
+		if (result == 0) {
+			measureView(child);
+			result = child.getMeasuredWidth();
+		}
+		return result;
 	}
 
 }
