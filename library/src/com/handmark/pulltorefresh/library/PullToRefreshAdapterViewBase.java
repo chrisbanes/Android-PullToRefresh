@@ -423,7 +423,7 @@ public abstract class PullToRefreshAdapterViewBase<T extends AbsListView> extend
 			 * account for it and rely on the inner condition which checks
 			 * getBottom().
 			 */
-			if (lastVisiblePosition >= lastItemPosition - 1) {
+			if (lastVisiblePosition >= lastItemPosition) {
 				final int childIndex = lastVisiblePosition - mRefreshableView.getFirstVisiblePosition();
 				final View lastVisibleChild = mRefreshableView.getChildAt(childIndex);
 				if (lastVisibleChild != null) {
