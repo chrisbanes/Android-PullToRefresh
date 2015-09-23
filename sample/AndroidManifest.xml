@@ -61,6 +61,10 @@
             android:name=".PullToRefreshWebView2Activity"
             android:label="PtR WebView Advanced" >
         </activity>
+        <activity
+            android:name=".PullToRefreshRecycleActivity"
+            android:label="PtR RecyclerView" >
+        </activity>
     </application>
 
     <!-- For WebView Sample -->

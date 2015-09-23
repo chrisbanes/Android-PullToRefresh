@@ -46,11 +46,11 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	// Constants
 	// ===========================================================
 
-	static final boolean DEBUG = true;
+	public static final boolean DEBUG = true;
 
 	static final boolean USE_HW_LAYERS = false;
 
-	static final String LOG_TAG = "PullToRefresh";
+	public static final String LOG_TAG = "PullToRefresh";
 
 	static final float FRICTION = 2.0f;
 
@@ -78,7 +78,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	private Mode mMode = Mode.getDefault();
 
 	private Mode mCurrentMode;
-	T mRefreshableView;
+	protected T mRefreshableView;
 	private FrameLayout mRefreshableViewWrapper;
 
 	private boolean mShowViewWhileRefreshing = true;
