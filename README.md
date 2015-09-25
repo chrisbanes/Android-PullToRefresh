@@ -5,6 +5,7 @@
 # Pull To Refresh Views for Android
 
 Expanded support for **RecyclerView**
+Expanded support for **SwipeListView**
 
 ![Screenshot](https://github.com/chrisbanes/Android-PullToRefresh/raw/master/header_graphic.png)
 

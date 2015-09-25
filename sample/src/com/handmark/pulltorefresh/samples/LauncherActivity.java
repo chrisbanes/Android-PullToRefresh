@@ -15,6 +15,8 @@
  *******************************************************************************/
 package com.handmark.pulltorefresh.samples;
 
+import com.handmark.pulltorefresh.extras.swipelistview.PullToRefreshSwipeListView;
+
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -25,7 +27,8 @@ import android.widget.ListView;
 public class LauncherActivity extends ListActivity { 
 
 	public static final String[] options = { "ListView", "ExpandableListView", "GridView", "WebView", "ScrollView",
-			"Horizontal ScrollView", "ViewPager", "ListView Fragment", "WebView Advanced", "ListView in ViewPager", "RecyclerView" };
+			"Horizontal ScrollView", "ViewPager", "ListView Fragment", "WebView Advanced", "ListView in ViewPager", 
+			"RecyclerView","SwipListView" };
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +74,9 @@ public class LauncherActivity extends ListActivity {
 				break;
 			case 10:
 				intent = new Intent(this, PullToRefreshRecycleActivity.class);
+				break;
+			case 11:
+				intent = new Intent(this, PullToRefreshSwipeListActivity.class);
 				break;
 		}
 
