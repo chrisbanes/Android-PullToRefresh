@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="E:\work\GitHub\PullToRefresh\sample\build\intermediates\exploded-aar\PullToRefresh\library\unspecified\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.0 rc2"
+        sha1="6a1c0e14e64eb26071acaa7df2c4001f7d7a1b7b">
+        <dex dex="E:\work\GitHub\PullToRefresh\sample\build\intermediates\pre-dexed\debug\classes-9eac3d4d7dadd2b0b8185faee731e94f5dab66e0.jar" />
+    </item>
+    <item
+        jar="E:\work\GitHub\PullToRefresh\sample\build\intermediates\exploded-aar\com.android.support\recyclerview-v7\23.0.1\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.0 rc2"
+        sha1="4356e230a981d1bbf047d848b91bc0d9b7c5bacc">
+        <dex dex="E:\work\GitHub\PullToRefresh\sample\build\intermediates\pre-dexed\debug\classes-556cd1a21893c13c1e915093b6bfdbbca18c92bc.jar" />
+    </item>
+    <item
+        jar="E:\work\GitHub\PullToRefresh\sample\build\intermediates\exploded-aar\PullToRefresh\swipelistview\unspecified\jars\libs\nineoldandroids-2.4.0.jar"
+        jumboMode="false"
+        revision="23.0.0 rc2"
+        sha1="59f19e43354d32de831379c23ce03bb259a4c2b7">
+        <dex dex="E:\work\GitHub\PullToRefresh\sample\build\intermediates\pre-dexed\debug\nineoldandroids-2.4.0-6088d6ca2084a73e6b86cc95cb51d1b5f6f61fa1.jar" />
+    </item>
+    <item
+        jar="E:\work\GitHub\PullToRefresh\sample\build\intermediates\exploded-aar\PullToRefresh\viewpager\unspecified\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.0 rc2"
+        sha1="8b269492a725f7623f582126404ba28c9fe85250">
+        <dex dex="E:\work\GitHub\PullToRefresh\sample\build\intermediates\pre-dexed\debug\classes-f35211feab27d6c952142f7238ebb0fa76da8216.jar" />
+    </item>
+    <item
+        jar="E:\work\GitHub\PullToRefresh\sample\build\intermediates\exploded-aar\com.android.support\support-v4\23.0.1\jars\libs\internal_impl-23.0.1.jar"
+        jumboMode="false"
+        revision="23.0.0 rc2"
+        sha1="aa92916125166649d8ad4ba3940c3dd7515596d3">
+        <dex dex="E:\work\GitHub\PullToRefresh\sample\build\intermediates\pre-dexed\debug\internal_impl-23.0.1-fca9ecf1ddd3133813c1850b117988b29625e5b4.jar" />
+    </item>
+    <item
+        jar="E:\work\GitHub\PullToRefresh\sample\build\intermediates\exploded-aar\com.android.support\support-v4\23.0.1\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.0 rc2"
+        sha1="c31e21b53ff2f74664e498248d01453a32e32d48">
+        <dex dex="E:\work\GitHub\PullToRefresh\sample\build\intermediates\pre-dexed\debug\classes-f9caf495f1ec72125406ba149a28c38f0c80295d.jar" />
+    </item>
+    <item
+        jar="E:\work\GitHub\PullToRefresh\sample\build\intermediates\exploded-aar\PullToRefresh\swipelistview\unspecified\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.0 rc2"
+        sha1="e830548382cc2f05742f1153624b2790cc1b84d6">
+        <dex dex="E:\work\GitHub\PullToRefresh\sample\build\intermediates\pre-dexed\debug\classes-7d4e5eb978925331cd5a51f5b9e16a5b2ef40bc1.jar" />
+    </item>
+    <item
+        jar="E:\work\GitHub\PullToRefresh\sample\build\intermediates\exploded-aar\PullToRefresh\listfragment\unspecified\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.0 rc2"
+        sha1="918dd70ce9325f10e02352a0ebac119b18e1c865">
+        <dex dex="E:\work\GitHub\PullToRefresh\sample\build\intermediates\pre-dexed\debug\classes-c2673b0f718d65d4874bd7f26c52de97cc36e940.jar" />
+    </item>
+    <item
+        jar="E:\work\GitHub\PullToRefresh\sample\build\intermediates\exploded-aar\PullToRefresh\recyclerview\unspecified\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.0 rc2"
+        sha1="59bb0054d7d5f94cc2139df8393f7ca78a654056">
+        <dex dex="E:\work\GitHub\PullToRefresh\sample\build\intermediates\pre-dexed\debug\classes-07182f31ae6c54eb17befc83f0792aa5476df242.jar" />
+    </item>
+    <item
+        jar="D:\Program Files (x86)\Android\studio-sdk\extras\android\m2repository\com\android\support\support-annotations\23.0.1\support-annotations-23.0.1.jar"
+        jumboMode="false"
+        revision="23.0.0 rc2"
+        sha1="1fce89a6428c51467090d7f424e4c9c3dbd55f7e">
+        <dex dex="E:\work\GitHub\PullToRefresh\sample\build\intermediates\pre-dexed\debug\support-annotations-23.0.1-05f21506d29e9c8a6610ea19f8e170fbdb6459c6.jar" />
+    </item>
+
+</items>

@@ -1,0 +1,30 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 16
+    buildToolsVersion "23.0.0 rc2"
+
+    defaultConfig {
+        applicationId "com.handmark.pulltorefresh.samples"
+        minSdkVersion 10
+        targetSdkVersion 16
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile 'com.android.support:support-v4:23.0.1'
+    compile project(':library')
+    compile project(':listfragment')
+    compile project(':recyclerview')
+    compile project(':swipelistview')
+    compile project(':viewpager')
+}
