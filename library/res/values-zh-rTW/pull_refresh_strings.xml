@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="pull_to_refresh_pull_label">下拉重新整理...</string>
+  <string name="pull_to_refresh_release_label">放開以重新整理...</string>
+  <string name="pull_to_refresh_refreshing_label">更新中...</string>
+</resources>
