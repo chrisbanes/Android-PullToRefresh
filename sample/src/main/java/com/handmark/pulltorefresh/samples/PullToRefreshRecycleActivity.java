@@ -4,12 +4,14 @@ import java.util.Arrays;
 import java.util.LinkedList;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.Adapter;
 import android.support.v7.widget.RecyclerView.ViewHolder;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -42,7 +44,8 @@ public class PullToRefreshRecycleActivity extends Activity{
 		mPullRefreshRecyclerView = (PullToRefreshRecyclerView) this.findViewById(R.id.pull_refresh_recycler);
 		
 		mRecyclerView = mPullRefreshRecyclerView.getRefreshableView();
-		mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+//		mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+		mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL));
 		
 		// Set a listener to be invoked when the list should be refreshed.
 		mPullRefreshRecyclerView.setOnRefreshListener(new OnRefreshListener2<RecyclerView>() {
@@ -137,12 +140,16 @@ public class PullToRefreshRecycleActivity extends Activity{
                     false));
             return holder;
 		}
-		
+
 		@Override
 		public void onBindViewHolder(ViewHolder holder, int position) {
 			((MyViewHolder)holder).tv.setText(mListItems.get(position));
+			int bg = Color.rgb((int) Math.floor(Math.random() * 128) + 64,
+					(int) Math.floor(Math.random() * 128) + 64,
+					(int) Math.floor(Math.random() * 128) + 64);
+			((MyViewHolder)holder).tv.setBackgroundColor(bg);
 		}
-		
+
         class MyViewHolder extends ViewHolder {
             TextView tv;
             public MyViewHolder(View view) {

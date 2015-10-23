@@ -9,8 +9,11 @@ Expanded support for **SwipeListView**
 
 ![Screenshot](https://github.com/chrisbanes/Android-PullToRefresh/raw/master/header_graphic.png)
 
+### RecyclerView Demo ###
+![Screenshot](https://raw.githubusercontent.com/xuehuayous/Android-PullToRefresh/master/recyclerView_demo.gif)
+
 ### SwipeListView Demo ###
-![Screenshot](https://raw.githubusercontent.com/xuehuayous/Android-PullToRefresh/master/swipelisview_demo.png)
+![Screenshot](https://raw.githubusercontent.com/xuehuayous/Android-PullToRefresh/master/swipelisview_demo.gif)
 
 This project aims to provide a reusable Pull to Refresh widget for Android. It was originally based on Johan Nilsson's [library](https://github.com/johannilsson/android-pulltorefresh) (mainly for graphics, strings and animations), but these have been replaced since.
 
