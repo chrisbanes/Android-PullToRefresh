@@ -60,6 +60,10 @@
             android:label="PtR RecyclerView" >
         </activity>
         <activity
+            android:name=".PullToRefreshHeaderRecycleActivity"
+            android:label="PtR HeaderRecyclerView" >
+        </activity>
+        <activity
             android:name=".PullToRefreshSwipeListActivity"
             android:label="PtR SwipListView" >
         </activity>

@@ -1,13 +1,9 @@
 package com.handmark.pulltorefresh.samples;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-
 import android.app.Activity;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.Adapter;
 import android.support.v7.widget.RecyclerView.ViewHolder;
@@ -20,17 +16,21 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.handmark.pulltorefresh.extras.recyclerview.PullToRefreshHeaderRecyclerView;
 import com.handmark.pulltorefresh.extras.recyclerview.PullToRefreshRecyclerView;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener2;
 
-public class PullToRefreshRecycleActivity extends Activity{
+import java.util.Arrays;
+import java.util.LinkedList;
+
+public class PullToRefreshHeaderRecycleActivity extends Activity{
 	
 	static final int MENU_SET_MODE = 0;
 	
 	private LinkedList<String> mListItems;
-	private PullToRefreshRecyclerView mPullRefreshRecyclerView;
+	private PullToRefreshHeaderRecyclerView mPullRefreshHeaderRecyclerView;
 	private RecyclerView mRecyclerView;
 	private RecyclerViewAdapter mAdapter;
 	
@@ -40,25 +40,30 @@ public class PullToRefreshRecycleActivity extends Activity{
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_ptr_recycler);
-		mPullRefreshRecyclerView = (PullToRefreshRecyclerView) this.findViewById(R.id.pull_refresh_recycler);
+		setContentView(R.layout.activity_ptr_header_recycler);
+		mPullRefreshHeaderRecyclerView = (PullToRefreshHeaderRecyclerView) this.findViewById(R.id.pull_refresh_header_recycler);
 
-		mRecyclerView = mPullRefreshRecyclerView.getRefreshableView();
+		TextView tv = new TextView(this);
+		tv.setText("添加的头部");
+		tv.setTextSize(22);
+		mPullRefreshHeaderRecyclerView.addHeaderView(tv);
+		
+		mRecyclerView = mPullRefreshHeaderRecyclerView.getRefreshableView();
 //		mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 		mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL));
 		
 		// Set a listener to be invoked when the list should be refreshed.
-		mPullRefreshRecyclerView.setOnRefreshListener(new OnRefreshListener2<RecyclerView>() {
+		mPullRefreshHeaderRecyclerView.setOnRefreshListener(new OnRefreshListener2<RecyclerView>() {
 
 			@Override
 			public void onPullDownToRefresh(PullToRefreshBase<RecyclerView> refreshView) {
-				Toast.makeText(PullToRefreshRecycleActivity.this, "Pull Down!", Toast.LENGTH_SHORT).show();
+				Toast.makeText(PullToRefreshHeaderRecycleActivity.this, "Pull Down!", Toast.LENGTH_SHORT).show();
 				new GetDataTask().execute();
 			}
 
 			@Override
 			public void onPullUpToRefresh(PullToRefreshBase<RecyclerView> refreshView) {
-				Toast.makeText(PullToRefreshRecycleActivity.this, "Pull Up!", Toast.LENGTH_SHORT).show();
+				Toast.makeText(PullToRefreshHeaderRecycleActivity.this, "Pull Up!", Toast.LENGTH_SHORT).show();
 				new GetDataTask().execute();
 			}
 		});
@@ -89,7 +94,7 @@ public class PullToRefreshRecycleActivity extends Activity{
 			mAdapter.notifyDataSetChanged();
 
 			// Call onRefreshComplete when the list has been refreshed.
-			mPullRefreshRecyclerView.onRefreshComplete();
+			mPullRefreshHeaderRecyclerView.onRefreshComplete();
 
 			super.onPostExecute(result);
 		}
@@ -98,7 +103,7 @@ public class PullToRefreshRecycleActivity extends Activity{
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		menu.add(0, MENU_SET_MODE, 0,
-				mPullRefreshRecyclerView.getMode() == Mode.BOTH ? "Change to MODE_PULL_DOWN"
+				mPullRefreshHeaderRecyclerView.getMode() == Mode.BOTH ? "Change to MODE_PULL_DOWN"
 						: "Change to MODE_PULL_BOTH");
 		return super.onCreateOptionsMenu(menu);
 	}
@@ -106,7 +111,7 @@ public class PullToRefreshRecycleActivity extends Activity{
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		MenuItem setModeItem = menu.findItem(MENU_SET_MODE);
-		setModeItem.setTitle(mPullRefreshRecyclerView.getMode() == Mode.BOTH ? "Change to MODE_PULL_FROM_START"
+		setModeItem.setTitle(mPullRefreshHeaderRecyclerView.getMode() == Mode.BOTH ? "Change to MODE_PULL_FROM_START"
 				: "Change to MODE_PULL_BOTH");
 
 		return super.onPrepareOptionsMenu(menu);
@@ -116,8 +121,8 @@ public class PullToRefreshRecycleActivity extends Activity{
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case MENU_SET_MODE:
-				mPullRefreshRecyclerView
-						.setMode(mPullRefreshRecyclerView.getMode() == Mode.BOTH ? Mode.PULL_FROM_START
+				mPullRefreshHeaderRecyclerView
+						.setMode(mPullRefreshHeaderRecyclerView.getMode() == Mode.BOTH ? Mode.PULL_FROM_START
 								: Mode.BOTH);
 				break;
 		}
@@ -136,7 +141,7 @@ public class PullToRefreshRecycleActivity extends Activity{
 		@Override
 		public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             MyViewHolder holder = new MyViewHolder(LayoutInflater.from(
-            		PullToRefreshRecycleActivity.this).inflate(android.R.layout.simple_list_item_1, parent,
+            		PullToRefreshHeaderRecycleActivity.this).inflate(android.R.layout.simple_list_item_1, parent,
                     false));
             return holder;
 		}
