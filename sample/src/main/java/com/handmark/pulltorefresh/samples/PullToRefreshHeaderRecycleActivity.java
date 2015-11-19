@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.Adapter;
 import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -42,11 +43,6 @@ public class PullToRefreshHeaderRecycleActivity extends Activity{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_ptr_header_recycler);
 		mPullRefreshHeaderRecyclerView = (PullToRefreshHeaderRecyclerView) this.findViewById(R.id.pull_refresh_header_recycler);
-
-		TextView tv = new TextView(this);
-		tv.setText("添加的头部");
-		tv.setTextSize(22);
-		mPullRefreshHeaderRecyclerView.addHeaderView(tv);
 		
 		mRecyclerView = mPullRefreshHeaderRecyclerView.getRefreshableView();
 //		mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -72,7 +68,12 @@ public class PullToRefreshHeaderRecycleActivity extends Activity{
 		mListItems.addAll(Arrays.asList(mStrings));
 		mAdapter = new RecyclerViewAdapter();
 		mRecyclerView.setAdapter(mAdapter);
-		
+
+		TextView tv = new TextView(this);
+		tv.setText("添加的头部 View");
+		tv.setGravity(Gravity.CENTER_HORIZONTAL);
+		tv.setTextSize(32);
+		mPullRefreshHeaderRecyclerView.addHeaderView(tv);
 	}
 	
 	private class GetDataTask extends AsyncTask<Void, Void, String[]> {
