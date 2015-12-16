@@ -1,1 +1,1 @@
-include ':library', ':sample', ':listfragment', ':recyclerview', ':swipelistview', ':viewpager'
+include ':pulltorefresh', ':sample'

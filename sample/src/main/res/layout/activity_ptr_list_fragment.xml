@@ -5,7 +5,7 @@
 
     <fragment
         android:id="@+id/frag_ptr_list"
-        android:name="com.handmark.pulltorefresh.extras.listfragment.PullToRefreshListFragment"
+        android:name="com.handmark.pulltorefresh.library.extras.listfragment.PullToRefreshListFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

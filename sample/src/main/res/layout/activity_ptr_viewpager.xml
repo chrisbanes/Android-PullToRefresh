@@ -5,7 +5,7 @@
 
     <!-- The PullToRefreshScrollView replaces a standard PullToRefreshScrollView widget. -->
 
-    <com.handmark.pulltorefresh.extras.viewpager.PullToRefreshViewPager
+    <com.handmark.pulltorefresh.library.extras.viewpager.PullToRefreshViewPager
         xmlns:ptr="http://schemas.android.com/apk/res-auto"
         android:id="@+id/pull_refresh_viewpager"
         android:layout_width="fill_parent"

@@ -20,9 +20,9 @@ import android.os.Bundle;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import com.handmark.pulltorefresh.library.extras.PullToRefreshWebView2;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
-import com.handmark.pulltorefresh.library.extras.PullToRefreshWebView2;
 
 public final class PullToRefreshWebView2Activity extends Activity implements OnRefreshListener<WebView> {
 
@@ -41,7 +41,7 @@ public final class PullToRefreshWebView2Activity extends Activity implements OnR
 
 		// We just load a prepared HTML page from the assets folder for this
 		// sample, see that file for the Javascript implementation
-		webView.loadUrl("file:///android_asset/ptr_webview2_sample.html");
+		webView.loadUrl("file:///android_asset/e.html");
 	}
 
 	private static class SampleWebViewClient extends WebViewClient {

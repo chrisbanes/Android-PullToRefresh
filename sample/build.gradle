@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 16
-    buildToolsVersion "23.0.0 rc2"
+    compileSdkVersion 23
+    buildToolsVersion "23.0.2"
 
     defaultConfig {
         applicationId "com.handmark.pulltorefresh.samples"
-        minSdkVersion 10
-        targetSdkVersion 16
+        minSdkVersion 8
+        targetSdkVersion 23
         versionCode 1
         versionName "1.0"
     }
@@ -21,10 +21,7 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:support-v4:23.0.1'
-    compile project(':library')
-    compile project(':listfragment')
-    compile project(':recyclerview')
-    compile project(':swipelistview')
-    compile project(':viewpager')
+    testCompile 'junit:junit:4.12'
+    compile 'com.android.support:appcompat-v7:23.1.0'
+    compile project(':pulltorefresh')
 }

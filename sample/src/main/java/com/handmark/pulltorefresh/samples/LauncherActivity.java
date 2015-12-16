@@ -26,7 +26,7 @@ public class LauncherActivity extends ListActivity {
 
 	public static final String[] options = { "ListView", "ExpandableListView", "GridView", "WebView", "ScrollView",
 			"Horizontal ScrollView", "ViewPager", "ListView Fragment", "WebView Advanced", "ListView in ViewPager",
-			"RecyclerView", "HeaderRecyclerView", "SwipListView" };
+			"RecyclerView" };
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -72,12 +72,6 @@ public class LauncherActivity extends ListActivity {
 				break;
 			case 10:
 				intent = new Intent(this, PullToRefreshRecycleActivity.class);
-				break;
-			case 11:
-				intent = new Intent(this, PullToRefreshHeaderRecycleActivity.class);
-				break;
-			case 12:
-				intent = new Intent(this, PullToRefreshSwipeListActivity.class);
 				break;
 		}
 
