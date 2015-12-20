@@ -60,7 +60,6 @@ public final class PullToRefreshListActivity extends ListActivity {
 		setContentView(R.layout.activity_ptr_list);
 
 		mPullRefreshListView = (PullToRefreshListView) findViewById(R.id.pull_refresh_list);
-		mPullRefreshListView.setHeaderLayout(new JingDongHeaderLayout(this));
 
 		// Set a listener to be invoked when the list should be refreshed.
 		mPullRefreshListView.setOnRefreshListener(new OnRefreshListener<ListView>() {

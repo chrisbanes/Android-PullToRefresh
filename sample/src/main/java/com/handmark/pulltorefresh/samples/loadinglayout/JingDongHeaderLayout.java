@@ -55,9 +55,9 @@ public class JingDongHeaderLayout extends LoadingLayoutBase{
         lp.gravity = mode == PullToRefreshBase.Mode.PULL_FROM_END ? Gravity.TOP : Gravity.BOTTOM;
 
         // Load in labels
-        mPullLabel = context.getString(R.string.pull_to_refresh_pull_label);
-        mRefreshingLabel = context.getString(R.string.pull_to_refresh_refreshing_label);
-        mReleaseLabel = context.getString(R.string.pull_to_refresh_release_label);
+        mPullLabel = "下拉可以刷新";
+        mRefreshingLabel = "正在加载中";
+        mReleaseLabel = "松开后刷新";
 
         reset();
     }

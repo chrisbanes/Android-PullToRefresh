@@ -23,6 +23,7 @@ import com.handmark.pulltorefresh.library.extras.recyclerview.PullToRefreshRecyc
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener2;
+import com.handmark.pulltorefresh.samples.loadinglayout.JingDongHeaderLayout;
 
 public class PullToRefreshRecycleActivity extends Activity{
 	
@@ -41,6 +42,7 @@ public class PullToRefreshRecycleActivity extends Activity{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_ptr_recycler);
 		mPullRefreshRecyclerView = (PullToRefreshRecyclerView) this.findViewById(R.id.pull_refresh_recycler);
+		mPullRefreshRecyclerView.setHeaderLayout(new JingDongHeaderLayout(this));
 
 		mRecyclerView = mPullRefreshRecyclerView.getRefreshableView();
 //		mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
