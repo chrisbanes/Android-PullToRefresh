@@ -39,6 +39,8 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase.OnLastItemVisibleLis
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.State;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
+import com.handmark.pulltorefresh.samples.loadinglayout.JingDongHeaderLayout;
+import com.handmark.pulltorefresh.samples.loadinglayout.JingDongHeaderLayout_saves;
 
 public final class PullToRefreshListActivity extends ListActivity {
 
@@ -58,6 +60,7 @@ public final class PullToRefreshListActivity extends ListActivity {
 		setContentView(R.layout.activity_ptr_list);
 
 		mPullRefreshListView = (PullToRefreshListView) findViewById(R.id.pull_refresh_list);
+		mPullRefreshListView.setHeaderLayout(new JingDongHeaderLayout(this));
 
 		// Set a listener to be invoked when the list should be refreshed.
 		mPullRefreshListView.setOnRefreshListener(new OnRefreshListener<ListView>() {

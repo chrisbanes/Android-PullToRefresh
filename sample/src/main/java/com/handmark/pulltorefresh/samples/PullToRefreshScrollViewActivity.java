@@ -23,6 +23,8 @@ import android.widget.ScrollView;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshScrollView;
+import com.handmark.pulltorefresh.samples.loadinglayout.JingDongHeaderLayout;
+import com.handmark.pulltorefresh.samples.loadinglayout.JingDongHeaderLayout_saves;
 
 public final class PullToRefreshScrollViewActivity extends Activity {
 
@@ -36,6 +38,9 @@ public final class PullToRefreshScrollViewActivity extends Activity {
 		setContentView(R.layout.activity_ptr_scrollview);
 
 		mPullRefreshScrollView = (PullToRefreshScrollView) findViewById(R.id.pull_refresh_scrollview);
+		mPullRefreshScrollView.setHeaderLayout(new JingDongHeaderLayout(this));
+		mPullRefreshScrollView.setFooterLayout(new JingDongHeaderLayout(this, PullToRefreshBase.Mode.PULL_FROM_END));
+
 		mPullRefreshScrollView.setOnRefreshListener(new OnRefreshListener<ScrollView>() {
 
 			@Override

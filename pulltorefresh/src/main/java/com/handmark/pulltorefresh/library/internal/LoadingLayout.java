@@ -27,7 +27,6 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.FrameLayout;
@@ -35,13 +34,12 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.handmark.pulltorefresh.library.ILoadingLayout;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Orientation;
 import com.handmark.pulltorefresh.library.R;
 
 @SuppressLint("ViewConstructor")
-public abstract class LoadingLayout extends FrameLayout implements ILoadingLayout {
+public abstract class LoadingLayout extends LoadingLayoutBase {
 
 	static final String LOG_TAG = "PullToRefresh-LoadingLayout";
 
@@ -180,18 +178,9 @@ public abstract class LoadingLayout extends FrameLayout implements ILoadingLayou
 		reset();
 	}
 
-	public final void setHeight(int height) {
-		ViewGroup.LayoutParams lp = (ViewGroup.LayoutParams) getLayoutParams();
-		lp.height = height;
-		requestLayout();
-	}
 
-	public final void setWidth(int width) {
-		ViewGroup.LayoutParams lp = (ViewGroup.LayoutParams) getLayoutParams();
-		lp.width = width;
-		requestLayout();
-	}
 
+	@Override
 	public final int getContentSize() {
 		switch (mScrollDirection) {
 			case HORIZONTAL:
@@ -202,27 +191,14 @@ public abstract class LoadingLayout extends FrameLayout implements ILoadingLayou
 		}
 	}
 
-	public final void hideAllViews() {
-		if (View.VISIBLE == mHeaderText.getVisibility()) {
-			mHeaderText.setVisibility(View.INVISIBLE);
-		}
-		if (View.VISIBLE == mHeaderProgress.getVisibility()) {
-			mHeaderProgress.setVisibility(View.INVISIBLE);
-		}
-		if (View.VISIBLE == mHeaderImage.getVisibility()) {
-			mHeaderImage.setVisibility(View.INVISIBLE);
-		}
-		if (View.VISIBLE == mSubHeaderText.getVisibility()) {
-			mSubHeaderText.setVisibility(View.INVISIBLE);
-		}
-	}
-
+	@Override
 	public final void onPull(float scaleOfLayout) {
 		if (!mUseIntrinsicAnimation) {
 			onPullImpl(scaleOfLayout);
 		}
 	}
 
+	@Override
 	public final void pullToRefresh() {
 		if (null != mHeaderText) {
 			mHeaderText.setText(mPullLabel);
@@ -232,6 +208,7 @@ public abstract class LoadingLayout extends FrameLayout implements ILoadingLayou
 		pullToRefreshImpl();
 	}
 
+	@Override
 	public final void refreshing() {
 		if (null != mHeaderText) {
 			mHeaderText.setText(mRefreshingLabel);
@@ -249,6 +226,7 @@ public abstract class LoadingLayout extends FrameLayout implements ILoadingLayou
 		}
 	}
 
+	@Override
 	public final void releaseToRefresh() {
 		if (null != mHeaderText) {
 			mHeaderText.setText(mReleaseLabel);
@@ -258,6 +236,7 @@ public abstract class LoadingLayout extends FrameLayout implements ILoadingLayou
 		releaseToRefreshImpl();
 	}
 
+	@Override
 	public final void reset() {
 		if (null != mHeaderText) {
 			mHeaderText.setText(mPullLabel);
@@ -309,21 +288,6 @@ public abstract class LoadingLayout extends FrameLayout implements ILoadingLayou
 	@Override
 	public void setTextTypeface(Typeface tf) {
 		mHeaderText.setTypeface(tf);
-	}
-
-	public final void showInvisibleViews() {
-		if (View.INVISIBLE == mHeaderText.getVisibility()) {
-			mHeaderText.setVisibility(View.VISIBLE);
-		}
-		if (View.INVISIBLE == mHeaderProgress.getVisibility()) {
-			mHeaderProgress.setVisibility(View.VISIBLE);
-		}
-		if (View.INVISIBLE == mHeaderImage.getVisibility()) {
-			mHeaderImage.setVisibility(View.VISIBLE);
-		}
-		if (View.INVISIBLE == mSubHeaderText.getVisibility()) {
-			mSubHeaderText.setVisibility(View.VISIBLE);
-		}
 	}
 
 	/**

@@ -23,6 +23,7 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase.OnPullEventListener;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener2;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.State;
+import com.handmark.pulltorefresh.library.internal.LoadingLayoutBase;
 
 public interface IPullToRefresh<T extends View> {
 
@@ -193,6 +194,20 @@ public interface IPullToRefresh<T extends View> {
 	 * @param listener - Listener to be used when the Widget is set to Refresh
 	 */
 	public void setOnRefreshListener(OnRefreshListener2<T> listener);
+
+	/**
+	 * Set a header LoadingLayout for the Widget
+	 *
+	 * @param headerLayout
+	 */
+	public void setHeaderLayout(LoadingLayoutBase headerLayout);
+
+	/**
+	 * Set a footer LoadingLayout for the Widget
+	 *
+	 * @param footerLayout
+	 */
+	public void setFooterLayout(LoadingLayoutBase footerLayout);
 
 	/**
 	 * Sets whether Overscroll support is enabled. This is different to

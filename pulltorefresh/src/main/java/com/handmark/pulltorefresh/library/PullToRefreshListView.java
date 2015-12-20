@@ -30,33 +30,56 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import com.handmark.pulltorefresh.library.internal.EmptyViewMethodAccessor;
-import com.handmark.pulltorefresh.library.internal.LoadingLayout;
+import com.handmark.pulltorefresh.library.internal.LoadingLayoutBase;
 
 public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView> {
 
-	private LoadingLayout mHeaderLoadingView;
-	private LoadingLayout mFooterLoadingView;
+	private LoadingLayoutBase mHeaderLoadingView;
+	private LoadingLayoutBase mFooterLoadingView;
 
 	private FrameLayout mLvFooterLoadingFrame;
 
 	private boolean mListViewExtrasEnabled;
 
+	/**
+	 * 构造方法
+	 * @param context
+	 */
 	public PullToRefreshListView(Context context) {
 		super(context);
 	}
 
+	/**
+	 * 构造方法
+	 * @param context
+	 * @param attrs
+	 */
 	public PullToRefreshListView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 	}
 
+	/**
+	 * 构造方法
+	 * @param context
+	 * @param mode
+	 */
 	public PullToRefreshListView(Context context, Mode mode) {
 		super(context, mode);
 	}
 
+	/**
+	 * 构造方法
+	 * @param context
+	 * @param mode
+	 * @param style
+	 */
 	public PullToRefreshListView(Context context, Mode mode, AnimationStyle style) {
 		super(context, mode, style);
 	}
 
+	/**
+	 * 获取刷新方向
+	 */
 	@Override
 	public final Orientation getPullToRefreshScrollDirection() {
 		return Orientation.VERTICAL;
@@ -76,7 +99,7 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 
 		super.onRefreshing(false);
 
-		final LoadingLayout origLoadingView, listViewLoadingView, oppositeListViewLoadingView;
+		final LoadingLayoutBase origLoadingView, listViewLoadingView, oppositeListViewLoadingView;
 		final int selection, scrollToY;
 
 		switch (getCurrentMode()) {
@@ -136,7 +159,7 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 			return;
 		}
 
-		final LoadingLayout originalLoadingLayout, listViewLoadingLayout;
+		final LoadingLayoutBase originalLoadingLayout, listViewLoadingLayout;
 		final int scrollToHeight, selection;
 		final boolean scrollLvToEdge;
 
@@ -262,7 +285,7 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 
 		@Override
 		protected boolean overScrollBy(int deltaX, int deltaY, int scrollX, int scrollY, int scrollRangeX,
-				int scrollRangeY, int maxOverScrollX, int maxOverScrollY, boolean isTouchEvent) {
+									   int scrollRangeY, int maxOverScrollX, int maxOverScrollY, boolean isTouchEvent) {
 
 			final boolean returnValue = super.overScrollBy(deltaX, deltaY, scrollX, scrollY, scrollRangeX,
 					scrollRangeY, maxOverScrollX, maxOverScrollY, isTouchEvent);

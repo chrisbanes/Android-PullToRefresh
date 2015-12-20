@@ -34,8 +34,8 @@ import android.view.animation.Interpolator;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
+import com.handmark.pulltorefresh.library.internal.LoadingLayoutBase;
 import com.handmark.pulltorefresh.library.internal.FlipLoadingLayout;
-import com.handmark.pulltorefresh.library.internal.LoadingLayout;
 import com.handmark.pulltorefresh.library.internal.RotateLoadingLayout;
 import com.handmark.pulltorefresh.library.internal.Utils;
 import com.handmark.pulltorefresh.library.internal.ViewCompat;
@@ -90,8 +90,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	private Interpolator mScrollAnimationInterpolator;
 	private AnimationStyle mLoadingAnimationStyle = AnimationStyle.getDefault();
 
-	private LoadingLayout mHeaderLayout;
-	private LoadingLayout mFooterLayout;
+	protected LoadingLayoutBase mHeaderLayout;
+	protected LoadingLayoutBase mFooterLayout;
 
 	private OnRefreshListener<T> mOnRefreshListener;
 	private OnRefreshListener2<T> mOnRefreshListener2;
@@ -445,6 +445,18 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		mOnRefreshListener = null;
 	}
 
+	@Override
+	public void setHeaderLayout(LoadingLayoutBase headerLayout) {
+		mHeaderLayout = headerLayout;
+		updateUIForMode();
+	}
+
+	@Override
+	public final void setFooterLayout(LoadingLayoutBase footerLayout) {
+		mFooterLayout = footerLayout;
+		updateUIForMode();
+	}
+
 	/**
 	 * @deprecated You should now call this method on the result of
 	 *             {@link #getLoadingLayoutProxy()}.
@@ -583,8 +595,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		super.addView(child, -1, params);
 	}
 
-	protected LoadingLayout createLoadingLayout(Context context, Mode mode, TypedArray attrs) {
-		LoadingLayout layout = mLoadingAnimationStyle.createLoadingLayout(context, mode,
+	protected LoadingLayoutBase createLoadingLayout(Context context, Mode mode, TypedArray attrs) {
+		LoadingLayoutBase layout = mLoadingAnimationStyle.createLoadingLayout(context, mode,
 				getPullToRefreshScrollDirection(), attrs);
 		layout.setVisibility(View.INVISIBLE);
 		return layout;
@@ -627,7 +639,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		mLayoutVisibilityChangesEnabled = false;
 	}
 
-	protected final LoadingLayout getFooterLayout() {
+	protected final LoadingLayoutBase getFooterLayout() {
 		return mFooterLayout;
 	}
 
@@ -635,7 +647,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		return mFooterLayout.getContentSize();
 	}
 
-	protected final LoadingLayout getHeaderLayout() {
+	protected final LoadingLayoutBase getHeaderLayout() {
 		return mHeaderLayout;
 	}
 
@@ -1321,7 +1333,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 			}
 		}
 
-		LoadingLayout createLoadingLayout(Context context, Mode mode, Orientation scrollDirection, TypedArray attrs) {
+		LoadingLayoutBase createLoadingLayout(Context context, Mode mode, Orientation scrollDirection, TypedArray attrs) {
 			switch (this) {
 				case ROTATE:
 				default:
