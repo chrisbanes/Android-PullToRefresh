@@ -3,8 +3,6 @@ package com.handmark.pulltorefresh.library;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 
-import com.handmark.pulltorefresh.library.internal.LoadingLayoutBase;
-
 import java.util.HashSet;
 
 public class LoadingLayoutProxy implements ILoadingLayout {

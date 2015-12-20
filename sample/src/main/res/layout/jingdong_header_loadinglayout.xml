@@ -3,7 +3,7 @@
 
     <FrameLayout
         android:id="@+id/fl_inner"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="@dimen/header_footer_top_bottom_padding"
         android:paddingLeft="@dimen/header_footer_left_right_padding"
@@ -44,8 +44,6 @@
                 android:id="@+id/pull_to_refresh_people"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentLeft="true"
                 android:layout_marginLeft="40dp"
                 android:src="@drawable/app_refresh_people_0" />
 
@@ -53,8 +51,7 @@
                 android:id="@+id/pull_to_refresh_goods"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_marginRight="218dp"
+                android:layout_alignRight="@id/pull_to_refresh_people"
                 android:layout_centerVertical="true"
                 android:src="@drawable/app_refresh_goods_0" />
 
