@@ -1,7 +1,3 @@
-# PLEASE NOTE, THIS PROJECT IS NO LONGER BEING MAINTAINED
-
-* * *
-
 # Pull To Refresh Views for Android
 
 Expanded support for **RecyclerView**  
