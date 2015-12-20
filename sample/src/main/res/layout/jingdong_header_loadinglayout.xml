@@ -38,10 +38,10 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent" >
+            android:layout_height="match_parent">
 
             <ImageView
-                android:id="@+id/imageView2"
+                android:id="@+id/pull_to_refresh_people"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
@@ -50,13 +50,12 @@
                 android:src="@drawable/app_refresh_people_0" />
 
             <ImageView
-                android:id="@+id/imageView1"
+                android:id="@+id/pull_to_refresh_goods"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:layout_alignBottom="@+id/imageView2"
                 android:layout_marginRight="218dp"
-                android:layout_marginBottom="28dp"
+                android:layout_centerVertical="true"
                 android:src="@drawable/app_refresh_goods_0" />
 
         </RelativeLayout>

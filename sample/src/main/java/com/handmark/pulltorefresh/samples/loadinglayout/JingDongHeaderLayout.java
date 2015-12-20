@@ -33,8 +33,8 @@ public class JingDongHeaderLayout extends LoadingLayoutBase{
     private CharSequence mRefreshingLabel;
     private CharSequence mReleaseLabel;
 
-    private ImageView mImgGoods;
-    private ImageView mImgPerson;
+    private ImageView mGoodsImage;
+    private ImageView mPersonImage;
     private AnimationDrawable animP;
 
     public JingDongHeaderLayout(Context context) {
@@ -49,8 +49,8 @@ public class JingDongHeaderLayout extends LoadingLayoutBase{
         mInnerLayout = (FrameLayout) findViewById(R.id.fl_inner);
         mHeaderText = (TextView) mInnerLayout.findViewById(R.id.pull_to_refresh_text);
         mSubHeaderText = (TextView) mInnerLayout.findViewById(R.id.pull_to_refresh_sub_text);
-        mImgGoods = (ImageView) mInnerLayout.findViewById(R.id.imageView1);
-        mImgPerson = (ImageView) mInnerLayout.findViewById(R.id.imageView2);
+        mGoodsImage = (ImageView) mInnerLayout.findViewById(R.id.pull_to_refresh_goods);
+        mPersonImage = (ImageView) mInnerLayout.findViewById(R.id.pull_to_refresh_people);
 
         LayoutParams lp = (LayoutParams) mInnerLayout.getLayoutParams();
         lp.gravity = mode == PullToRefreshBase.Mode.PULL_FROM_END ? Gravity.TOP : Gravity.BOTTOM;
@@ -68,43 +68,38 @@ public class JingDongHeaderLayout extends LoadingLayoutBase{
         return mInnerLayout.getHeight();
     }
 
-    public final void onPull(float scaleOfLayout) {
-        float i = scaleOfLayout;
-        float j = scaleOfLayout;
-        Log.e("onPull", "scaleOfLayout=" + scaleOfLayout);
-
-        if (mImgGoods.getVisibility() != View.VISIBLE) {
-            mImgGoods.setVisibility(View.VISIBLE);
-        }
-        if (i > 1) {
-            i = 1;
-        }
-        //透明度动画
-        ObjectAnimator animeAlphaP = ObjectAnimator.ofFloat(mImgPerson, "alpha", -1, 1).setDuration(300);
-        animeAlphaP.setCurrentPlayTime((long) (i * 300));
-        ObjectAnimator animeAlphaG = ObjectAnimator.ofFloat(mImgGoods, "alpha", -1, 1).setDuration(300);
-        animeAlphaG.setCurrentPlayTime((long) (i * 300));
-
-        //缩放动画
-        ViewHelper.setPivotX(mImgPerson, 0);
-        ViewHelper.setPivotY(mImgPerson, 0);
-        ObjectAnimator animePX = ObjectAnimator.ofFloat(mImgPerson, "scaleX", 0, 1).setDuration(300);
-        animePX.setCurrentPlayTime((long) (i * 300));
-        ObjectAnimator animePY = ObjectAnimator.ofFloat(mImgPerson, "scaleY", 0, 1).setDuration(300);
-        animePY.setCurrentPlayTime((long) (i * 300));
-        if (j > 0.8) {
-            j = 0.8f;
-        }
-
-        ObjectAnimator animeGX = ObjectAnimator.ofFloat(mImgGoods, "scaleX", 0, 1).setDuration(300);
-        animeGX.setCurrentPlayTime((long) (j * 300 * 1.25));
-        ObjectAnimator animeGY = ObjectAnimator.ofFloat(mImgGoods, "scaleY", 0, 1).setDuration(300);
-        animeGY.setCurrentPlayTime((long) (j * 300 * 1.25));
-    }
-
     @Override
     public final void pullToRefresh() {
         mSubHeaderText.setText(mPullLabel);
+    }
+
+    @Override
+    public final void onPull(float scaleOfLayout) {
+        scaleOfLayout = scaleOfLayout > 1.0f ? 1.0f : scaleOfLayout;
+
+        if (mGoodsImage.getVisibility() != View.VISIBLE) {
+            mGoodsImage.setVisibility(View.VISIBLE);
+        }
+
+        //透明度动画
+        ObjectAnimator animAlphaP = ObjectAnimator.ofFloat(mPersonImage, "alpha", -1, 1).setDuration(300);
+        animAlphaP.setCurrentPlayTime((long) (scaleOfLayout * 300));
+        ObjectAnimator animAlphaG = ObjectAnimator.ofFloat(mGoodsImage, "alpha", -1, 1).setDuration(300);
+        animAlphaG.setCurrentPlayTime((long) (scaleOfLayout * 300));
+
+        //缩放动画
+        ViewHelper.setPivotX(mPersonImage, 0);  // 设置中心点
+        ViewHelper.setPivotY(mPersonImage, 0);
+        ObjectAnimator animPX = ObjectAnimator.ofFloat(mPersonImage, "scaleX", 0, 1).setDuration(300);
+        animPX.setCurrentPlayTime((long) (scaleOfLayout * 300));
+        ObjectAnimator animPY = ObjectAnimator.ofFloat(mPersonImage, "scaleY", 0, 1).setDuration(300);
+        animPY.setCurrentPlayTime((long) (scaleOfLayout * 300));
+
+        ViewHelper.setPivotX(mGoodsImage, mGoodsImage.getMeasuredWidth());
+        ObjectAnimator animGX = ObjectAnimator.ofFloat(mGoodsImage, "scaleX", 0, 1).setDuration(300);
+        animGX.setCurrentPlayTime((long) (scaleOfLayout * 300));
+        ObjectAnimator animGY = ObjectAnimator.ofFloat(mGoodsImage, "scaleY", 0, 1).setDuration(300);
+        animGY.setCurrentPlayTime((long) (scaleOfLayout * 300));
     }
 
     @Override
@@ -112,12 +107,12 @@ public class JingDongHeaderLayout extends LoadingLayoutBase{
         mSubHeaderText.setText(mRefreshingLabel);
 
         if (animP == null) {
-            mImgPerson.setImageResource(R.drawable.refreshing_anim);
-            animP = (AnimationDrawable) mImgPerson.getDrawable();
+            mPersonImage.setImageResource(R.drawable.refreshing_anim);
+            animP = (AnimationDrawable) mPersonImage.getDrawable();
         }
         animP.start();
-        if (mImgGoods.getVisibility() == View.VISIBLE) {
-            mImgGoods.setVisibility(View.INVISIBLE);
+        if (mGoodsImage.getVisibility() == View.VISIBLE) {
+            mGoodsImage.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -132,9 +127,9 @@ public class JingDongHeaderLayout extends LoadingLayoutBase{
             animP.stop();
             animP = null;
         }
-        mImgPerson.setImageResource(R.drawable.app_refresh_people_0);
-        if (mImgGoods.getVisibility() == View.VISIBLE) {
-            mImgGoods.setVisibility(View.INVISIBLE);
+        mPersonImage.setImageResource(R.drawable.app_refresh_people_0);
+        if (mGoodsImage.getVisibility() == View.VISIBLE) {
+            mGoodsImage.setVisibility(View.INVISIBLE);
         }
     }
 
