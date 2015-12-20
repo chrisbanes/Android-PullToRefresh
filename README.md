@@ -10,6 +10,14 @@ Expanded support for **Custom LoadingLayout**
 
 This project aims to provide a reusable Pull to Refresh widget for Android. It was originally based on Johan Nilsson's [library](https://github.com/johannilsson/android-pulltorefresh) (mainly for graphics, strings and animations), but these have been replaced since.
 
+## Using Pull To Refresh in your application
+
+If you are building with Gradle, simply add the following line to the `dependencies` section of your `build.gradle` file:
+
+```
+	compile 'com.kevin:pulltorefresh:1.0.1'
+```
+
 ## Features
 
  * Supports both Pulling Down from the top, and Pulling Up from the bottom (or even both).
