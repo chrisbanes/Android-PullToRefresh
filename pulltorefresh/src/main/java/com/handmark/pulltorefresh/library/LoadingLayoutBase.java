@@ -50,11 +50,6 @@ public abstract class LoadingLayoutBase extends FrameLayout implements ILoadingL
     }
 
     @Override
-    public void setPullLabel(CharSequence pullLabel) {
-
-    }
-
-    @Override
     public void setTextTypeface(Typeface tf) {
 
     }
