@@ -15,7 +15,7 @@ This project aims to provide a reusable Pull to Refresh widget for Android. It w
 If you are building with Gradle, simply add the following line to the `dependencies` section of your `build.gradle` file:
 
 ```
-	compile 'com.kevin:pulltorefresh:1.0.3'
+	compile 'com.kevin:pulltorefresh:1.0.4'
 ```
 
 ## Features
