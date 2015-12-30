@@ -451,7 +451,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	}
 
 	@Override
-	public final void setFooterLayout(LoadingLayoutBase footerLayout) {
+	public void setFooterLayout(LoadingLayoutBase footerLayout) {
 		mFooterLayout = footerLayout;
 		updateUIForMode();
 	}
