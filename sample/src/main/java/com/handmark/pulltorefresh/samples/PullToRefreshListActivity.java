@@ -60,6 +60,8 @@ public final class PullToRefreshListActivity extends ListActivity {
 		setContentView(R.layout.activity_ptr_list);
 
 		mPullRefreshListView = (PullToRefreshListView) findViewById(R.id.pull_refresh_list);
+		mPullRefreshListView.setHeaderLayout(new JingDongHeaderLayout(this));
+		mPullRefreshListView.setFooterLayout(new JingDongHeaderLayout(this, Mode.PULL_FROM_END));
 
 		// Set a listener to be invoked when the list should be refreshed.
 		mPullRefreshListView.setOnRefreshListener(new OnRefreshListener<ListView>() {
@@ -123,7 +125,9 @@ public final class PullToRefreshListActivity extends ListActivity {
 
 		@Override
 		protected void onPostExecute(String[] result) {
-			mListItems.addFirst("Added after refresh...");
+//			mListItems.addFirst("Added after refresh...");
+			mListItems.addLast("Added after refresh...");
+			mListItems.addLast("Added after refresh...");
 			mAdapter.notifyDataSetChanged();
 
 			// Call onRefreshComplete when the list has been refreshed.
