@@ -92,8 +92,6 @@ public class WrapAdapter<T extends RecyclerView.Adapter> extends RecyclerView.Ad
 	 * @return <code>true</code> if Successfully removed
 	 * @return boolean:
 	 * @version 1.0
-	 * @date 2015-11-24
-	 * @Author zhou.wenkai
 	 */
 	public boolean removeHeader(View v) {
 		for (WrapRecyclerView.FixedViewInfo fixedViewInfo : mHeaderViewInfos) {
@@ -114,8 +112,6 @@ public class WrapAdapter<T extends RecyclerView.Adapter> extends RecyclerView.Ad
 	 * @return <code>true</code> if Successfully removed
 	 * @return boolean:
 	 * @version 1.0
-	 * @date 2015-11-24
-	 * @Author zhou.wenkai
 	 */
 	public boolean removeFooter(View v) {
 		for (WrapRecyclerView.FixedViewInfo fixedViewInfo : mFooterViewInfos) {
