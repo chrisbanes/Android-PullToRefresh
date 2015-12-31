@@ -6,8 +6,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.FrameLayout;
-import android.widget.HeaderViewListAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -113,7 +111,7 @@ public class WrapRecyclerView extends RecyclerView {
         mHeaderViewInfos.add(info);
 
         if(null != mWrapAdapter) {
-            mWrapAdapter.updateFooterViewInfos(mFooterViewInfos);
+            mWrapAdapter.updateHeaderViewInfos(mFooterViewInfos);
         }
     }
 
@@ -145,9 +143,8 @@ public class WrapRecyclerView extends RecyclerView {
             }
         }
         if(null != mWrapAdapter) {
-            mWrapAdapter.updateFooterViewInfos(mFooterViewInfos);
+            mWrapAdapter.updateHeaderViewInfos(mFooterViewInfos);
         }
-//        setAdapter(mWrapAdapter);
     }
 
     public void removeFooterView(View view) {
@@ -159,7 +156,6 @@ public class WrapRecyclerView extends RecyclerView {
         if(null != mWrapAdapter) {
             mWrapAdapter.updateFooterViewInfos(mFooterViewInfos);
         }
-//        setAdapter(mWrapAdapter);
     }
 
     @Override

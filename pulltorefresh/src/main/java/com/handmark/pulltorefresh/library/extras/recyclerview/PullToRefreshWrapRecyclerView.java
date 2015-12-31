@@ -23,7 +23,6 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.Toast;
 
 import com.handmark.pulltorefresh.library.LoadingLayoutBase;
 import com.handmark.pulltorefresh.library.LoadingLayoutProxy;
@@ -81,6 +80,14 @@ public class PullToRefreshWrapRecyclerView extends PullToRefreshBase<WrapRecycle
         WrapAdapter adapter = mRefreshableView.getAdapter();
         if (!mRecyclerViewExtrasEnabled || !getShowViewWhileRefreshing() || null == adapter) {
             return;
+        }
+
+        // 修复刷新加载布局混乱问题
+        if(mLvHeaderLoadingFrame.getLayoutParams().width != getMeasuredWidth()) {
+            mLvHeaderLoadingFrame.getLayoutParams().width = getMeasuredWidth();
+        }
+        if(mLvFooterLoadingFrame.getLayoutParams().width != getMeasuredWidth()){
+            mLvFooterLoadingFrame.getLayoutParams().width = getMeasuredWidth();
         }
 
         final int selection;
@@ -263,8 +270,6 @@ public class PullToRefreshWrapRecyclerView extends PullToRefreshBase<WrapRecycle
             mLvHeaderLoadingFrame.addView(mHeaderLoadingView, lp);
             mRefreshableView.addHeaderView(mLvHeaderLoadingFrame);
 
-//            final FrameLayout.LayoutParams lp1 = new FrameLayout.LayoutParams(getMeasuredWidth(),
-//                    FrameLayout.LayoutParams.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL);
             mLvFooterLoadingFrame = new FrameLayout(getContext());
             mFooterLoadingView = createLoadingLayout(getContext(), Mode.PULL_FROM_END, a);
             mFooterLoadingView.setVisibility(View.GONE);

@@ -46,11 +46,11 @@ public class PullToRefreshWrapRecycleActivity extends Activity{
 		setContentView(R.layout.activity_ptr_wrap_recycler);
 		mPullRefreshRecyclerView = (PullToRefreshWrapRecyclerView) this.findViewById(R.id.pull_refresh_wrap_recycler);
 		mPullRefreshRecyclerView.setHeaderLayout(new JingDongHeaderLayout(this));
-//		mPullRefreshRecyclerView.setFooterLayout(new JingDongHeaderLayout(this, Mode.PULL_FROM_END));
+		mPullRefreshRecyclerView.setFooterLayout(new JingDongHeaderLayout(this, Mode.PULL_FROM_END));
 
 		mRecyclerView = mPullRefreshRecyclerView.getRefreshableView();
-		mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-//		mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL));
+//		mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+		mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL));
 
 		// Set a listener to be invoked when the list should be refreshed.
 		mPullRefreshRecyclerView.setOnRefreshListener(new OnRefreshListener2<WrapRecyclerView>() {
@@ -81,7 +81,7 @@ public class PullToRefreshWrapRecycleActivity extends Activity{
 		protected String[] doInBackground(Void... params) {
 			// Simulates a background job.
 			try {
-				Thread.sleep(20000);
+				Thread.sleep(3000);
 			} catch (InterruptedException e) {
 			}
 			return mStrings;
