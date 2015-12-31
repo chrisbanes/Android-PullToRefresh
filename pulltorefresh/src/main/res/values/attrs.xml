@@ -66,6 +66,13 @@
         <attr name="ptrListViewExtrasEnabled" format="reference|boolean" />
 
         <!--
+            Whether PullToRefreshRecyclerView has it's extras enabled. This allows the user to be
+            able to scroll while refreshing, and behaves better. It acheives this by adding
+            Header and/or Footer Views to the RecyclerView.
+        -->
+        <attr name="ptrRecyclerViewExtrasEnabled" format="reference|boolean" />
+
+        <!--
         	Whether the Drawable should be continually rotated as you pull. This only
         	takes effect when using the 'Rotate' Animation Style.
         -->

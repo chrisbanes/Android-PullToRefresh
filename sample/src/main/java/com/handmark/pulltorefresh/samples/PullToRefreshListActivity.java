@@ -96,7 +96,7 @@ public final class PullToRefreshListActivity extends ListActivity {
 		mListItems.addAll(Arrays.asList(mStrings));
 
 		mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, mListItems);
-
+		mAdapter.notifyDataSetChanged();
 		/**
 		 * Add Sound Event Listener
 		 */

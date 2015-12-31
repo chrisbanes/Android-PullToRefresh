@@ -59,6 +59,10 @@
             android:name=".PullToRefreshRecycleActivity"
             android:label="PtR RecyclerView" >
         </activity>
+        <activity
+            android:name=".PullToRefreshWrapRecycleActivity"
+            android:label="PtR WrapRecyclerView" >
+        </activity>
     </application>
 
     <!-- For WebView Sample -->
