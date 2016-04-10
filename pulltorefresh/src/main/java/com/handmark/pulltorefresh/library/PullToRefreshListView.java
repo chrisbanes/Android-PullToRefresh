@@ -41,6 +41,7 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 
 	private FrameLayout mLvHeaderLoadingFrame;
 	private FrameLayout mLvFooterLoadingFrame;
+	private FrameLayout mLvSecondFooterLoadingFrame;
 
 	private boolean mListViewExtrasEnabled;
 
@@ -249,6 +250,8 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 			mFooterLoadingView.setVisibility(View.GONE);
 			mLvFooterLoadingFrame.addView(mFooterLoadingView, lp);
 
+			mLvSecondFooterLoadingFrame = new FrameLayout(getContext());
+
 			/**
 			 * If the value for Scrolling While Refreshing hasn't been
 			 * explicitly set via XML, enable Scrolling While Refreshing.
@@ -302,6 +305,14 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public void setSecondFooterLayout(View secondFooterLayout) {
+		final FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,
+				FrameLayout.LayoutParams.WRAP_CONTENT, Gravity.CENTER_HORIZONTAL);
+
+		mLvSecondFooterLoadingFrame.addView(secondFooterLayout, lp);
 	}
 
 	@TargetApi(9)
@@ -366,6 +377,7 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		public void setAdapter(ListAdapter adapter) {
 			// Add the Footer View at the last possible moment
 			if (null != mLvFooterLoadingFrame && !mAddedLvFooter) {
+				addFooterView(mLvSecondFooterLoadingFrame, null, false);
 				addFooterView(mLvFooterLoadingFrame, null, false);
 				mAddedLvFooter = true;
 			}

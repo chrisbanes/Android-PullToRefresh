@@ -209,6 +209,15 @@ public interface IPullToRefresh<T extends View> {
 	public void setFooterLayout(LoadingLayoutBase footerLayout);
 
 	/**
+	 * Set a second footer LoadingLayout for the Widget，it used to the widget
+	 * can add footer just like ListView or
+	 * WrapRecyclerView(https://github.com/xuehuayous/WrapRecyclerView)
+	 *
+	 * @param view
+	 */
+	public void setSecondFooterLayout(View view);
+
+	/**
 	 * Sets whether Overscroll support is enabled. This is different to
 	 * Android's standard Overscroll support (the edge-glow). This setting only
 	 * takes effect when running on device with Android v2.3 or greater.

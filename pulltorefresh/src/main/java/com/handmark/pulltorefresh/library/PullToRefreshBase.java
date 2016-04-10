@@ -458,6 +458,10 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		updateUIForMode();
 	}
 
+	@Override
+	public void setSecondFooterLayout(View secondFooterLayout) {
+	}
+
 	/**
 	 * @deprecated You should now call this method on the result of
 	 *             {@link #getLoadingLayoutProxy()}.

@@ -40,7 +40,6 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.State;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.handmark.pulltorefresh.samples.loadinglayout.JingDongHeaderLayout;
-import com.handmark.pulltorefresh.samples.loadinglayout.JingDongHeaderLayout_saves;
 
 public final class PullToRefreshListActivity extends ListActivity {
 
@@ -61,7 +60,10 @@ public final class PullToRefreshListActivity extends ListActivity {
 
 		mPullRefreshListView = (PullToRefreshListView) findViewById(R.id.pull_refresh_list);
 		mPullRefreshListView.setHeaderLayout(new JingDongHeaderLayout(this));
-		mPullRefreshListView.setFooterLayout(new JingDongHeaderLayout(this, Mode.PULL_FROM_END));
+		// 使用第二底部加载布局,要先禁止掉包含（Mode.PULL_FROM_END）的模式
+		// 如修改（Mode.BOTH为Mode.PULL_FROM_START）
+		// 修改（Mode.PULL_FROM_END 为Mode.DISABLE）
+		mPullRefreshListView.setSecondFooterLayout(new JingDongHeaderLayout(this, Mode.PULL_FROM_END));
 		mPullRefreshListView.setHasPullUpFriction(false); // 设置没有上拉阻力
 
 		// Set a listener to be invoked when the list should be refreshed.
