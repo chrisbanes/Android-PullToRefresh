@@ -85,6 +85,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	private boolean mFilterTouchEvents = true;
 	private boolean mOverScrollEnabled = true;
 	private boolean mLayoutVisibilityChangesEnabled = true;
+	private boolean mHasPullDownFriction = true;
+	private boolean mHasPullUpFriction = true;
 
 	private Interpolator mScrollAnimationInterpolator;
 	private AnimationStyle mLoadingAnimationStyle = AnimationStyle.getDefault();
@@ -496,6 +498,16 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		if (!isRefreshing()) {
 			setState(State.MANUAL_REFRESHING, doScroll);
 		}
+	}
+
+	@Override
+	public void setHasPullDownFriction(boolean hasPullDownFriction) {
+		this.mHasPullDownFriction = hasPullDownFriction;
+	}
+
+	@Override
+	public void setHasPullUpFriction(boolean hasPullUpFriction) {
+		this.mHasPullUpFriction = hasPullUpFriction;
 	}
 
 	/**
@@ -1191,12 +1203,20 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 
 		switch (mCurrentMode) {
 			case PULL_FROM_END:
-				newScrollValue = Math.round(Math.max(initialMotionValue - lastMotionValue, 0) / FRICTION);
+				if(mHasPullUpFriction) {
+					newScrollValue = Math.round(Math.max(initialMotionValue - lastMotionValue, 0) / FRICTION);
+				} else {
+					newScrollValue = Math.round(Math.max(initialMotionValue - lastMotionValue, 0));
+				}
 				itemDimension = getFooterSize();
 				break;
 			case PULL_FROM_START:
 			default:
-				newScrollValue = Math.round(Math.min(initialMotionValue - lastMotionValue, 0) / FRICTION);
+				if(mHasPullDownFriction) {
+					newScrollValue = Math.round(Math.min(initialMotionValue - lastMotionValue, 0) / FRICTION);
+				} else {
+					newScrollValue = Math.round(Math.min(initialMotionValue - lastMotionValue, 0));
+				}
 				itemDimension = getHeaderSize();
 				break;
 		}

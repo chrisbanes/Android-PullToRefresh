@@ -43,6 +43,7 @@ public class PullToRefreshRecycleActivity extends Activity{
 		setContentView(R.layout.activity_ptr_recycler);
 		mPullRefreshRecyclerView = (PullToRefreshRecyclerView) this.findViewById(R.id.pull_refresh_recycler);
 		mPullRefreshRecyclerView.setHeaderLayout(new JingDongHeaderLayout(this));
+		mPullRefreshRecyclerView.setHasPullUpFriction(false); // 设置没有上拉阻力
 
 		mRecyclerView = mPullRefreshRecyclerView.getRefreshableView();
 //		mRecyclerView.setLayoutManager(new LinearLayoutManager(this));

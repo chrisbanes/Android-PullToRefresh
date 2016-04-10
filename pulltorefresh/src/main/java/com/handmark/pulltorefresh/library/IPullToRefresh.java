@@ -257,4 +257,16 @@ public interface IPullToRefresh<T extends View> {
 	 */
 	public void setShowViewWhileRefreshing(boolean showView);
 
+	/**
+	 * set weather has friction when pull down
+	 * @param hasPullDownFriction
+     */
+	public void setHasPullDownFriction(boolean hasPullDownFriction);
+
+	/**
+	 * set weather has friction when pull up
+	 * @param hasPullUpFriction
+	 */
+	public void setHasPullUpFriction(boolean hasPullUpFriction);
+
 }
