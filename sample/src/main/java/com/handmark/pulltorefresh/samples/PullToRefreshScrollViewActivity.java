@@ -24,7 +24,6 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshScrollView;
 import com.handmark.pulltorefresh.samples.loadinglayout.JingDongHeaderLayout;
-import com.handmark.pulltorefresh.samples.loadinglayout.JingDongHeaderLayout_saves;
 
 public final class PullToRefreshScrollViewActivity extends Activity {
 
