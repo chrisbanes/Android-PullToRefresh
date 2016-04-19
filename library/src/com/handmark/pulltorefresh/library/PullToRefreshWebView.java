@@ -21,7 +21,6 @@ import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.util.AttributeSet;
-import android.util.FloatMath;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 
@@ -112,7 +111,7 @@ public class PullToRefreshWebView extends PullToRefreshBase<WebView> {
 
 	@Override
 	protected boolean isReadyForPullEnd() {
-		float exactContentHeight = FloatMath.floor(mRefreshableView.getContentHeight() * mRefreshableView.getScale());
+		float exactContentHeight = (float)Math.floor(mRefreshableView.getContentHeight() * mRefreshableView.getScale());
 		return mRefreshableView.getScrollY() >= (exactContentHeight - mRefreshableView.getHeight());
 	}
 
@@ -158,7 +157,7 @@ public class PullToRefreshWebView extends PullToRefreshBase<WebView> {
 		}
 
 		private int getScrollRange() {
-			return (int) Math.max(0, FloatMath.floor(mRefreshableView.getContentHeight() * mRefreshableView.getScale())
+			return (int) Math.max(0, (float)Math.floor(mRefreshableView.getContentHeight() * mRefreshableView.getScale())
 					- (getHeight() - getPaddingBottom() - getPaddingTop()));
 		}
 	}
