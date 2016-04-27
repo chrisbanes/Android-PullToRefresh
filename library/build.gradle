@@ -1,0 +1,55 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 16
+    buildToolsVersion '19.1.0'
+
+    defaultConfig {
+        minSdkVersion 4
+        targetSdkVersion 4
+    }
+
+    sourceSets {
+        main {
+            manifest {
+                srcFile 'AndroidManifest.xml'
+            }
+            java {
+                srcDir 'src'
+            }
+            res {
+                srcDir 'res'
+            }
+            assets {
+                srcDir 'assets'
+            }
+            resources {
+                srcDir 'src'
+            }
+        }
+    }
+}
+
+android.libraryVariants.all  { variant ->      
+    def name = variant.buildType.name      
+    if (!name.equals("debug")) {      
+        def task = project.tasks.create  "jar${name.capitalize()}", Jar      
+        task.dependsOn variant.javaCompile      
+        task.from  variant.javaCompile.destinationDir      
+        artifacts.add('archives', task);      
+    }      
+}
+
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+}
+
+allprojects {
+    repositories {
+        jcenter()
+    }
+}
