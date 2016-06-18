@@ -1102,6 +1102,7 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		// Refreshable View
 		// By passing the attrs, we can add ListView/GridView params via XML
 		mRefreshableView = createRefreshableView(context, attrs);
+		mRefreshableView.setBackgroundResource(android.R.color.transparent);
 		addRefreshableView(context, mRefreshableView);
 
 		// We need to create now layouts now
