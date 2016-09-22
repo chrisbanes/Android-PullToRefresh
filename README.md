@@ -1,12 +1,22 @@
-# PLEASE NOTE, THIS PROJECT IS NO LONGER BEING MAINTAINED
-
-* * *
-
 # Pull To Refresh Views for Android
+
+Expanded support for **RecyclerView**  
+Expanded support for **Custom LoadingLayout**  
 
 ![Screenshot](https://github.com/chrisbanes/Android-PullToRefresh/raw/master/header_graphic.png)
 
+### RecyclerView with Custom LoadingLayout Demo ###
+![Screenshot](https://raw.githubusercontent.com/xuehuayous/Android-PullToRefresh/master/recyclerView_demo.gif)
+
 This project aims to provide a reusable Pull to Refresh widget for Android. It was originally based on Johan Nilsson's [library](https://github.com/johannilsson/android-pulltorefresh) (mainly for graphics, strings and animations), but these have been replaced since.
+
+## Using Pull To Refresh in your application
+
+If you are building with Gradle, simply add the following line to the `dependencies` section of your `build.gradle` file:
+
+```
+	compile 'com.kevin:pulltorefresh:1.0.8'
+```
 
 ## Features
 
@@ -14,18 +24,20 @@ This project aims to provide a reusable Pull to Refresh widget for Android. It w
  * Animated Scrolling for all devices.
  * Over Scroll supports for devices on Android v2.3+.
  * Currently works with:
- 	* **ListView**
+     * **ListView**
  	* **ExpandableListView**
  	* **GridView**
  	* **WebView**
  	* **ScrollView**
  	* **HorizontalScrollView**
  	* **ViewPager**
+ 	* **RecyclerView**
  * Integrated End of List Listener for use of detecting when the user has scrolled to the bottom.
  * Maven Support.
  * Indicators to show the user when a Pull-to-Refresh is available.
  * Support for **ListFragment**!
  * Lots of [Customisation](https://github.com/chrisbanes/Android-PullToRefresh/wiki/Customisation) options!
+ * Expanded support for **RecyclerView** by Kevin
 
 Repository at <https://github.com/chrisbanes/Android-PullToRefresh>.
 

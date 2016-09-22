@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <FrameLayout
+        android:id="@+id/fl_inner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/header_footer_top_bottom_padding"
+        android:paddingLeft="@dimen/header_footer_left_right_padding"
+        android:paddingRight="@dimen/header_footer_left_right_padding"
+        android:paddingTop="@dimen/header_footer_top_bottom_padding" >
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center_horizontal"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/pull_to_refresh_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:text="让购物更便捷"
+                android:textColor="#5b5b5b"
+                android:textAppearance="?android:attr/textAppearance" />
+
+            <TextView
+                android:id="@+id/pull_to_refresh_sub_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:text="下拉刷新"
+                android:textColor="#5b5b5b"
+                android:textAppearance="?android:attr/textAppearanceSmall"/>
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/pull_to_refresh_people"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="40dp"
+                android:src="@drawable/app_refresh_people_0" />
+
+            <ImageView
+                android:id="@+id/pull_to_refresh_goods"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignRight="@id/pull_to_refresh_people"
+                android:layout_centerVertical="true"
+                android:src="@drawable/app_refresh_goods_0" />
+
+        </RelativeLayout>
+
+    </FrameLayout>
+
+</merge>
